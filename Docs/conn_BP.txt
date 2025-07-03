@@ -1,0 +1,95 @@
+MC68000
+
+Primeira parte
+
+Bus: 76 bits
+Control 14 bits.
+Data 16 bits.
+Address 23 bits
+Irq.    8 bits.
+Total 61 sobram 15 pinos
+
+
+
+Chips:
+CPU 68000
+CLOCK 16MHZ
+RESET COM 555
+74LS06
+5 x 74hc573
+Logica para gerar mrd mwr a partir de r/w e as
+74ls14
+74ls32
+
+1 - Montagem da CPU em partes testadas
+    1.0 decidir quais chips vão na placa da cpu
+    1.1 desenhar o esquema elétrico.
+    1.2 preparar a placa circuito impresso 10x15
+         1.2.1 furos p/orelhas
+         1.2.2 preparar as orelhas de plastico da frente da
+                   placa.
+         1.2.3 marcar a parte superior e inferior da placa p/
+                   trilho
+         1.2.4 soldar barra pinos da traseira
+         1.2.5 posicionar os soquetes para decidir melhor
+                  forma
+         1.2.6 soldar os soquetes e conectores e os pinos
+                  para wire wrap
+    1.3 passar todos os fios wire wrap
+
+
+
+Definição do barramento 80 pinos compativel com meu
+-My pc-xt
+01-A00    -free
+02-A01    -OSC88
+03-A02    -free
+04-A03    -ALE
+05-A04    -TC
+06-A05    -DACK2
+07-A06    -IRQ3
+08-A07    -IRQ4
+09-A08    -IRQ5
+10-A09    -IRQ6
+11-A10    -IRQ7
+12-A11    -CLK88
+13-A12    -DRQ0
+14-A13    -DRQ1
+15-A14    -DACK1
+16-A15    -DRQ3
+17-Gnd    gnd
+18-Vcc    vcc
+19-A16    -IOWR
+20-A17    -MRD
+21-A18    -MWR
+22-A19    -free
+23- D0    -+12
+24- D1    -IORD
+25- D2    - -12
+26- D3    -DRQ2
+27- D4    - -5
+28- D5    -IRQ2
+29- D6    -free
+30- D7    -RESETOUT
+31-CH_CK  -free
+32-AEN    -FREE
+33-RDY    -FREE
+34-FREE   -FREE
+35-FREE   -FREE
+36-FREE   -FREE
+37-PCLK   -FREE
+
+8259A_SP_EN-FREE
+INTR-INTA
+FREE-FREE
+------------------
+IP0-FC0
+IP1-FC1
+IP2-FC2
+BR-BGACK HOLD/HOLDA
+VMA-VPA
+BERR-DTACK
+LDS-UDS
+AS-FREE
+FREE-FREE
+FREE-FREE
