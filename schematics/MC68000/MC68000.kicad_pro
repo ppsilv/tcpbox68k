@@ -320,6 +320,10 @@
     [
       "769e212f-4950-4bc7-87dd-856b7f7fe64d",
       "CPU"
+    ],
+    [
+      "46851f42-1a1d-4f27-b9e4-631920caffce",
+      "MEMORY"
     ]
   ],
   "text_variables": {}

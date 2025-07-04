@@ -8,10 +8,31 @@
   )
 
 
-  (text "CPU MC68000 \nCLOCK 16MHZ\nDATA AND ADDRESS BUFFERS\nHALT AND RESET\nDTACK GLUE LOGIC\n"
+  (text "ROM 16kBytes\nRAM 1MBytes\n" (at 34.29 83.82 0)
+    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
+    (uuid 5570c11b-890f-4a5d-abaf-1a4c84a2dd12)
+  )
+  (text "CPU MC68000 \nCLOCK 16MHZ\nDATA AND ADDRESS BUFFERS\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
     (at 36.83 57.15 0)
     (effects (font (size 2.54 2.54) (thickness 0.254) bold) (justify left bottom))
     (uuid 80bb59c6-c5c3-4e0b-9abc-953afbae5d6e)
+  )
+
+  (sheet (at 31.75 72.39) (size 80.01 30.48) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 46851f42-1a1d-4f27-b9e4-631920caffce)
+    (property "Sheetname" "MEMORY" (at 31.75 71.0434 0)
+      (effects (font (size 2.54 2.54)) (justify left bottom))
+    )
+    (property "Sheetfile" "memory.kicad_sch" (at 31.75 103.4546 0)
+      (effects (font (size 1.27 1.27)) (justify left top) hide)
+    )
+    (instances
+      (project "MC68000"
+        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "3"))
+      )
+    )
   )
 
   (sheet (at 31.75 31.75) (size 80.01 30.48) (fields_autoplaced)
