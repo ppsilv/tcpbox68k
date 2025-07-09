@@ -23,7 +23,7 @@
     (fill (color 0 0 0 0.0000))
     (uuid 46851f42-1a1d-4f27-b9e4-631920caffce)
     (property "Sheetname" "MEMORY" (at 31.75 71.0434 0)
-      (effects (font (size 2.54 2.54)) (justify left bottom))
+      (effects (font (size 2.54 2.54) bold) (justify left bottom))
     )
     (property "Sheetfile" "memory.kicad_sch" (at 31.75 103.4546 0)
       (effects (font (size 1.27 1.27)) (justify left top) hide)
@@ -31,6 +31,23 @@
     (instances
       (project "MC68000"
         (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "3"))
+      )
+    )
+  )
+
+  (sheet (at 31.75 116.84) (size 78.74 30.48) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid 743e43ef-105d-41ce-864e-753e6edb9a06)
+    (property "Sheetname" "FOUR UARTS" (at 31.75 115.4934 0) (show_name)
+      (effects (font (size 2.54 2.54) bold) (justify left bottom))
+    )
+    (property "Sheetfile" "fourUarts.kicad_sch" (at 31.75 147.9046 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "MC68000"
+        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "4"))
       )
     )
   )

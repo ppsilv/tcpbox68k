@@ -1,0 +1,397 @@
+*********************************************************************************************
+*                                                                                           *
+* Equações para de codificação de endereo                                                   *
+* ROM  - ROMH ROML de 0x00000 a 0x01FFF                                                     *
+* RAM1 - RAMH RAML de 0x02000 a 0x80000                                                     *
+* RAM2 - RAMH RAML de 0x80000 a 0xFFFFF                                                     *
+*                                                                                           *
+*********************************************************************************************
+
+## Equação completa:
+
+CHIP MEMORY_DECODER
+PIN 1   = A19
+PIN 2   = A18
+PIN 3   = A17
+PIN 4   = A16
+PIN 5   = A15
+PIN 6   = A14
+PIN 7   = A13
+PIN 8   = !CE
+PIN 9   = !ROM_CS
+PIN 11  = !RAM1_CS
+PIN 12  = !RAM2_CS
+PIN 13  = GND
+PIN 14  = VCC
+
+EQUATIONS
+
+; ROM (8K): 0x0000-0x1FFF (A19-A13 = 0000000)
+!ROM_CS = CE & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13
+
+; RAM 1 (504K): 0x2000-0x7FFFF (A19=0 e pelo menos um bit A18-A13=1)
+!RAM1_CS = CE & !A19 & (A18 # A17 # A16 # A15 # A14 # A13)
+
+; RAM 2 (512K): 0x80000-0xFFFFF (A19=1)
+!RAM2_CS = CE & A19
+
+ASSERT (!ROM_CS & RAM1_CS & RAM2_CS) # (ROM_CS & !RAM1_CS & RAM2_CS) # (ROM_CS & RAM1_CS & !RAM2_CS)
+
+
+Esta versão corrigida garantirá que:
+1. A ROM seja selecionada apenas quando todos os bits A19-A13 forem 0
+2. A RAM1 seja selecionada para qualquer endereço com A19=0 e pelo menos um bit A18-A13=1
+3. A RAM2 seja selecionada quando A19=1
+
+
+*********************************************************************************************
+*                                                                                           *
+* Equações simplificadas com o uso de ROM_CS para gerar RAM1_CS                             *
+*                                                                                           *
+* Equações para de codificação de endereo                                                   *
+* ROM  - ROMH ROML de 0x00000 a 0x01FFF                                                     *
+* RAM1 - RAMH RAML de 0x02000 a 0x80000                                                     *
+* RAM2 - RAMH RAML de 0x80000 a 0xFFFFF                                                     *
+*                                                                                           *
+*********************************************************************************************
+
+
+### Implementação com `ROM_CS` como entrada:
+galasm
+!RAM1_CS = CE & !A19 & !ROM_CS
+
+
+### Lógica por trás:
+1. `!ROM_CS` já é ativo (baixo) **apenas quando A19-A13 = 0000000**
+2. Invertendo (`!ROM_CS`), temos um sinal que fica **alto quando fora da faixa da ROM**
+3. Combinando com `CE & !A19`, garantimos:
+   - Chip habilitado (`CE`)
+   - Faixa inferior a 512K (`!A19`)
+   - **E** fora da área da ROM (`!ROM_CS`)
+
+### Vantagens:
+- Mais compacta que a versão anterior (`A18 # A17 # ...`)
+- Reutiliza a lógica já existente para a ROM
+- Mantém a mesma funcionalidade correta que chegamos anteriormente
+
+### Equação completa atualizada:
+galasm
+CHIP MEMORY_DECODER
+PIN 1   = A19
+PIN 2   = A18
+PIN 3   = A17
+PIN 4   = A16
+PIN 5   = A15
+PIN 6   = A14
+PIN 7   = A13
+PIN 8   = !CE
+PIN 9   = !ROM_CS     ; Saída que também será reutilizada
+PIN 11  = !RAM1_CS
+PIN 12  = !RAM2_CS
+PIN 13  = GND
+PIN 14  = VCC
+
+EQUATIONS
+!ROM_CS = CE & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13
+!RAM1_CS = CE & !A19 & !ROM_CS   ; <<- Método simplificado
+!RAM2_CS = CE & A19
+
+ASSERT (!ROM_CS & RAM1_CS & RAM2_CS) # (ROM_CS & !RAM1_CS & RAM2_CS) # (ROM_CS & RAM1_CS & !RAM2_CS)
+
+
+### Validação:
+- **ROM**: `!ROM_CS` ativo → `!RAM1_CS` fica inativo (pois `!ROM_CS` está baixo)
+- **RAM1**: `!ROM_CS` alto (fora da ROM) + `!A19` → `!RAM1_CS` ativo
+
+
+
+
+*********************************************************************************************
+*                                                                                           *
+* Equações otimizadas para GAL20V8B                                                         *
+*                                                                                           *
+* Equações para de codificação de endereo                                                   *
+* ROM  - ROMH ROML de 0x00000 a 0x01FFF                                                     *
+* RAM1 - RAMH RAML de 0x02000 a 0x80000                                                     *
+* RAM2 - RAMH RAML de 0x80000 a 0xFFFFF                                                     *
+*                                                                                           *
+*********************************************************************************************
+
+
+
+Usando a **GAL20V8B**! Essa é uma ótima escolha para esse tipo de decodificação, e as saídas poderem ser reutilizadas como entradas em algumas configurações.
+Isso permite otimizar ainda mais a lógica.
+😊
+
+### Considerações para a **GAL20V8B**:
+1. **Saídas como entradas (Feedback)**:
+   - Na GAL20V8B, você pode configurar alguns pinos de saída como **entradas** (via lógica combinacional ou macrocelas).
+   - Isso é perfeito para seu caso, onde `!ROM_CS` (pino 9) é uma saída que também será usada como entrada para `!RAM1_CS`.
+
+2. **Arquitetura OLMC (Macrocelas)**:
+   - Cada pino de E/S pode ser configurado como **entrada dedicada, saída combinacional ou registrada**.
+   - Como seu decodificador é puramente combinacional, não precisa se preocupar com clocks.
+
+3. **Pinos disponíveis**:
+   - A GAL20V8B tem **10 pinos de I/O** + **2 pinos dedicados de entrada** (totalizando 12 entradas possíveis, se necessário).
+   - No seu caso, está bem dimensionado (A19-A13 + CE + 3 saídas).
+
+### Versão Final Otimizada para GAL20V8B:
+galasm
+CHIP MEMDECODER GAL20V8B
+; Pinos de entrada
+PIN 1   = A19
+PIN 2   = A18
+PIN 3   = A17
+PIN 4   = A16
+PIN 5   = A15
+PIN 6   = A14
+PIN 7   = A13
+PIN 8   = !CE       ; Chip Enable (ativo baixo)
+; Pinos de saída (com feedback)
+PIN 19  = !ROM_CS   ; Saída que também será reutilizada como entrada
+PIN 18  = !RAM1_CS
+PIN 17  = !RAM2_CS
+; Alimentação e terra
+PIN 10  = GND
+PIN 20  = VCC
+
+EQUATIONS
+; ROM (0000-1FFF): A19-A13 = 0000000
+!ROM_CS = CE & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13
+
+; RAM1 (2000-7FFFF): A19=0 e fora da ROM (reutiliza !ROM_CS como entrada)
+!RAM1_CS = CE & !A19 & !ROM_CS
+
+; RAM2 (80000-FFFFF): A19=1
+!RAM2_CS = CE & A19
+
+; Garante que apenas um Chip Select está ativo por vez
+ASSERT (!ROM_CS & RAM1_CS & RAM2_CS) # (ROM_CS & !RAM1_CS & RAM2_CS) # (ROM_CS & RAM1_CS & !RAM2_CS)
+
+
+### Vantagens dessa implementação:
+✔ **Mais eficiente**: Elimina a redundância de calcular `(A18 # A17 # ...)` novamente.
+✔ **Menos termos de produto**: Economiza recursos lógicos da GAL.
+✔ **Legível e fácil de modificar**: Se mudar o mapa de memória, basta ajustar `!ROM_CS`.
+
+### Dica de Compilação:
+Ao usar o **GALasm**, certifique-se de que:
+1. O modo de configuração das macrocelas está como **combinacional puro** (sem registro).
+2. O pino `!ROM_CS` (19) está definido como **saída com feedback** (para ser usado como entrada em `!RAM1_CS`).
+
+
+*********************************************************************************************
+*                                                                                           *
+* Equações otimizadas para acesso a word(16 bits) invéz de 8bits(1 byte)                    *
+*                                                                                           *
+* Equações para de codificação de endereo                                                   *
+* ROM  - ROMH ROML de 0x00000 a 0x01FFF                                                     *
+* RAM1 - RAMH RAML de 0x02000 a 0x80000                                                     *
+* RAM2 - RAMH RAML de 0x80000 a 0xFFFFF                                                     *
+*                                                                                           *
+*********************************************************************************************
+
+
+**Acessos de 16 bits em um único ciclo**!
+1. **ROM e RAM sejam diferenciadas** pelo PLD (como antes).
+2. **`!UDS`/`!LDS` sejam usados corretamente** para leituras de *word* (16 bits) em um único ciclo.
+
+
+
+### **Solução Ideal para Word Access (68000 + GAL + Memórias)**
+#### **Requisitos**:
+- **ROM 16-bit**: Aceita `!UDS` e `!LDS` e entrega 16 bits por ciclo.
+- **RAM 16-bit**: Mesmo comportamento (ou 2 chips de 8 bits em paralelo).
+- **Decodificação**: O PLD ainda controla `!ROM_CS` e `!RAM_CS`, mas os strobes (`!UDS`/`!LDS`) vão **diretamente para as memórias**.
+
+
+
+### **Conexões no Hardware**:
+1. **Barramento do 68000**:
+   - `!AS`, `!UDS`, `!LDS`, `A19-A0` → PLD e memórias.
+   - `D0-D15` → Conectados diretamente às memórias.
+
+2. **PLD (GAL20V8B)**:
+   - Gera `!ROM_CS` e `!RAM_CS` baseado em `A19-A13` e `!AS` (como antes).
+   - **Não mexe com `!UDS`/`!LDS`** (deixa passar direto).
+
+3. **Memórias**:
+   - **ROM/RAM 16-bit**:
+     - `!UDS` e `!LDS` conectados aos pinos `!CE1` e `!CE2` do chip.
+     - `!CS` global vindo do PLD (`!ROM_CS` ou `!RAM_CS`).
+
+
+
+### **Diagrama Simplificado**:
+
+MC68000:
+  !AS   --> GAL (pino 8 !CE)
+  !UDS  --> ROM/RAM !CE1
+  !LDS  --> ROM/RAM !CE2
+  A19-A1--> GAL + Memórias
+  D0-D15--> ROM/RAM
+
+GAL20V8B:
+  !ROM_CS --> ROM !CS
+  !RAM_CS --> RAM !CS
+
+### **Como Funciona (Exemplo de Leitura de 16 bits)**:
+1. **CPU solicita uma word** (ex: `A0=0`, endereço par):
+   - `!UDS` e `!LDS` são ativados **juntos**.
+   - `!AS` vai para baixo (ciclo válido).
+   - O PLD decodifica o endereço:
+     - Se `A19=0` → `!ROM_CS` ativa a ROM.
+     - Se `A19=1` → `!RAM_CS` ativa a RAM.
+   - **A memória selecionada** recebe `!UDS` e `!LDS` e entrega **16 bits de uma vez**.
+
+2. **Vantagem**:
+   - **1 ciclo de clock** para ler/escrever 16 bits.
+   - **Sem atrasos** por acesso parcial a bytes.
+
+### **Se Usar RAM de 8 bits**:
+Se sua RAM for **8-bit** (ex: 2x 62256), conecte:
+- `!LDS` → `!CE` da RAM (ignora `!UDS`).
+- **Mapeie a RAM em endereços pares e ímpares**:
+  - Acesso a **endereço par** (`A0=0`): Lê byte da RAM.
+  - Acesso a **endereço ímpar** (`A0=1`): Retorna lixo (ou repete o byte).
+
+### **Equação no PLD (GAL20V8B)**:
+galasm
+!ROM_CS = !AS & !A19 & !A18 & ... & !A13  ; 0x0000-0x1FFF
+!RAM_CS = !AS & A19                       ; 0x80000-0xFFFFF (ajuste conforme seu mapa)
+
+### **Por Que Isso Resolve o Problema**:
+1. **Word access**: `!UDS` e `!LDS` ativam a memória **em paralelo** (16 bits).
+2. **Separação ROM/RAM**: O PLD ainda controla qual chip está ativo.
+3. **Eficiência máxima**: Sem ciclos extras para ler bytes separados.
+
+### **Dica Final**:
+Se a **ROM for 8-bit** e a **RAM 16-bit**,  pode:
+- Conectar `!UDS` e `!LDS` apenas à RAM.
+- Para a ROM, usar só `!LDS` e deixar `!UDS` desconectado (ou tratar como wait state).
+
+
+*********************************************************************************************
+*                                                                                           *
+* Equações otimizadas para acesso a I/O                                                     *
+*                                                                                           *
+* ROM  -  0x00000 a 0x01FFF                                                                 *
+* I/O  - Input output de 0x02000 a 0x03FFF                                                  *
+* RAM1 -  0x04000 a 0x80000                                                                 *
+* RAM2 -  0x80000 a 0xFFFFF                                                                 *
+*                                                                                           *
+*********************************************************************************************
+
+
+Ajustar o mapeamento de memória conforme sua nova especificação,
+incluindo a região de I/O e as duas áreas de RAM (RAM1 e RAM2). Aqui está a solução atualizada:
+
+### **Mapeamento de Memória Atualizado**:
+| Endereço       | Tamanho  | Dispositivo |
+|-|-|-|
+| `0x00000-0x01FFF`  | 8 KB     | ROM         |
+| `0x02000-0x03FFF`  | 8 KB     | I/O         |
+| `0x04000-0x7FFFF`  | 480 KB   | RAM1        |
+| `0x80000-0xFFFFF`  | 512 KB   | RAM2        |
+
+
+### **Modificações no PLD (GAL20V8B)**:
+#### **Equações para Decodificação**:
+galasm
+CHIP GAL20V8B
+
+DECODIFICADOR_68000
+
+; PINOS DE ENTRADA
+A13  PIN 1  ; Barramento de endereço
+A14  PIN 2
+A15  PIN 3
+A16  PIN 4
+A17  PIN 5
+A18  PIN 6
+A19  PIN 7
+A20  PIN 8
+!AS  PIN 9  ; Address Strobe
+
+; PINOS DE SAÍDA
+!ROM_CS  PIN 19  ; ROM (0x00000-0x01FFF)
+!IO_CS   PIN 18  ; I/O (0x02000-0x03FFF)
+!RAM4_CS PIN 17  ; RAM1 (0x004000-0x07FFFF)
+!RAM1_CS PIN 16  ; RAM2 (0x080000-0x0FFFFF)
+!RAM2_CS PIN 16  ; RAM2 (0x100000-0x17FFFF)
+!RAM3_CS PIN 16  ; RAM2 (0x180000-0x1FFFFF)
+
+; EQUAÇÕES
+!ROM_CS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13  ; 0x0000-0x1FFF (8 KB)
+!IO_CS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13  ; 0x2000-0x3FFF (8 KB)
+!RAM4_CS = !AS & !A20 & !A19  ; 0x004000-0x07FFFF (20=0 e A19=0, exceto ROM e I/O)
+!RAM1_CS = !AS & !A20 &  A19  ; 0x080000-0x0FFFFF (20=0 e A19=1)
+!RAM2_CS = !AS &  A20 & !A19  ; 0x100000-0x17FFFF (20=1 e A19=0)
+!RAM3_CS = !AS &  A20 &  A19  ; 0x180000-0x1FFFFF (20=1 e A19=1)
+
+
+DESCRIPTION
+Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
+
+### **Conexões do Hardware**:
+1. **Barramento do 68000**:
+   - `!AS`, `!UDS`, `!LDS`, `A19-A0` → PLD e dispositivos.
+   - `D0-D15` → Conectados diretamente a ROM, RAM e I/O.
+
+2. **PLD (GAL20V8B)**:
+   - Gera `!ROM_CS`, `!IO_CS`, `!RAM1_CS`, `!RAM2_CS` conforme as equações acima.
+   - **Não interfere em `!UDS`/`!LDS`** (passam direto para as memórias).
+
+3. **Dispositivos**:
+   - **ROM (16-bit)**:
+     - `!CS` = `!ROM_CS` (vindo do PLD).
+     - `!UDS` e `!LDS` conectados diretamente (para acesso a 16 bits).
+   - **I/O (8-bit)**:
+     - `!CS` = `!IO_CS` + `!LDS` (só reage a acessos a bytes).
+     - Ignora `!UDS` (ou gera wait states se necessário).
+   - **RAM1 e RAM2 (16-bit)**:
+     - `!CS` = `!RAM1_CS` ou `!RAM2_CS`.
+     - `!UDS` e `!LDS` conectados diretamente.
+
+### **Como Funciona**:
+1. **Acesso à ROM (16-bit)**:
+   - Endereço `0x00000-0x01FFF` → `!ROM_CS` ativa.
+   - `!UDS` e `!LDS` habilitam a saída de 16 bits em um ciclo.
+
+2. **Acesso ao I/O (8-bit)**:
+   - Endereço `0x02000-0x03FFF` → `!IO_CS` ativa.
+   - **Só reage a `!LDS`** (acessos a bytes ímpares podem ser ignorados ou tratados com wait states).
+
+3. **Acesso à RAM1/RAM2 (16-bit)**:
+   - `!RAM1_CS` ou `!RAM2_CS` ativa a RAM correspondente.
+   - `!UDS` e `!LDS` permitem leitura/escrita de 16 bits em um ciclo.
+
+### **Observações Importantes**:
+1. **Região de I/O**:
+   - Como o 68000 não tem instruções dedicadas a I/O, trate essa área como **memória mapeada**.
+   - Se seus dispositivos de I/O forem **8-bit**, conecte `D0-D7` e ignore `D8-D15`.
+
+2. **Ajuste de Tamanho**:
+   - Verifique se os tamanhos da ROM (8 KB) e I/O (8 KB) estão corretos. Se precisar de mais espaço, ajuste as equações (ex: usar `A12` para ROM de 16 KB).
+
+3. **Wait States para I/O**:
+   - Se o hardware de I/O for lento, use `!DTACK` para inserir wait states.
+
+4. **Compatibilidade com 16-bit**:
+   - Se a RAM ou I/O for **8-bit**, conecte apenas `!LDS` e trate `A0` para evitar conflitos.
+
+### **Exemplo de Acesso**:
+- **Leitura de 16 bits em `0x04000` (RAM1)**:
+  - `!AS` ativo, `!UDS` e `!LDS` ativos.
+  - PLD ativa `!RAM1_CS` (pois `A19=0` e não é ROM/I/O).
+  - RAM entrega 16 bits em um ciclo.
+
+- **Escrita de byte em `0x02001` (I/O)**:
+  - `!AS` ativo, `!LDS` ativo (mas `!UDS` inativo).
+  - PLD ativa `!IO_CS`.
+  - Hardware de I/O grava apenas no byte inferior (`D0-D7`).
+
+### **Dica para Debug**:
+Simulador como **EASy68K** para testar o mapeamento antes de implementar no hardware.
+Se mais regiões de ram (ex: mais chips de RAM), adicione linhas de endereço (ex: `A20`) ao PLD.
