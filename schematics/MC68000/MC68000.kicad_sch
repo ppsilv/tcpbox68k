@@ -17,12 +17,21 @@
     (effects (font (size 2.54 2.54) (thickness 0.254) bold) (justify left bottom))
     (uuid 80bb59c6-c5c3-4e0b-9abc-953afbae5d6e)
   )
+  (text "CPU MC68000 \nCLOCK 16MHZ\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
+    (at 33.02 187.96 0)
+    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
+    (uuid 954e2856-0c86-49f3-ba8d-6df86096466d)
+  )
+  (text "TG16C554\n4 UARTS.\n" (at 34.29 127 0)
+    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
+    (uuid 96aacee7-8ad9-4784-8eb3-878addb92c13)
+  )
 
   (sheet (at 31.75 72.39) (size 80.01 30.48) (fields_autoplaced)
     (stroke (width 0.1524) (type solid))
     (fill (color 0 0 0 0.0000))
     (uuid 46851f42-1a1d-4f27-b9e4-631920caffce)
-    (property "Sheetname" "MEMORY" (at 31.75 71.0434 0)
+    (property "Sheetname" "MEMORY" (at 31.75 71.0434 0) (show_name)
       (effects (font (size 2.54 2.54) bold) (justify left bottom))
     )
     (property "Sheetfile" "memory.kicad_sch" (at 31.75 103.4546 0)
@@ -65,6 +74,23 @@
     (instances
       (project "MC68000"
         (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "2"))
+      )
+    )
+  )
+
+  (sheet (at 31.75 166.37) (size 78.74 26.67) (fields_autoplaced)
+    (stroke (width 0.1524) (type solid))
+    (fill (color 0 0 0 0.0000))
+    (uuid cb1c4173-bc78-475d-9381-bcb9d50be77b)
+    (property "Sheetname" "cpuNoBuffer" (at 31.75 165.0234 0) (show_name)
+      (effects (font (size 2.54 2.54) bold) (justify left bottom))
+    )
+    (property "Sheetfile" "cpuNoBuffer.kicad_sch" (at 31.75 193.6246 0)
+      (effects (font (size 1.27 1.27)) (justify left top))
+    )
+    (instances
+      (project "MC68000"
+        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "5"))
       )
     )
   )

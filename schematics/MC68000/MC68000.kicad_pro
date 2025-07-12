@@ -328,6 +328,10 @@
     [
       "743e43ef-105d-41ce-864e-753e6edb9a06",
       "FOUR UARTS"
+    ],
+    [
+      "cb1c4173-bc78-475d-9381-bcb9d50be77b",
+      "cpuNoBuffer"
     ]
   ],
   "text_variables": {}
