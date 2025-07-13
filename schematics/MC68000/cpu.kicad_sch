@@ -6867,7 +6867,7 @@
     (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
     (uuid 27b421c2-7a10-4825-9685-40581955b9d5)
   )
-  (text "PARA FINS DE TESTE\nNO LUGAR DE /ROM_CE\nE /RAM_CS ESTOU \nUSANDO O SINAL \nDA CPU /AS E O /AS\nPRECISA SER INVERTIDO\n"
+  (text "PARA FINS DE TESTE\nNO LUGAR DE /ROM_CE\nE /RAM_CS ESTOU \nUSANDO O SINAL \nDA CPU /AS "
     (at 12.7 77.47 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid a7c775aa-b9e5-4e3d-a365-a9949a7ea6a0)

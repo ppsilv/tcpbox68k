@@ -4716,10 +4716,20 @@
     (uuid ff99174f-9127-4e37-a5f0-07f99427386f)
   )
 
+  (text "PARA FINS DE TESTE\nNO LUGAR DE /ROM_CE\nE /RAM_CS ESTOU \nUSANDO O SINAL \nDA CPU /AS \n"
+    (at 15.24 74.93 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 1e4354ad-069c-4e7e-8600-003d49e5a534)
+  )
   (text "CPU MC68000\nINTERRUPT \nCLOCK 16MHZ\nRESET AND HALT\nDTACK GLUE LOGIC\n"
     (at 300.99 266.7 0)
     (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
     (uuid 6c50a393-63f4-488f-8edc-3c6cc17399ea)
+  )
+  (text "0 - por o soquete do ci intrq\n1 - por todos os capacitores 100nf\n2 - por todos os terras\n3 - por todos os vccs\n4 - por todos os pullups com opção de pulldown\n5 - por o oscilador\n6 - por o ci intrq\n7 - ligar o clock\n8 - ligar a cpu ao halt reset\n9 - ligar os leds"
+    (at 17.78 35.56 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid ac35ee9d-cf81-426b-84c5-ba413ad7ce2b)
   )
 
   (label "D11" (at 252.73 134.62 0) (fields_autoplaced)
@@ -5226,6 +5236,10 @@
   (label "A1" (at 252.73 45.72 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid db781ebc-a8a8-4d32-b18f-b75ef8be27eb)
+  )
+  (label "CLK" (at 153.67 45.72 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid dc508de7-d2f6-4eab-9a1a-d87f5bf504dd)
   )
   (label "A4" (at 317.5 53.34 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
