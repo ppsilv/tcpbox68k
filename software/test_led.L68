@@ -1,0 +1,90 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 7/16/2025 3:43:17 PM
+
+00000000                             1  ; Programa de teste para placa MC68000
+00000000                             2  ; Sintaxe com 0x para valores hexadecimais
+00000000                             3  
+00000000  6000 0010                  4          bra     MAIN            ; Pula para o código principal
+00000004                             5  
+00000004                             6  ; Vetores de inicialização
+00000004                             7  VECTOR_INIT:
+Line 8 ERROR: Invalid syntax
+00000004                             8          move.l  #0x00880000,a7  ; SP inicial
+00000004  4EF9 00000012              9          jmp     MAIN            ; PC inicial
+0000000A  6000 0022                 10          bra     ERROR_HANDLER   ; Vetor de bus error
+0000000E  6000 001E                 11          bra     ERROR_HANDLER   ; Vetor de address error
+00000012                            12  
+00000012                            13  MAIN:
+Line 14 ERROR: Invalid syntax
+00000012                            14          move.l  #0x00880000,a7  ; Inicializa stack pointer
+00000012                            15  
+00000012                            16          ; Teste simples de RAM
+Line 17 ERROR: Invalid syntax
+00000012                            17          move.l  #0xA5A5A5A5,d0
+Line 18 ERROR: Invalid syntax
+00000012                            18          move.l  d0,0x00080000   ; Endereço da RAM (0x80000)
+Line 19 ERROR: Invalid syntax
+00000012                            19          move.l  0x00080000,d1   ; Lê de volta
+00000012  B280                      20          cmp.l   d0,d1
+00000014  6600 0018                 21          bne     ERROR_HANDLER   ; Se diferente, vai para erro
+00000018                            22  
+00000018                            23          ; Loop principal - animação nos LEDs
+00000018                            24  LED_LOOP:
+Line 25 ERROR: Invalid syntax
+00000018                            25          move.w  #0x0001,d1      ; Padrão inicial
+00000018  343C 0010                 26          move.w  #16,d2          ; Número de LEDs
+0000001C                            27  
+0000001C                            28  LED_ANIMATE:
+Line 29 ERROR: Invalid syntax
+0000001C                            29          move.w  d1,0x00002000  ; Endereço dos LEDs (0x2000)
+0000001C  E359                      30          rol.w   #1,d1           ; Rotaciona o padrão
+0000001E                            31  
+0000001E                            32          ; Delay loop (ajuste conforme clock)
+0000001E  263C 00027100             33          move.l  #160000,d3
+00000024                            34  DELAY:
+00000024  5383                      35          subq.l  #1,d3
+00000026  66FC                      36          bne     DELAY
+00000028                            37  
+00000028  51CA FFF2                 38          dbra    d2,LED_ANIMATE
+0000002C  60EA                      39          bra     LED_LOOP
+0000002E                            40  
+0000002E                            41  ; Manipulador de erros (pisca LEDs)
+0000002E                            42  ERROR_HANDLER:
+Line 43 ERROR: Invalid syntax
+0000002E                            43          move.w  #0xAAAA,d4
+0000002E                            44  ERROR_LOOP:
+Line 45 ERROR: Invalid syntax
+0000002E                            45          move.w  d4,0x00002000   ; Endereço dos LEDs (0x2000)
+Line 46 ERROR: Invalid syntax
+0000002E                            46          eori.w  #0xFFFF,d4
+0000002E  2A3C 0030D400             47          move.l  #3200000,d5
+00000034                            48  ERROR_DELAY:
+00000034  5385                      49          subq.l  #1,d5
+00000036  66FC                      50          bne     ERROR_DELAY
+00000038  60F4                      51          bra     ERROR_LOOP
+0000003A                            52  
+0000003A                            53  ; Preenchimento com NOPs (exemplo)
+0000003A                            54  FILLER:
+0000003A  4E71                      55          nop
+0000003C  4E71                      56          nop
+0000003E  4E71                      57          nop
+00000040                            58          ; Continue adicionando NOPs até completar 8KB
+Line 59 WARNING: END directive missing, starting address not set
+
+10 errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+DELAY               24
+ERROR_DELAY         34
+ERROR_HANDLER       2E
+ERROR_LOOP          2E
+FILLER              3A
+LED_ANIMATE         1C
+LED_LOOP            18
+MAIN                12
+VECTOR_INIT         4
