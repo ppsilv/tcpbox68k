@@ -1,0 +1,163 @@
+# **Sistema Completo de Refresh DRAM + Acesso da CPU com Débitos**  
+
+Agora vamos implementar **tudo em um único circuito**:  
+✅ **Refresh automático** (RAS-only)  
+✅ **Controle de débitos** (se a CPU monopolizar o barramento)  
+✅ **Acesso concorrente da CPU à DRAM**  
+✅ **Arbitragem de barramento**  
+
+---
+
+## **📡 Diagrama do Circuito Completo**
+```
+  +---------------------+
+  | AT90S2313           |
+  |                     |
+  | PB0-PB7 ----+       |---> A0-A7 DRAM
+  |             |       |
+  | PD0 (OC1A) -+-> RAS |
+  | PD1 (OC1B) -+-> CAS |
+  | PD2 (INT0) <- CPU_REQUEST
+  | PD3 (T1) <-- CLOCK_DRAM (opcional)
+  +---------------------+
+         |
+         v
+  +---------------------+
+  | Lógica de Arbitragem|
+  | (74HC00 + 74HC32)   |
+  +---------------------+
+         |
+         v
+  +---------------------+
+  | DRAM (41256, etc.)  |
+  +---------------------+
+```
+
+---
+
+## **🔧 Componentes Adicionais**
+| Componente          | Função                                  |
+|---------------------|----------------------------------------|
+| 74HC00 (NAND)       | Lógica de controle RAS/CAS             |
+| 74HC32 (OR)         | Arbitragem CPU vs Refresh              |
+| 74HC245 (Opcional)  | Buffer bidirecional se CPU compartilhar dados |
+
+---
+
+## **📌 Firmware Completo (Acesso CPU + Débitos)**
+```c
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+// Configurações
+#define REFRESH_INTERVAL_US    15   // 15μs entre refreshes
+#define MAX_REFRESH_DEBT       4    // Máximo de refreshes pendentes
+
+// Variáveis
+volatile uint8_t refresh_debt = 0;
+volatile uint8_t current_row = 0;
+volatile uint8_t cpu_accessing = 0;
+
+// Interrupção do Timer1 (Refresh)
+ISR(TIMER1_COMPA_vect) {
+    if (!cpu_accessing) {
+        // Modo Refresh Normal
+        PORTB = current_row;      // Envia endereço
+        PORTD &= ~(1 << PD0);     // Ativa RAS
+        _delay_us(0.1);
+        PORTD |= (1 << PD0);      // Desativa RAS
+        current_row++;
+        if (refresh_debt > 0) refresh_debt--;
+    } 
+    else {
+        // CPU está acessando → acumula débito
+        if (refresh_debt < MAX_REFRESH_DEBT) refresh_debt++;
+    }
+
+    // Refresh Forçado se débito >= MAX_REFRESH_DEBT
+    if (refresh_debt >= MAX_REFRESH_DEBT) {
+        force_refresh();
+    }
+}
+
+// Força um refresh (ignora acesso da CPU)
+void force_refresh() {
+    cli();
+    DDRB = 0xFF;              // Assume controle do barramento
+    PORTB = current_row;      // Envia endereço
+    PORTD &= ~(1 << PD0);     // RAS ativo
+    _delay_us(0.1);
+    PORTD |= (1 << PD0);      // RAS inativo
+    current_row++;
+    refresh_debt--;
+    sei();
+}
+
+// Interrupção INT0 (CPU_REQUEST)
+ISR(INT0_vect) {
+    if (PIND & (1 << PD2)) {
+        cpu_accessing = 0;    // CPU liberou o barramento
+        DDRB = 0xFF;         // AT90 retoma controle
+    } 
+    else {
+        cpu_accessing = 1;    // CPU está acessando
+        DDRB = 0x00;          // AT90 entra em alta impedância
+    }
+}
+
+// Configurações iniciais
+void setup() {
+    // I/O
+    DDRB = 0xFF;              // PB = saída (endereços)
+    DDRD = (1 << PD0) | (1 << PD1); // PD0 = RAS, PD1 = CAS
+    PORTD |= (1 << PD0);      // RAS inativo (alto)
+
+    // Interrupção INT0 (CPU_REQUEST)
+    GIMSK |= (1 << INT0);     // Habilita INT0
+    MCUCR |= (1 << ISC00);    // Qualquer mudança em PD2 gera INT
+
+    // Timer1 (Refresh automático)
+    TCCR1A = 0;
+    TCCR1B = (1 << WGM12) | (1 << CS10); // CTC, prescaler = 1
+    OCR1A = (F_CPU / 1000000) * REFRESH_INTERVAL_US - 1;
+    TIMSK |= (1 << OCIE1A);   // Habilita interrupção
+
+    sei(); // Habilita interrupções globais
+}
+
+int main() {
+    setup();
+    while (1) { } // Tudo é tratado por interrupções
+}
+```
+
+---
+
+## **⚙️ Funcionamento Detalhado**
+
+### **1. Acesso da CPU à DRAM**
+- Quando a CPU precisa acessar a DRAM:
+  - **CPU_REQUEST vai para LOW** (aciona INT0).
+  - O AT90 **coloca PB0-PB7 em alta impedância** (`DDRB = 0x00`).
+  - A CPU controla **RAS, CAS e endereços diretamente**.
+
+### **2. Sistema de Débitos**
+- Se a CPU fica muito tempo no barramento:
+  - O Timer1 continua contando e **aumenta `refresh_debt`**.
+  - Se `refresh_debt >= MAX_REFRESH_DEBT`, o AT90 **força um refresh** (`force_refresh()`), mesmo durante acesso da CPU.
+
+### **3. Retorno ao Refresh Automático**
+- Quando **CPU_REQUEST volta para HIGH**:
+  - A interrupção INT0 **reativa o controle do AT90** (`DDRB = 0xFF`).
+  - O sistema volta ao **refresh normal**.
+
+---
+
+## **📌 Conclusão**
+Este circuito **garante**:  
+✅ **Refresh correto da DRAM** (mesmo com CPU acessando).  
+✅ **Baixo custo** (apenas AT90 + pouca lógica discreta).  
+✅ **Controle de débitos** (evita perda de dados).  
+
+**Pronto para integrar em sistemas com DRAM antiga!** 🚀

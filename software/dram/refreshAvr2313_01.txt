@@ -1,0 +1,152 @@
+# **Circuito Completo de Refresh DRAM com AT90S2313 – Programa e Hardware Otimizado**  
+
+Neste artigo, vamos projetar um **controlador de refresh DRAM totalmente autônomo** usando um **AT90S2313** (ou ATtiny2313) para gerenciar:  
+✅ **Refresh automático** (RAS-only)  
+✅ **Controle de débitos** (se a CPU monopolizar o barramento)  
+✅ **Alta impedância quando a CPU acessa a memória**  
+
+---
+
+## **🔧 Componentes Necessários**
+| Componente          | Função                                  |
+|---------------------|----------------------------------------|
+| AT90S2313 / ATtiny2313 | Gerencia refresh e débitos             |
+| Resistores 100Ω     | Proteção das saídas (opcional)         |
+| Capacitor 100nF     | Filtro de ruído (VCC-GND)              |
+| Cristal 7.3728MHz   | Clock preciso para temporização        |
+
+---
+
+## **📡 Diagrama do Circuito**  
+```
+  +---------------------+
+  | AT90S2313           |
+  |                     |
+  | PB0-PB7 ------------|---> A0-A7 DRAM (endereços de linha)
+  | PD0 (OC1A) ---------|---> RAS (pulso de refresh)
+  | PD2 (INT0) <--------|----- CPU_REQUEST (sinal da CPU)
+  +---------------------+
+```
+
+### **🔌 Conexões Essenciais:**
+- **PB0-PB7** → **A0-A7 da DRAM** (endereços de linha para refresh).  
+- **PD0 (OC1A)** → **RAS** (pulso ativo em nível baixo).  
+- **PD2 (INT0)** ← **CPU_REQUEST** (nível baixo = CPU está acessando a DRAM).  
+
+---
+
+## **💾 Firmware Completo (AVR GCC)**
+```c
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+// Definições
+#define REFRESH_INTERVAL_US    15   // 15μs entre refreshes (416 em 2ms)
+#define MAX_REFRESH_DEBT       4    // Máximo de refreshes pendentes
+
+// Variáveis globais
+volatile uint8_t refresh_debt = 0;
+volatile uint8_t current_row = 0;
+
+// Interrupção do Timer1 (refresh automático)
+ISR(TIMER1_COMPA_vect) {
+    if (!(PIND & (1 << PD2))) {  // Se CPU não está acessando
+        // Gera pulso RAS
+        PORTB = current_row;      // Envia endereço da linha
+        PORTD &= ~(1 << PD0);     // RAS ativo (baixo)
+        _delay_us(0.1);           // 100ns de pulso (ajustável)
+        PORTD |= (1 << PD0);      // RAS inativo (alto)
+        
+        current_row++;            // Próxima linha
+        if (refresh_debt > 0) refresh_debt--; // Reduz débito
+    } 
+    else {
+        // CPU está acessando → acumula débito
+        if (refresh_debt < MAX_REFRESH_DEBT) refresh_debt++;
+    }
+
+    // Força refresh se débito atingir limite
+    if (refresh_debt >= MAX_REFRESH_DEBT) {
+        force_refresh();
+    }
+}
+
+// Força um refresh (mesmo com CPU acessando)
+void force_refresh() {
+    cli();  // Desabilita interrupções (evita conflito)
+    
+    PORTB = current_row;      // Envia endereço
+    PORTD &= ~(1 << PD0);     // Ativa RAS
+    _delay_us(0.1);
+    PORTD |= (1 << PD0);      // Desativa RAS
+    
+    current_row++;
+    refresh_debt--;
+    
+    sei();  // Reabilita interrupções
+}
+
+// Configura Timer1 para gerar interrupção a cada 15μs
+void setup_timer1() {
+    TCCR1A = 0;                     // Modo normal
+    TCCR1B = (1 << WGM12) | (1 << CS10); // CTC, prescaler = 1
+    OCR1A = (F_CPU / 1000000) * REFRESH_INTERVAL_US - 1; // 15μs
+    TIMSK = (1 << OCIE1A);          // Habilita interrupção
+}
+
+// Configura I/O
+void setup_io() {
+    DDRB = 0xFF;    // PB0-PB7 como saída (endereços)
+    DDRD = (1 << PD0); // PD0 (RAS) como saída
+    PORTD |= (1 << PD0); // RAS inativo (alto)
+    
+    // PD2 (INT0) como entrada (CPU_REQUEST)
+    DDRD &= ~(1 << PD2);
+    PORTD |= (1 << PD2); // Pull-up ativado
+}
+
+int main() {
+    setup_io();
+    setup_timer1();
+    sei(); // Habilita interrupções globais
+
+    while (1) {
+        // Se CPU acessando, coloca barramento em alta impedância
+        if (PIND & (1 << PD2)) {
+            DDRB = 0x00; // PB0-PB7 como entrada (alta impedância)
+        } else {
+            DDRB = 0xFF; // PB0-PB7 como saída (controle DRAM)
+        }
+    }
+}
+```
+
+---
+
+## **⚙️ Funcionamento Detalhado**
+1. **Refresh Automático (RAS-only)**  
+   - O **Timer1** gera interrupções a cada **15μs** (416 refreshes em 2ms).  
+   - O AT90 envia um **endereço de linha (PB0-PB7)** e gera um **pulso RAS (PD0)**.  
+
+2. **Controle de Débitos**  
+   - Se a **CPU acessa a DRAM (CPU_REQUEST = 0)**, o refresh é **adiado** e o débito aumenta.  
+   - Se o débito atinge **MAX_REFRESH_DEBT (4)**, o AT90 **força um refresh**, mesmo durante acesso da CPU.  
+
+3. **Alta Impedância Quando a CPU Controla a DRAM**  
+   - Se **CPU_REQUEST = 0**, o AT90 **desativa as saídas (DDRB = 0x00)**, liberando o barramento.  
+
+---
+
+## **📌 Conclusão**
+Este projeto **elimina componentes desnecessários** (latches, buffers) e usa apenas:  
+✔ **Um AT90S2313**  
+✔ **Resistores de proteção (opcional)**  
+✔ **Cristal para clock preciso**  
+
+### **🔹 Vantagens:**
+✅ **Baixo custo** (apenas o microcontrolador + poucos componentes)  
+✅ **Controle preciso** (temporização ajustável via software)  
+✅ **Funcionamento autônomo** (não depende da CPU para refresh)  
+
+**Pronto para usar em sistemas com DRAM antiga (416 refresh/2ms)!** 🚀

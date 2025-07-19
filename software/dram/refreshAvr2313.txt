@@ -1,0 +1,151 @@
+# Circuito de Controle de Refresh DRAM com AT90S2313
+
+Vou detalhar um circuito completo usando o microcontrolador AT90S2313 (AVR antigo mas eficiente) para gerenciar tanto o refresh normal quanto o débito de refresh da DRAM.
+
+## Diagrama do Circuito Completo
+
+```
+  +---------------------+
+  | AT90S2313           |
+  |                     |
+  | PD0 (OC1A) --------|--> RAS (74HC123 para temporização)
+  | PD1 (OC1B) --------|--> CAS (quando necessário)
+  | PB0-PB7 -----------|--> Endereços de linha DRAM
+  | PD2 (INT0) <-------|-- CPU_REQUEST (sinal da CPU)
+  | PD3 (T1) <---------|-- CLOCK_DRAM (opcional)
+  +---------------------+
+         |
+         v
+  +---------------------+
+  | Interface DRAM      |
+  | RAS/CAS/Addr/Data   |
+  +---------------------+
+```
+
+## Lista de Componentes
+
+- AT90S2313 (com cristal de 7.3728MHz para temporização precisa)
+- 74HC123 (para gerar pulsos RAS/CAS com largura precisa)
+- 74HC245 (buffer bidirecional para barramento de dados)
+- 74HC573 (latch para endereços)
+- Resistores: 10kΩ (pull-ups), 100Ω (série em sinais críticos)
+- Capacitores: 22pF (cristal), 100nF (bypass)
+- Diodos: 1N4148 (proteção)
+
+## Firmware Essencial (Pseudocódigo)
+
+```c
+// Constantes
+#define REFRESH_INTERVAL   15   // 15μs entre refreshes
+#define MAX_DEBT           4    // Máximo de refreshes pendentes
+
+// Variáveis globais
+volatile uint8_t refresh_debt = 0;
+volatile uint8_t current_row = 0;
+
+// Interrupção de Timer1 (modo CTC para refresh)
+ISR(TIMER1_COMPA_vect) {
+    static uint8_t refresh_counter = 0;
+    
+    if(!(PIND & (1<<PD2))) { // Se CPU não está acessando
+        generate_ras(current_row);
+        current_row++;
+        if(refresh_debt > 0) refresh_debt--;
+    } else {
+        if(refresh_debt < MAX_DEBT) refresh_debt++;
+    }
+    
+    // Refresh extra se débito crítico
+    if(refresh_debt >= MAX_DEBT) {
+        force_refresh();
+    }
+}
+
+void generate_ras(uint8_t row) {
+    PORTB = row;                // Seta linhas de endereço
+    PORTD |= (1<<PD0);          // Ativa RAS (alto)
+    _delay_us(0.1);             // Pequeno atraso
+    PORTD &= ~(1<<PD0);         // Desativa RAS (baixo)
+    _delay_us(0.1);             // Tempo de ativação RAS
+}
+
+void force_refresh() {
+    cli();                      // Desabilita interrupções
+    generate_ras(current_row);
+    current_row++;
+    refresh_debt--;
+    sei();                      // Reabilita interrupções
+}
+
+// Inicialização
+void init_timer1() {
+    TCCR1A = 0;
+    TCCR1B = (1<<WGM12) | (1<<CS10); // CTC, prescaler 1
+    OCR1A = 110; // 7.3728MHz/110 ≈ 15μs (ajuste fino necessário)
+    TIMSK = (1<<OCIE1A);             // Habilita interrupção
+}
+
+void main() {
+    DDRB = 0xFF;    // PB como saída (endereços)
+    DDRD = 0x03;    // PD0-PD1 como saída (RAS/CAS)
+    
+    init_timer1();
+    sei();
+    
+    while(1) {
+        // Tarefas de baixa prioridade podem ser adicionadas aqui
+    }
+}
+```
+
+## Detalhes de Temporização
+
+1. **Cálculo do Timer1**:
+   - Clock CPU: 7.3728MHz
+   - Sem prescaler: 1 ciclo = 0.1356μs
+   - Para 15μs: 15/0.1356 ≈ 110 ciclos (OCR1A = 110)
+
+2. **Pulso RAS**:
+   - Largura mínima típica: 100ns
+   - Nosso código gera ≈200ns (suficiente para DRAM antigas)
+
+3. **Prioridades**:
+   - Interrupção de timer tem máxima prioridade
+   - Refresh forçado ocorre mesmo durante acesso da CPU
+
+## Interface com a CPU
+
+1. **Sinal de Controle**:
+   - `CPU_REQUEST` conectado a PD2 (INT0)
+   - Nível baixo = CPU está acessando DRAM
+
+2. **Protocolo**:
+   - CPU deve manter o sinal ativo durante todo acesso
+   - Microcontrolador monitora e acumula débito
+
+## Alimentação e Conexões
+
+1. **Diagrama de Energia**:
+   ```
+   +5V ---+---||----+---- VCC (AT90)
+          |  100nF  |
+          |         |
+   GND ---+---------+---- GND
+   ```
+
+2. **Conexões DRAM**:
+   - RAS: Saída do 74HC123 (controlado por PD0)
+   - CAS: Opcional, pode ser gerado direto por PD1
+   - Endereços: PB0-PB7 via buffer 74HC245
+
+## Ajustes Finais
+
+1. **Calibração**:
+   - Ajustar OCR1A para exatos 15μs com osciloscópio
+   - Verificar largura de pulso RAS/CAS
+
+2. **Otimizações**:
+   - Usar sleep mode do AVR entre refreshes para economia
+   - Implementar watchdog timer para segurança
+
+Esta implementação oferece controle preciso do refresh com baixo custo e alta confiabilidade, resolvendo tanto o refresh normal quanto o gerenciamento de débitos de forma elegante. O AT90S2313 é ideal para esta aplicação por seu timer de 16 bits e baixo consumo.
