@@ -21,7 +21,7 @@ ROM_SIZE := 8129
 # Tamanhos (ajuste conforme necessário)
 SPLIT_SIZE := 4096  # 4KB por chip (para 28C64)
 
-.PHONY: all compile aux split fill program clean help
+.PHONY: all compile aux split fill programH programL clean help
 
 # Fluxo completo
 all: program
@@ -50,12 +50,14 @@ fill: compile aux split
 	@echo "✅ Partes prontas: $(SPLIT_LOW) e $(SPLIT_HIGH)"
 
 # Gravação em chips separados (cada um começa em 0x0000)
-program: split
+programL: split
 	@echo "🔥 Gravando $(SPLIT_LOW) na Flash #1..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(SPLIT_LOW)
+	@echo "🎉 Gravação concluída Flash Low!"
+programH: split
 	@echo "🔥 Gravando $(SPLIT_HIGH) na Flash #2..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(SPLIT_HIGH)
-	@echo "🎉 Gravação concluída em ambas as memórias!"
+	@echo "🎉 Gravação concluída na Flash High!"
 
 # Limpeza radical
 clean:
