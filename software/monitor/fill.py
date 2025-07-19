@@ -32,8 +32,8 @@ def fill_file(input_file, target_size):
             f.write(b'\xFF' * bytes_needed)
         
         print(f"Arquivo '{input_file}' preenchido com sucesso.")
-        print(f"Bytes adicionados: {bytes_needed} (0xFF)")
-        print(f"Tamanho final: {target_size} bytes")
+        print(f"    Bytes adicionados: {bytes_needed} (0xFF)")
+        print(f"    Tamanho final: {target_size} bytes")
         return True
     
     except Exception as e:

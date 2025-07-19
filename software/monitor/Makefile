@@ -18,6 +18,14 @@ SPLIT_LOW := monitor_low.bin
 SPLIT_HIGH := monitor_high.bin
 ROM_SIZE := 8129
 
+BOLD := \033[1m
+RED := \033[1;31m
+GREEN := \033[1;32m
+BLUE := \033[1;34m
+CYAN := \033[1;36m
+UNDERLINE := \033[4m
+NC := \033[0m # Reset
+
 # Tamanhos (ajuste conforme necessário)
 SPLIT_SIZE := 4096  # 4KB por chip (para 28C64)
 
@@ -28,34 +36,41 @@ all: program
 
 # Compilação principal
 compile: aux
-	@echo "🔨 Compilando $(SOURCE)..."
+	@echo "$(NC)*****************************************************"
+	@echo "$(BOLD)$(RED) 🔨 Compilando $(SOURCE)..."
 	@$(ASM) $(ASMFLAGS) -o $(TARGET) $(SOURCE)
-	@echo "✅ $(TARGET) gerado ($$(stat -c%s $(TARGET)) bytes)"
+	@echo "$(GREEN)✅ $(TARGET) gerado ($$(stat -c%s $(TARGET)) bytes)"
+	@echo "$(NC)"
 
 # Compilação do utilitário
 aux:
-	@echo "🔧 Compilando $(AUX_SOURCE)..."
+	@echo "$(NC)*****************************************************"
+	@echo "$(BOLD)$(RED)🔧 Compilando $(AUX_SOURCE)..."
 	@$(ASM) $(ASMFLAGS) -o $(AUX_TARGET) $(AUX_SOURCE)
+	@echo "$(NC)"
 
 # Divisão inteligente com split.py
 split: compile aux
+	@echo "$(NC)*****************************************************"
 	@echo "✂️ Dividindo $(TARGET) em partes de $(SPLIT_SIZE) bytes..."
 	@$(SPLITTER) $(TARGET)
-	@echo "✅ Partes prontas: $(SPLIT_LOW) e $(SPLIT_HIGH)"
+	@echo "$(GREEN)✅ Partes prontas: $(SPLIT_LOW) e $(SPLIT_HIGH)"
 
-fill: compile aux split
-	@echo "✂️ Preenchendo $(TARGET) com $(ROM_SIZE) bytes..."
+fill: compile aux split party
+	@echo "$(NC)*****************************************************"
+	@echo "$(BOLD)✂️ Preenchendo $(TARGET) com $(ROM_SIZE) bytes..."
 	@$(FILLER) $(SPLIT_LOW) $(ROM_SIZE)
 	@$(FILLER) $(SPLIT_HIGH) $(ROM_SIZE)
-	@echo "✅ Partes prontas: $(SPLIT_LOW) e $(SPLIT_HIGH)"
-
+	@echo "$(NC)✅ Partes prontas: $(SPLIT_LOW) e $(SPLIT_HIGH)"
 # Gravação em chips separados (cada um começa em 0x0000)
 programL: split
-	@echo "🔥 Gravando $(SPLIT_LOW) na Flash #1..."
+	@echo "$(NC)*****************************************************\n\n"
+	@echo "$(NC)🔥 Gravando $(SPLIT_LOW) na Flash #1..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(SPLIT_LOW)
 	@echo "🎉 Gravação concluída Flash Low!"
 programH: split
-	@echo "🔥 Gravando $(SPLIT_HIGH) na Flash #2..."
+	@echo "$(NC)*****************************************************\n\n"
+	@echo "$(NC)🔥 Gravando $(SPLIT_HIGH) na Flash #2..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(SPLIT_HIGH)
 	@echo "🎉 Gravação concluída na Flash High!"
 
@@ -75,3 +90,10 @@ help:
 	@echo "  make program  - Grava nas duas memórias"
 	@echo "  make clean    - Limpeza geral"
 	@echo "  make help     - Mostra esta ajuda"
+
+party:
+	@echo "💃🕺 PARABÉNS! Seu código está rodando!"
+	@echo "   \_O_/  "
+	@echo "    | |   "
+	@echo "    / \   "
+
