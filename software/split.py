@@ -4,7 +4,7 @@ import sys
 
 def split_16bit_binary(input_file):
     """Divide um arquivo binário em partes low e high byte para sistemas 16-bit"""
-    
+
     # Verifica se o arquivo existe
     if not os.path.exists(input_file):
         print(f"Erro: Arquivo '{input_file}' não encontrado!")
@@ -23,7 +23,7 @@ def split_16bit_binary(input_file):
     if len(data) % 2 != 0:
         print(f"Aviso: Arquivo com tamanho ímpar ({len(data)} bytes), adicionando padding 0xFF")
         data += b'\xff'
-    
+
     # Processa os bytes
     low_bytes = bytearray()
     high_bytes = bytearray()
@@ -43,6 +43,8 @@ def split_16bit_binary(input_file):
     print(f"Tamanho original: {len(data)} bytes | Low: {len(low_bytes)} bytes | High: {len(high_bytes)} bytes")
 
 if __name__ == "__main__":
+    print(f"Erro: Programa obsoleto e errado USE split68k.py...")
+    sys.exit(1)
     if len(sys.argv) != 2:
         print("Uso: split.py <arquivo_binario>")
         print("Exemplo: split.py firmware.bin")

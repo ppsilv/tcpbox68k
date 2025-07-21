@@ -1,0 +1,71 @@
+T68K.BIN
+0000000 1300 0000 0000 0020 1000 0800 1000 0c00
+0000010 1000 1000 ffff ffff ffff ffff ffff ffff
+0000020 ffff ffff 0000 0429 ffff ffff ffff ffff
+0000030 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000080 0000 0429 ffff ffff ffff ffff ffff ffff
+0000090 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+00000c0 1300 0000 ffff ffff ffff ffff ffff ffff
+00000d0 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000400 0060 f007 3908 0100 6000 0100 f667 c013
+0000410 6000 0300 754e 3908 0000 6000 0100 f667
+0000420 3910 6000 0300 dc61 754e 3c10 0d00 d461
+0000430 3c10 0a00 ce61 754e 1d10 c861 cdbd f866
+
+
+T68K.ODD
+0000000 0013 0000 0810 0c10 1010 ffff ffff ffff
+0000010 ffff 0400 ffff ffff ffff ffff ffff ffff
+0000020 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000040 0400 ffff ffff ffff ffff ffff ffff ffff
+0000050 ffff ffff ffff ffff ffff ffff ffff ffff
+0000060 0013 ffff ffff ffff ffff ffff ffff ffff
+0000070 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000200 f000 0139 0160 c0f6 0360 3975 6000 f601
+0000210 6039 dc03 3c75 d40d 0a3c 75ce c81d f8cd
+0000220 0075 381e 4654 0620 0001 ff04 000f fc1a
+0000230 832c 3c14 00f4 1c34 0014 83ee ec3c 2200
+
+
+T68K.EVEN
+0000000 0000 2000 0000 0000 0000 ffff ffff ffff
+0000010 ffff 2900 ffff ffff ffff ffff ffff ffff
+0000020 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000040 2900 ffff ffff ffff ffff ffff ffff ffff
+0000050 ffff ffff ffff ffff ffff ffff ffff ffff
+0000060 0000 ffff ffff ffff ffff ffff ffff ffff
+0000070 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0000200 0760 0008 0000 1367 0000 084e 0000 6700
+0000210 0010 6100 104e 6100 0010 4e61 6110 66bd
+0000220 614e 7c07 0ccc 6700 727c 7c60 6172 1c07
+0000230 5400 3e38 6101 6005 6100 5406 073e 0561
+
+D0~D7  ESTÁ LIGADO NA MEMORIA ODD
+D8~D15 ESTA LIGADO NA MEMORIA EVEN
+
+0000000 8800 0000 0000 0800 3c30 0000 c031 0020
+0000010 3c30 0000 c031 0020 3c22 1800 006a 8153
+0000020 fc66 3c30 0000 c031 0020 3c22 1800 006a
+0000030 8153 fc66 da60
+0000036
+
+LOW
+0000000 0000 0000 0030 2031 0030 2031 0022 536a
+0000010 3066 3100 2220 6a00 6653 0060
+000001b
+
+HIGH
+0000000 0088 0800 003c 00c0 003c 00c0 183c 8100
+0000010 3cfc c000 3c00 0018 fc81 00da
+000001b
+
+
+D0~D7  LOW  == ODD
+D8~D15 HIGH == EVEN

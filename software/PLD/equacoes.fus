@@ -70,9 +70,9 @@ Pin 16 = IOCS2        XOR = 1   AC1 = 0
  54  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  55  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
-Pin 15 = NC           XOR = 0   AC1 = 0
- 56  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
- 57  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
+Pin 15 = DTACK        XOR = 0   AC1 = 0
+ 56  ---- ---- ---x ---- ---- ---- ---- -x-- ---- ----
+ 57  ---- ---- ---- ---- ---- ---- ---- -x-- ---- ----
  58  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  59  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  60  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx

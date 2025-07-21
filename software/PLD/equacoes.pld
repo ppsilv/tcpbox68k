@@ -3,8 +3,8 @@ GAL20V8
 ; 1   2   3   4   5   6   7   8   9 10 11  12
 A13 A14 A15 A16 A17 A18 A19 A20  AS NC NC GND
 
-;13  14  15  16    17     18     19     20     21   22     23   24
- NC  NC  NC  IOCS2 RAM3CS RAM2CS RAM1CS NC     IOCS ROMCS  NC   VCC
+;13  14     15     16    17     18     19     20  21   22     23   24
+ NC  NC  DTACK  IOCS2 RAM3CS RAM2CS RAM1CS    NC  IOCS ROMCS  NC   VCC
 
 ; EQUAÇÕES
 !ROMCS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13  ; 0x0000-0x1FFF (8 KB)
@@ -14,9 +14,14 @@ A13 A14 A15 A16 A17 A18 A19 A20  AS NC NC GND
 !RAM2CS = !AS &  A20 & !A19 & ROMCS ; 0x100000-0x17FFFF (20=1 e A19=0)
 !RAM3CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (20=1 e A19=1)
 IOCS2   = !IOCS & !AS
+!DTACK =  !AS & !ROMCS # !AS
+;!DTACK = (!AS & !ROM_CS) # RESET #!RESET;
 
 DESCRIPTION
 Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
+
+Gravação
+minipro -p GAL20V8B -w equacoes.jed
 
 !ROMCS  PIN 22  ; ROM (0x00000-0x01FFF)
 !IOCS   PIN 21  ; I/O (0x02000-0x03FFF)

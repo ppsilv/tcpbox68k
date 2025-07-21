@@ -4,7 +4,7 @@
 # Configurações
 ASM := vasmm68k_mot
 ASMFLAGS := -Fbin -quiet -L listing.txt
-SPLITTER := python3 split.py
+SPLITTER := python3 split68k.py
 FILLER := python3 fill.py
 PROGRAMMER := minipro
 CHIP_TYPE := 28C64A  # Altere para o seu chip Flash

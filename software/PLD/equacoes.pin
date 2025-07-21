@@ -16,7 +16,7 @@
   12   | GND      | GND
   13   | NC       | Input
   14   | NC       | Input
-  15   | NC       | NC
+  15   | DTACK    | Output
   16   | IOCS2    | Output
   17   | RAM3CS   | Output
   18   | RAM2CS   | Output
