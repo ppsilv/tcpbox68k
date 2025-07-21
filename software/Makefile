@@ -2,7 +2,7 @@
 # Inclui: compilação, split, fill e gravação com minipro
 
 # Configurações
-ASM := vasmm68k_std
+ASM := vasmm68k_mot
 ASMFLAGS := -Fbin -quiet -L listing.txt
 SPLITTER := python3 split.py
 FILLER := python3 fill.py
@@ -16,12 +16,12 @@ TARGET_LOW := $(TARGET)_low.bin
 TARGET_HIGH := $(TARGET)_high.bin
 
 # Tamanhos (ajuste conforme sua memória)
-FLASH_SIZE := 32768  # 32KB (tamanho típico de uma 27C256)
+FLASH_SIZE := 8192  # 32KB (tamanho típico de uma 27C256)
 ROM_SIZE := 8192     # 8KB usados
 
 .PHONY: all compile split fill program clean
 
-all: program
+all: split
 
 compile:
 	@echo "Compilando $(SOURCE) para $(TARGET).bin..."
@@ -39,9 +39,13 @@ fill: split
 	@$(FILLER) $(TARGET_HIGH) $(FLASH_SIZE)
 	@echo "Preenchimento completo."
 
-program: fill
+programL: fill
 	@echo "Gravando na Flash com minipro..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
+	@echo "Gravação concluída com sucesso!"
+
+programH: fill
+	@echo "Gravando na Flash com minipro..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
 	@echo "Gravação concluída com sucesso!"
 

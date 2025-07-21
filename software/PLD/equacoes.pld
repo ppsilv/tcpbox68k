@@ -1,0 +1,111 @@
+GAL20V8
+
+; 1   2   3   4   5   6   7   8   9 10 11  12
+A13 A14 A15 A16 A17 A18 A19 A20  AS NC NC GND
+
+;13  14  15  16    17     18     19     20     21   22     23   24
+ NC  NC  NC  IOCS2 RAM3CS RAM2CS RAM1CS NC     IOCS ROMCS  NC   VCC
+
+; EQUAÇÕES
+!ROMCS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13  ; 0x0000-0x1FFF (8 KB)
+!IOCS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13  ; 0x2000-0x3FFF (8 KB)
+
+!RAM1CS = !AS & !A20 &  A19 & ROMCS ; 0x080000-0x0FFFFF (20=0 e A19=1)
+!RAM2CS = !AS &  A20 & !A19 & ROMCS ; 0x100000-0x17FFFF (20=1 e A19=0)
+!RAM3CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (20=1 e A19=1)
+IOCS2   = !IOCS & !AS
+
+DESCRIPTION
+Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
+
+!ROMCS  PIN 22  ; ROM (0x00000-0x01FFF)
+!IOCS   PIN 21  ; I/O (0x02000-0x03FFF)
+RETIRADO !RAM4CS PIN 20  ; RAM1 (0x004000-0x07FFFF)
+!RAM1CS PIN 19  ; RAM2 (0x080000-0x0FFFFF)
+!RAM2CS PIN 18  ; RAM2 (0x100000-0x17FFFF)
+!RAM3CS PIN 17  ; RAM2 (0x180000-0x1FFFFF)
+IOCS2 É SOMENTE PARA TESTE
+
+*********************************************************************************************
+*                                                                                           *
+* Equações otimizadas para acesso a I/O                                                     *
+*                                                                                           *
+* ROM  -  0x00000 a 0x01FFF                                                                 *
+* I/O  - Input output de 0x02000 a 0x03FFF                                                  *
+* RAM1 -  0x04000 a 0x80000                                                                 *
+* RAM2 -  0x80000 a 0xFFFFF                                                                 *
+*                                                                                           *
+*********************************************************************************************
+
+
+Ajustar o mapeamento de memória conforme sua nova especificação,
+incluindo a região de I/O e as duas áreas de RAM (RAM1 e RAM2). Aqui está a solução atualizada:
+
+### **Mapeamento de Memória Atualizado**:
+| Endereço       | Tamanho  | Dispositivo |
+|-|-|-|
+| `0x00000-0x01FFF`  | 8 KB     | ROM         |
+| `0x02000-0x03FFF`  | 8 KB     | I/O         |
+| `0x04000-0x7FFFF`  | 480 KB   | RAM1        |
+| `0x80000-0xFFFFF`  | 512 KB   | RAM2        |
+
+
+
+### **Conexões do Hardware**:
+1. **Barramento do 68000**:
+   - `!AS`, `!UDS`, `!LDS`, `A19-A0` → PLD e dispositivos.
+   - `D0-D15` → Conectados diretamente a ROM, RAM e I/O.
+
+2. **PLD (GAL20V8B)**:
+   - Gera `!ROM_CS`, `!IO_CS`, `!RAM1_CS`, `!RAM2_CS` conforme as equações acima.
+   - **Não interfere em `!UDS`/`!LDS`** (passam direto para as memórias).
+
+3. **Dispositivos**:
+   - **ROM (16-bit)**:
+     - `!CS` = `!ROM_CS` (vindo do PLD).
+     - `!UDS` e `!LDS` conectados diretamente (para acesso a 16 bits).
+   - **I/O (8-bit)**:
+     - `!CS` = `!IO_CS` + `!LDS` (só reage a acessos a bytes).
+     - Ignora `!UDS` (ou gera wait states se necessário).
+   - **RAM1 e RAM2 (16-bit)**:
+     - `!CS` = `!RAM1_CS` ou `!RAM2_CS`.
+     - `!UDS` e `!LDS` conectados diretamente.
+
+### **Como Funciona**:
+1. **Acesso à ROM (16-bit)**:
+   - Endereço `0x00000-0x01FFF` → `!ROM_CS` ativa.
+   - `!UDS` e `!LDS` habilitam a saída de 16 bits em um ciclo.
+
+2. **Acesso ao I/O (8-bit)**:
+   - Endereço `0x02000-0x03FFF` → `!IO_CS` ativa.
+   - **Só reage a `!LDS`** (acessos a bytes ímpares podem ser ignorados ou tratados com wait states).
+
+3. **Acesso à RAM1/RAM2 (16-bit)**:
+   - `!RAM1_CS` ou `!RAM2_CS` ativa a RAM correspondente.
+   - `!UDS` e `!LDS` permitem leitura/escrita de 16 bits em um ciclo.
+
+### **Observações Importantes**:
+1. **Região de I/O**:
+   - Como o 68000 não tem instruções dedicadas a I/O, trate essa área como **memória mapeada**.
+   - Se seus dispositivos de I/O forem **8-bit**, conecte `D0-D7` e ignore `D8-D15`.
+
+2. **Ajuste de Tamanho**:
+   - Verifique se os tamanhos da ROM (8 KB) e I/O (8 KB) estão corretos. Se precisar de mais espaço, ajuste as equações (ex: usar `A12` para ROM de 16 KB).
+
+3. **Wait States para I/O**:
+   - Se o hardware de I/O for lento, use `!DTACK` para inserir wait states.
+
+4. **Compatibilidade com 16-bit**:
+   - Se a RAM ou I/O for **8-bit**, conecte apenas `!LDS` e trate `A0` para evitar conflitos.
+
+### **Exemplo de Acesso**:
+- **Leitura de 16 bits em `0x04000` (RAM1)**:
+  - `!AS` ativo, `!UDS` e `!LDS` ativos.
+  - PLD ativa `!RAM1_CS` (pois `A19=0` e não é ROM/I/O).
+  - RAM entrega 16 bits em um ciclo.
+
+- **Escrita de byte em `0x02001` (I/O)**:
+  - `!AS` ativo, `!LDS` ativo (mas `!UDS` inativo).
+  - PLD ativa `!IO_CS`.
+  - Hardware de I/O grava apenas no byte inferior (`D0-D7`).
+
