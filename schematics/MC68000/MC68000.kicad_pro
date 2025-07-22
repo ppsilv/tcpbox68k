@@ -332,6 +332,10 @@
     [
       "cb1c4173-bc78-475d-9381-bcb9d50be77b",
       "cpuNoBuffer"
+    ],
+    [
+      "95e583b5-cf01-4f04-acea-05f9c8e809c6",
+      "UART CONTROL"
     ]
   ],
   "text_variables": {}

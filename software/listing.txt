@@ -1,60 +1,65 @@
 Sections:
-00: "org0001:0" (0-44)
+00: "org0001:0" (0-6E)
 
 
-Source: "test_led.asm"
-                            	     1:         ORG     $00000000       ; Vetor de reset (obrigatório!)
-00:00000000 00008000        	     2:         DC.L    $00008000       ; SP inicial (exemplo: pilha em 0x8000)
-00:00000004 00000010        	     3:         DC.L    MAIN            ; PC inicial (ponto de entrada do programa)
+Source: "test_ram2.asm"
+                            	     1:         ORG     $00000000
+00:00000000 00100000        	     2:         DC.L    $00100000       ;SP inicial
+00:00000004 00000008        	     3:         DC.L    MAIN            ;PC inicial
                             	     4: 
-                            	     5:         ; Outros vetores de exceção (opcional)
-00:00000008 0000003C        	     6:         DC.L    ERROR_HANDLER   ; Bus Error
-00:0000000C 0000003C        	     7:         DC.L    ERROR_HANDLER   ; Address Error
-                            	     8:         ; ... (pode preencher com 0xFFFFFFFF se não for usar)
-                            	     9: 
-                            	    10: MAIN:
-                            	    11:         ; --- Configuração inicial ---
-00:00000010 2E7C00008000    	    12:         MOVE.L  #$00008000,A7   ; Inicializa SP novamente (redundante)
-                            	    13: LOOP:
-                            	    14:         ; --- Seu código principal ---
-00:00000016 303CFF00        	    15:         MOVE.W  #$FF00,D0       ; Ativa todos os LEDs (D8-D15 = 0xFF)
-00:0000001A 31C02000        	    16:         MOVE.W  D0,$2000        ; Escreve no barramento (word access)
-                            	    17: 
-                            	    18:         ; Delay loop (ajuste conforme clock)
-00:0000001E 263C0007A120    	    19:         move.l  #500000,d3
-                            	    20: DELAY:
-00:00000024 5383            	    21:         subq.l  #1,d3
-00:00000026 66FC            	    22:         bne     DELAY
-                            	    23: 
-00:00000028 303C0000        	    24:         MOVE.W  #$0000,D0       ; Ativa todos os LEDs (D8-D15 = 0xFF)
-00:0000002C 31C02000        	    25:         MOVE.W  D0,$2000        ; Escreve no barramento (word access)
-                            	    26: 
-                            	    27:         ; Delay loop (ajuste conforme clock)
-00:00000030 263C0007A120    	    28:         move.l  #500000,d3
-                            	    29: DELAY1:
-00:00000036 5383            	    30:         subq.l  #1,d3
-00:00000038 66FC            	    31:         bne     DELAY1
-                            	    32: 
-                            	    33: 
-                            	    34: 
-00:0000003A 60DA            	    35:         BRA     LOOP            ; Loop infinito
-                            	    36: 
-                            	    37: ERROR_HANDLER:
-00:0000003C 31FCAA002000    	    38:         MOVE.W  #$AA00,$2000      ; Padrão de erro nos LEDs
-00:00000042 60F8            	    39:         BRA     ERROR_HANDLER
+                            	     5: MAIN:
+                            	     6:         ;MOVE.L  #$00100000,A7   ;SP seguro (meio da RAM)
+00:00000008 207C00080000    	     7:         MOVE.L  #$80000,A0      ;Início da RAM
+00:0000000E 227C000FFFFF    	     8:         MOVE.L  #$FFFFF,A1      ;Fim da RAM
+00:00000014 3A3C0000        	     9:         MOVE.W  #$0000,D5       ;D5=0 (sem erro)
+00:00000018 203CA5A5A5A5    	    10:         MOVE.L  #$A5A5A5A5,D0
+00:0000001E 20790007FFFC    	    11:         MOVE.L  $7FFFC,A0
+00:00000024 2080            	    12:         MOVE.L  D0,(A0)
+00:00000026 207C00080000    	    13:         MOVE.L  #$80000,A0      ;Início da RAM
+                            	    14: 
+00:0000002C 4EB80064        	    15:         JSR     WARN
+                            	    16: 
+                            	    17: TEST_LOOP:
+00:00000030 203CA5A5A5A5    	    18:         MOVE.L  #$A5A5A5A5,D0   ;Padrão 1
+00:00000036 2080            	    19:         MOVE.L  D0,(A0)         ;Escreve na RAM
+00:00000038 B090            	    20:         CMP.L   (A0),D0         ;Compara
+00:0000003A 6614            	    21:         BNE     ERROR           ;Se diferente, erro
+00:0000003C 203C5A5A5A5A    	    22:         MOVE.L  #$5A5A5A5A,D0   ;Padrão 2
+00:00000042 2080            	    23:         MOVE.L  D0,(A0)         ;Escreve novamente
+00:00000044 B090            	    24:         CMP.L   (A0),D0         ;Compara
+00:00000046 6608            	    25:         BNE     ERROR           ;Se diferente, erro
+00:00000048 5888            	    26:         ADDQ.L  #4,A0           ;Próximo endereço (4 bytes)
+00:0000004A B1C9            	    27:         CMPA.L  A1,A0           ;Chegou ao fim?
+00:0000004C 63E2            	    28:         BLS     TEST_LOOP        ;Se não, continua
+00:0000004E 600A            	    29:         BRA     SUCCESS         ;Se passou, fim sem erros
+                            	    30: 
+                            	    31: ERROR:
+00:00000050 3A3CFF00        	    32:         MOVE.W  #$FF00,D5       ;Sinaliza erro (LEDs acesos)
+00:00000054 31C52000        	    33:         MOVE.W  D5,$2000        ;Ativa LEDs (byte high)
+00:00000058 60FE            	    34:         BRA     *               ;Trava em caso de erro
+                            	    35: 
+                            	    36: SUCCESS:
+00:0000005A 3A3C5500        	    37:         MOVE.W  #$5500,D5       ;Padrão de sucesso (LEDs alternados)
+00:0000005E 31C52000        	    38:         MOVE.W  D5,$2000        ;Exibe nos LEDs
+00:00000062 60FE            	    39:         BRA     *               ;Trava após teste completo
                             	    40: 
+                            	    41: WARN:
+00:00000064 3A3CFF00        	    42:         MOVE.W  #$FF00,D5       ;Sinaliza erro (LEDs acesos)
+00:00000068 31C52000        	    43:         MOVE.W  D5,$2000        ;Ativa LEDs (byte high)
+00:0000006C 4E75            	    44:         RTS
+                            	    45: 
 
 
 Symbols by name:
-DELAY                            A:00000024
-DELAY1                           A:00000036
-ERROR_HANDLER                    A:0000003C
-LOOP                             A:00000016
-MAIN                             A:00000010
+ERROR                            A:00000050
+MAIN                             A:00000008
+SUCCESS                          A:0000005A
+TEST_LOOP                        A:00000030
+WARN                             A:00000064
 
 Symbols by value:
-00000010 MAIN
-00000016 LOOP
-00000024 DELAY
-00000036 DELAY1
-0000003C ERROR_HANDLER
+00000008 MAIN
+00000030 TEST_LOOP
+00000050 ERROR
+0000005A SUCCESS
+00000064 WARN

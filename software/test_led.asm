@@ -9,7 +9,21 @@
 
 MAIN:
         ; --- Configuração inicial ---
-        MOVE.L  #$00008000,A7   ; Inicializa SP novamente (redundante)
+        MOVE.L  #$0007FFFF,A7   ; Inicializa SP novamente (redundante)
+
+        MOVE.L  #$00080000,A0   ; Endereço base da RAM
+        MOVE.L  #$A5A5A5A5,D0   ; Padrão de teste
+
+        ; Escreve na RAM
+        MOVE.L  D0,(A0)
+
+        ; Lê de volta
+        MOVE.L  (A0),D1
+
+        ; Verifica se D1 == D0
+        CMP.L   D0,D1
+        BNE     MEM_ERROR           ; Se ≠, pula para tratamento de erro
+
 LOOP:
         ; --- Seu código principal ---
         MOVE.W  #$FF00,D0       ; Ativa todos os LEDs (D8-D15 = 0xFF)
@@ -37,3 +51,24 @@ DELAY1:
 ERROR_HANDLER:
         MOVE.W  #$AA00,$2000      ; Padrão de erro nos LEDs
         BRA     ERROR_HANDLER
+
+MEM_ERROR:
+        ; --- Seu código principal ---
+        MOVE.W  #$FF00,D0       ; Ativa todos os LEDs (D8-D15 = 0xFF)
+        MOVE.W  D0,$2000        ; Escreve no barramento (word access)
+
+        ; Delay loop (ajuste conforme clock)
+        move.l  #50000,d3
+DELAY3:
+        subq.l  #1,d3
+        bne     DELAY3
+
+        MOVE.W  #$0000,D0       ; Ativa todos os LEDs (D8-D15 = 0xFF)
+        MOVE.W  D0,$2000        ; Escreve no barramento (word access)
+
+        ; Delay loop (ajuste conforme clock)
+        move.l  #50000,d3
+DELAY4:
+        subq.l  #1,d3
+        bne     DELAY4
+        BRA     MEM_ERROR

@@ -114,3 +114,5 @@ incluindo a região de I/O e as duas áreas de RAM (RAM1 e RAM2). Aqui está a s
   - PLD ativa `!IO_CS`.
   - Hardware de I/O grava apenas no byte inferior (`D0-D7`).
 
+ A20 |A19 A18 A17 A16 | A15 A14 A13 A12 | A11 A10 A9 A8 |  A7  A6  A5  A4 |  A3  A2  A1  A0
+  0  | 1   0   0   0  |  0   0   0   0  |  0   0   0   0|  0   0   0   0  |  0   0   0   0   = 0x80000

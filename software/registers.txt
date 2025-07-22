@@ -1,0 +1,9 @@
+. Understand the ST16C554 Registers:
+Baud Rate Divisor: The ST16C554 uses a divisor to calculate the baud rate. The formula is: Baud Rate = Main Clock Frequency / (16 * Divisor).
+Line Control Register (LCR): Configures data format (number of data bits, stop bits, parity).
+Interrupt Enable Register (IER): Enables/disables various interrupt sources.
+Interrupt Identification Register (IIR): Indicates the source of an interrupt.
+FIFO Control Register (FCR): Enables and configures the FIFO buffers.
+Line Status Register (LSR): Provides information about the status of the UART, such as data available, transmit holding register empty, etc.
+Modem Control Register (MCR): Controls modem interface signals.
+Scratch Register (SCR): A general-purpose register for storing temporary data.

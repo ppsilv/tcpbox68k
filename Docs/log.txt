@@ -1,0 +1,29 @@
+
+
+ * Reset
+    . por inversores coletor aberto para halt e reset
+    . no reset halt e reset tem que ficar em no minimo 100ms em ZERO
+    . na sequência DTACK tem que estar em ZERO ( DTACK = /AS & /ROM_CS )
+
+ * As memorias high e low estavam trocadas porque split.py estava fazendo errado a divisão de arquivos
+   tem que ser usado o split68.py
+
+ * A20 não chegava até a memoria por isso não achava a ROM o sistema precisa de A13 até A20 todos em ZERO
+
+ * Memoria HIGH e LOW ou ODD e EVEN
+    . LOW = ODD
+    . HIGH= EVEN
+    Acredito que a explicação seja pelo seguinte, o primeiro byte do arquivo está na posição 1 portanto na
+    na posição impar de endereço e e low é porque esse primeiro byte vai na memoria ligada aos dados D0~D7
+    dados baixos, menos significativos e par são os bytes da posições pares da memória e estão ligados nos
+    byte mais significativo do barramento de dados de D8~D15 por isso high.
+
+ * A4 e A8 estavam em curto por isso todo o comportamento anômalo.Depois disso tudo funcionou como deveria.
+
+ * erros ao tentar usar o stack pointer, causados por uso de endereço impar no stack pointer causa bus error
+
+ * erros ao tentar gravar na ram no endereço $7FFFF, também causado pelo uso de endereço impar, máquina 16 bits
+   big-endiam é isso só endereço par.
+
+ *
+

@@ -10,7 +10,7 @@ PROGRAMMER := minipro
 CHIP_TYPE := 28C64A  # Altere para o seu chip Flash
 
 # Nomes de arquivos
-SOURCE := test_led.asm
+SOURCE := test_ram2.asm
 TARGET := $(basename $(SOURCE))
 TARGET_LOW := $(TARGET)_low.bin
 TARGET_HIGH := $(TARGET)_high.bin
