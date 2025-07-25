@@ -18,7 +18,8 @@
     dados baixos, menos significativos e par são os bytes da posições pares da memória e estão ligados nos
     byte mais significativo do barramento de dados de D8~D15 por isso high.
 
- * A4 e A8 estavam em curto por isso todo o comportamento anômalo.Depois disso tudo funcionou como deveria.
+ * A4 e A8 estavam em curto por um pedacinho de wire wrap, por isso todo o comportamento anômalo.Depois disso tudo funcionou como
+    deveria.
 
  * erros ao tentar usar o stack pointer, causados por uso de endereço impar no stack pointer causa bus error
 

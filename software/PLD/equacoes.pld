@@ -1,27 +1,50 @@
 GAL20V8
 
-; 1   2   3   4   5   6   7   8   9 10 11  12
-A13 A14 A15 A16 A17 A18 A19 A20  AS NC NC GND
+; 1   2   3   4   5   6   7   8   9  10  11   12
+A13 A14 A15 A16 A17 A18 A19 A20  AS  A9 A10   GND
 
-;13  14     15     16    17     18     19     20  21   22     23   24
- NC  NC  DTACK  IOCS2 RAM3CS RAM2CS RAM1CS    NC  IOCS ROMCS  NC   VCC
+;13   14     15     16    17     18     19        20   21   22    23   24
+ A11  LDS    DTACK   LEDS  RAM3CS RAM2CS RAM1CS  UDS  IOCS ROMCS  NC   VCC
 
 ; EQUAÇÕES
 !ROMCS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13  ; 0x0000-0x1FFF (8 KB)
-!IOCS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13  ; 0x2000-0x3FFF (8 KB)
+!IOCS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13 & !LDS # !UDS ; 0x2000-0x3FFF (8 KB)
 
 !RAM1CS = !AS & !A20 &  A19 & ROMCS ; 0x080000-0x0FFFFF (20=0 e A19=1)
 !RAM2CS = !AS &  A20 & !A19 & ROMCS ; 0x100000-0x17FFFF (20=1 e A19=0)
 !RAM3CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (20=1 e A19=1)
-IOCS2   = !IOCS & !AS
+
+LEDS   = !IOCS & !A11 & A10 & !A9
 !DTACK =  !AS & !ROMCS # !AS
-;!DTACK = (!AS & !ROM_CS) # RESET #!RESET;
+
+
+;;TESTAR ESSA COMBINAÇÃO PODE SER QUE FUNCIONE
+;;13  14     15     16    17     18     19   20     21   22     23   24
+;;NC  NC  DTACK  LEDS RAM3CS RAM2CS RAM1CS  RAM0CS IOCS ROMCS  NC   VCC
+;;!ROMCS = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13 & ROMCS ; 0x0000-0x1FFF       (8 KB)
+;;!IO_CS = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13 & ROMCS ; 0x2000-0x3FFF       (8 KB)
+;;!RAM0CS = !AS & !A20 & !A19 #  A18 #  A17 #  A16 #  A15 #  A14 & ROMCS         ; 0x4000-0x0x7FFFF    (507,903KB)
+;;!RAM1CS = !AS & !A20 &  A19 & ROMCS ; 0x080000-0x0FFFFF (20=0 e A19=1)
+;;!RAM2CS = !AS &  A20 & !A19 & ROMCS ; 0x100000-0x17FFFF (20=1 e A19=0)
+;;!RAM3CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (20=1 e A19=1)
+;;LEDS   = !IOCS & !AS
+;;!DTACK =  !AS & !ROMCS # !AS
+
+
 
 DESCRIPTION
 Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
 
 Gravação
 minipro -p GAL20V8B -w equacoes.jed
+
+       A16 A15 A14 A13 | A12 A11 A10 A9A |  A8 A7 A6 A5 |  A4 A3 A2 A1
+         0   0   1   0 |   0   0   0   0 |   0  0  0  0 |   0  0  0  0    UART1 - 0x2000 até 0x20FF
+         0   0   1   0 |   0   0   0   1 |   0  0  0  0 |   0  0  0  0    UART2 - 0x2100 até 0x21FF
+         0   0   1   0 |   0   0   1   0 |   0  0  0  0 |   0  0  0  0    UART3 - 0x2200 até 0x22FF
+         0   0   1   0 |   0   0   1   1 |   0  0  0  0 |   0  0  0  0    UART4 - 0x2300 até 0x23FF
+         0   0   1   0 |   0   1   0   0 |   0  0  0  0 |   0  0  0  0    LEDs  - 0x2400 até 0x24FF
+
 
 !ROMCS  PIN 22  ; ROM (0x00000-0x01FFF)
 !IOCS   PIN 21  ; I/O (0x02000-0x03FFF)

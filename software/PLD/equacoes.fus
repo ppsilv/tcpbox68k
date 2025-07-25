@@ -60,8 +60,8 @@ Pin 17 = RAM3CS       XOR = 0   AC1 = 0
  46  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  47  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
-Pin 16 = IOCS2        XOR = 1   AC1 = 0
- 48  ---- ---- ---- ---x ---- ---- ---- -x-- ---- ----
+Pin 16 = LEDS         XOR = 1   AC1 = 0
+ 48  ---- ---- ---- ---x ---- ---- ---- ---- -x-- x--x
  49  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  50  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  51  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
