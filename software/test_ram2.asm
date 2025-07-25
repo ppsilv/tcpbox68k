@@ -3,7 +3,7 @@
         DC.L    MAIN            ;PC inicial
 
 ;# Clock frequency in Hz
-F_CPU           equ 12000000
+F_CPU           equ 16000000
 ;# Serial baud rate
 BAUD            equ 9600
 UART            equ $2000

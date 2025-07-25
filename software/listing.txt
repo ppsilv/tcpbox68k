@@ -8,7 +8,7 @@ Source: "test_ram2.asm"
 00:00000004 00000008        	     3:         DC.L    MAIN            ;PC inicial
                             	     4: 
                             	     5: ;# Clock frequency in Hz
-                            	     6: F_CPU           equ 12000000
+                            	     6: F_CPU           equ 16000000
                             	     7: ;# Serial baud rate
                             	     8: BAUD            equ 9600
                             	     9: UART            equ $2000
@@ -53,7 +53,7 @@ Source: "test_ram2.asm"
 00:00000036 43F82000        	    48:         lea.l   UART,a1
 00:0000003A 137C000D0004    	    49:         move.b  #%00001101,FCR(a1)      ; enable FIFO
 00:00000040 137C00830006    	    50:         move.b  #%10000011,LCR(a1)      ; 8 data bits, no parity, 1 stop bit, DLAB=1
-00:00000046 12BC004E        	    51:         move.b  #BAUD_DIV_L,DLL(a1)     ; set divisor latch low byte
+00:00000046 12BC0068        	    51:         move.b  #BAUD_DIV_L,DLL(a1)     ; set divisor latch low byte
 00:0000004A 137C00000002    	    52:         move.b  #BAUD_DIV_U,DLM(a1)     ; set divisor latch high byte
 00:00000050 08A900070006    	    53:         bclr.b  #7,LCR(a1)              ; disable divisor latch
 00:00000056 4229000E        	    54:         clr.b   SCR(a1)                 ; clear the scratch register
@@ -220,8 +220,8 @@ Source: "test_ram2.asm"
 Symbols by name:
 ATUALIZA_LEDS                    A:0000010A
 BAUD                             E:00002580
-BAUD_DIV                         E:0000004E
-BAUD_DIV_L                       E:0000004E
+BAUD_DIV                         E:00000068
+BAUD_DIV_L                       E:00000068
 BAUD_DIV_U                       E:00000000
 COUNTER                          A:0000015C
 DELAY                            A:0000011E
@@ -232,7 +232,7 @@ DLM                              E:00000002
 ERROR                            A:000000BE
 FCR                              E:00000004
 FIM                              A:0000010E
-F_CPU                            E:00B71B00
+F_CPU                            E:00F42400
 ISR                              E:00000004
 LCR                              E:00000006
 LSR                              E:0000000A
@@ -269,9 +269,9 @@ Symbols by value:
 0000000E SPR
 00000032 DELAY_INIT
 00000036 uartinit
-0000004E BAUD_DIV
-0000004E BAUD_DIV_L
 0000005A sendchars
+00000068 BAUD_DIV
+00000068 BAUD_DIV_L
 00000096 mainprogram
 0000009E TEST_LOOP
 000000BE ERROR
@@ -289,4 +289,4 @@ Symbols by value:
 0000015C COUNTER
 00002000 UART
 00002580 BAUD
-00B71B00 F_CPU
+00F42400 F_CPU
