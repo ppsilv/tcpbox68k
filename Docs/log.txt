@@ -26,5 +26,11 @@
  * erros ao tentar gravar na ram no endereço $7FFFF, também causado pelo uso de endereço impar, máquina 16 bits
    big-endiam é isso só endereço par.
 
- *
+ * um curto entre a A14 e um pino onde no final dos testes eu coloquei o RESET da uart estava provocando buss error e com isso
+   a cpu fica instável pois o m68k não lida muito bem com buss error.
+
+ * um curto entre os pinos 33a e 33b também provocava buss error esse curto,solda espalhou entre 33a e 33b, foi provocado pela
+   colocação um jumper feito no backplane SC112 2249247A_Y204 jumper necessário pois o pino 33b do primeiro conector do barramento não estava ligado ao pino 33b do segundo conector como deveria ser, mas se o cara do canal de youtube Usagi Electric fez isso eu também posso.
+
+
 
