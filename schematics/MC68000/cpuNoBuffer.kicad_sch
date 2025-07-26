@@ -4781,6 +4781,11 @@
     (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
     (uuid 6c50a393-63f4-488f-8edc-3c6cc17399ea)
   )
+  (text "nao estou usando o chip que \npode provocar wait states\nnesse momento DTACK está \nsendo tratado na GAL"
+    (at 39.37 93.98 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 71c9e720-3c02-4b80-9fa3-89f74d9e7c5b)
+  )
   (text "0 - por o soquete do ci intrq\n1 - por todos os capacitores 100nf\n2 - por todos os terras\n3 - por todos os vccs\n4 - por todos os pullups com opção de pulldown\n5 - por o oscilador\n6 - por o ci intrq\n7 - ligar o clock\n8 - ligar a cpu ao halt reset\n9 - ligar os leds"
     (at 17.78 35.56 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))

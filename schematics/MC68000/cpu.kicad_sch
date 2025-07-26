@@ -6940,6 +6940,11 @@
     (effects (font (size 6.35 6.35)) (justify left bottom))
     (uuid b77eb836-d0ac-41cc-8530-dc12f21373fb)
   )
+  (text "nao estou usando o chip que \npode provocar wait states\nnesse momento DTACK está \nsendo tratado na GAL"
+    (at 53.34 95.25 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid c13d72e2-62c1-4a08-9121-de05519c7602)
+  )
   (text "REVISAR" (at 109.22 100.33 0)
     (effects (font (size 6.35 6.35)) (justify left bottom))
     (uuid df540343-59fa-4b71-9d9c-f9447ca6f2c0)

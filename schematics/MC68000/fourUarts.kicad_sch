@@ -9095,6 +9095,12 @@
     )
   )
 
+  (text "U23 e U24 eu tirei, naquele momento eles\npareciam estar fazendo algo que dava buss error.\neles serão necessários quando for usar as \ninterrupções."
+    (at 80.01 191.77 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 4b749fb5-6c6d-4345-ab7b-7a6ff309b768)
+  )
+
   (label "RTSA" (at 229.87 62.23 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 07184398-c447-41b6-a3e0-05bb9557365f)
