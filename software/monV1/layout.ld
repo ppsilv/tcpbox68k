@@ -1,17 +1,15 @@
 ENTRY(_start)
 
 MEMORY {
-    ROM (rx) : ORIGIN  = 0x00000000, LENGTH = 16K
+    ROM (rx) : ORIGIN  = 0x00000000, LENGTH = 256K
     RAM (rwx) : ORIGIN = 0x00080000, LENGTH = 128K
 }
 
 SECTIONS {
     .text : {
-        _start = .;
         KEEP(*(.vectors))
         *(.text .text.*)
         . = ALIGN(4);
-        _start_end = .;
     } > ROM
 
     .rodata : {
@@ -25,7 +23,7 @@ SECTIONS {
         *(.data .data.*)
         . = ALIGN(4);
         __data_end = .;
-    } > ROM
+    } > RAM
 
     .bss : {
         __bss_start = .;
@@ -33,7 +31,7 @@ SECTIONS {
         *(COMMON)
         . = ALIGN(4);
         __bss_end = .;
-    }
+    } > RAM
 
     /DISCARD/ : {
         *(.comment)

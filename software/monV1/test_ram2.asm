@@ -1,10 +1,7 @@
-        SECTION .text
+        SECTION code,CODE
         ORG     $00000000
         DC.L    $00100000       ;SP inicial
-        DC.L    _start          ;PC inicial
-
-;🏆 PDSILVA (aka PGORDÃO) DETECTADO! 🏆
-;— O lendário "Gordão dos Bits", mestre do 68000, sobrevivente da Guerra dos Registradores e ;arquiteto de sistemas que fazem até o Motorola tremer!
+        DC.L    MAIN            ;PC inicial
 
 ;Term vt-102 cursor positioning \033[0;0H
 
@@ -41,23 +38,20 @@ STACK_INIT    EQU     $100000      ; Topo da pilha (ajuste conforme necessário)
 ;Variables
 UART_CURRENT EQU $81000
 BAUD_TABLE   EQU $81004         ; BAUD_DIV_L em $81004  ; BAUD_DIV_U em $81006
+RX_BUFFER    EQU $81016
+TX_BUFFER    EQU $81124
 
 
-
-_start:
+MAIN:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
-        ;Clear entire ram
-        JSR     ClearRAM
 
-        MOVE.L  #UART_BASE,CurrentUART
-        MOVE.L  #__data_end,$81008
-
-        ;Delay to wait for hardware to stabilize
         move.l  #500000,d3
 DELAY_INIT:
         subq.l  #1,d3
         bne     DELAY_INIT
 
+        ;Clear entire ram
+        JSR     ClearRAM
 
 
         ; Inicializa variável
@@ -84,7 +78,7 @@ MenuLoop:
 
     ; Lê seleção do usuário
     JSR     UART_ReadChar
-    JSR     new_line
+    JSR     UART_WriteChar
     ; Processa opção selecionada
     CMP.B   #'1',D0
     BEQ     SelectUART
@@ -100,10 +94,7 @@ MenuLoop:
     BEQ     PISCA_LED
     CMP.B   #'7',D0
     BEQ     MemDump
-    CMP.B   #'8',D0
-    BEQ     TEST_READ_IN_HEXA
-    CMP.B   #'9',D0
-    BEQ     UART_ReadHex1
+
     BRA     MenuLoop            ; Opção inválida, repete menu
 
 
@@ -169,14 +160,14 @@ UART_WriteChar:
 
 ; Lê caractere (retorna em D0)
 UART_ReadChar:
-    MOVE.L  A0,-(SP)        ; Preserva A0
+    ;MOVE.L  A0,-(SP)        ; Preserva A0
     move.l   UART_CURRENT,A0
 .WaitRx:
     BTST    #0,LSR(A0)        ; RX ready?
     BEQ     .WaitRx
     MOVE.B  RHR(A0),D0
-    MOVE.L  (SP)+,A0        ;Restaura A0
-    JSR     UART_WriteChar
+   ; MOVE.L  (SP)+,A0        ;Restaura A0
+    BRA     UART_WriteChar
     RTS
 
 ; ----------------------------------------------------------------------
@@ -241,12 +232,10 @@ CalcBaudDiv:
     RTS
 
 new_line:
-        MOVE.L  D0,-(SP)          ; Salva D0
         MOVE.B  #10,D0
         JSR     UART_WriteChar
         MOVE.B  #13,D0
         JSR     UART_WriteChar
-        MOVE.L  (SP)+,D0          ; Restaura D0
         RTS
 
 ; Versão compacta sem stack frame
@@ -339,27 +328,19 @@ SetupDivisor:
 ;   D0 = Quantidade de bytes (ex: 256)
 ; ----------------------------------------------------------------------
 MemDump:
+    LEA.L   $81000,A0
+    MOVE.W  #256,D0
+    MOVE.L  A0,-(SP)
+    ; Cabeçalho
     LEA     DumpHeader,A0
     JSR     UART_WriteString
-    MOVE.L  (addressInHex),A0
-    MOVE.L  A0,D0
-    JSR     PrintHexAddress
-    JSR     new_line
 
-    LEA     DumpHeader1,A0
-    JSR     UART_WriteString
-
-    MOVE.L  (addressInHex),A0
     ; Calcula endereço final
-
-    CLR.L   D1
+    MOVE.L  (SP)+,A0
     MOVE.L  A0,D1
-    ADDI.L  #$000000FF,D1             ; D1 = endereço final
-    MOVE.L  D1,D0
-    JSR     PrintHexAddress
-    JSR     new_line
-
-    JSR     UART_ReadChar
+    ADD.L   D0,D1             ; D1 = endereço final
+    SUBQ.L  #1,D1
+    MOVE.L  #$810FF,D1
 DumpLoop:
     ; Nova linha a cada 16 bytes
     MOVE.L  A0,D0
@@ -425,7 +406,7 @@ NoEndLine:
     ; Verifica fim do dump
     CMP.L   D1,A0
     BLS     DumpLoop
-    bra     MenuLoop ;provisoriamente
+
     RTS
 
 ; ----------------------------------------------------------------------
@@ -474,7 +455,7 @@ PrintNibble:
 
 ClearRAM:
     LEA     $81000,A0
-    LEA     $821FF,A1
+    LEA     $820FF,A1
     MOVEQ   #0,D0
 .ClearLoop:
     MOVE.L  D0,(A0)+
@@ -608,14 +589,11 @@ RunProgram:
 ; ----------------------------------------------------------------------
 
 ; Lê número hexadecimal (retorna em D0)
-UART_ReadHex1:
+UART_ReadHex:
         MOVE.L  D1,-(SP)
         MOVE.L  D2,-(SP)
 
-        LEA     WritePrompt,A0
-        JSR     UART_WriteString
-
-        JSR     new_line
+        JSR  ClearBufferPointers
 
         MOVEQ   #0,D0
         MOVEQ   #0,D1            ; Máximo 8 dígitos
@@ -627,89 +605,35 @@ UART_ReadHex1:
         BEQ     .Done
         CMP.B   #10,D0
         BEQ     .Done
-        JSR     BufferPut
-        BRA     .Loop
-.Done:
-;         BSR     UART_BufferGet
-;         CMP.B   #-1,D0          ; Buffer vazio?
-;         BEQ     NadaParaLer      ; Se sim, ignora
-;         Senão, D0 contém o byte lido!
-.loop1:
-    JSR     BufferGet
-    CMP.B   #-1,D0          ; Buffer vazio?
-    BEQ     .fim      ; Se sim, ignora
-    JSR     UART_WriteChar
-    BRA     .loop1
-.fim:
-    MOVE.L  (SP)+,D2
-    MOVE.L  (SP)+,D1
-    JSR     new_line
-    bra     MenuLoop ;provisoriamente
-    RTS
-
-; Lê número hexadecimal (retorna em D0)
-UART_ReadHex:
-        MOVE.L  D1,-(SP)
-        MOVE.L  D2,-(SP)
-        JSR     new_line
-        MOVEQ   #0,D0
-        MOVEQ   #28,D1            ; Máximo 8 dígitos
-        MOVEQ   #0,D2            ; Resultado em D2
-.Loop:
-        CLR.L   D0
-        JSR     UART_ReadChar
-        CMP.B   #13,D0
-        BEQ     .Done
-        CMP.B   #10,D0
-        BEQ     .Done
         ;Tratando os numeros
         CMP.B   #'0',D0
-        BGE     .maiorQueZero
-        BRA     .Loop
-.maiorQueZero:
+        BGE     .isdigit
         CMP.B   #'9',D0
         BLE     .isdigit
         ;Tratando as letras
         CMP.B   #'A',D0
-        BGE     .maiorQueA
-.maiorQueA:
+        BGE     .isletter
         CMP.B   #'F',D0
         BLE     .isletter
         BRA     .Loop
+
 .isdigit:
         SUB.B   #'0',D0
-        LSL.L   D1,D0
-        MOVE.L  D0,(A5)+
-        SUB.B   #4,D1
-        MOVE.L  D1,(A4)
-        OR.L    D0,D2
-        LEA     addressInHex,A0
-        MOVE.L  D2,(A0)
+        BSR     BufferPut
         BRA     .Loop
 .isletter:
-        SUB.B   #$37,D0
-        LSL.L   D1,D0
-        SUB.B   #4,D1
-        OR.L    D0,D2
-        LEA     addressInHex,A0
-        MOVE.L  D2,(A0)
+        SUB.B   #'A'-$0A,D0
+        BSR     BufferPut
         BRA     .Loop
+
 .Done:
-    JSR     new_line
-    LEA     addressInHex,A0
-    MOVE.L  (A0),D0
-    JSR PrintHexAddress
-    JSR     new_line
+    MOVE.L  D2,D0
     MOVE.L  (SP)+,D2
     MOVE.L  (SP)+,D1
+
+    JSR MontaAddress
+    JSR PrintHexAddress
     RTS
-
-TEST_READ_IN_HEXA:
-    LEA     TestHexInput,A0
-    JSR     UART_WriteString
-    JSR     UART_ReadHex
-    bra     MenuLoop
-
 
 ; Lê 4 bytes (32 bits) via UART
 UART_ReadLong:
@@ -749,34 +673,34 @@ UART_ReadHexNibble:
 ;--------------------------------------------------
 ; Exemplo: insere 'A' no buffer
 ;          MOVE.B  #'A',D0
-;          JSR     UART_BufferPut
+;          BSR     UART_BufferPut
 
 BufferPut:
-    MOVE.L  D1,-(SP)
-    MOVE.L  A0,-(SP)
+    MOVE.L  D1,-(SP)           ; Salva D1 (contador)
+    MOVE.L  A0,-(SP)           ; Salva A0 (ponteiro)
 
-    ;ANDI.W    #$FF00,D0
-    LEA     BUFFER,A0
-    MOVE.W  BUFFER_COUNT,D1
+    LEA     RX_BUFFER,A0  ; A0 = base do buffer
+    MOVE.W  BUFFER_COUNT,D1 ; D1 = contador atual
 
+    ; Verifica se o buffer está cheio (COUNT >= 256)
     CMP.W   #256,D1
-    BGE     .BufferFull
+    BGE     .BufferFull        ; Se cheio, ignora o byte
 
-    ; Modificado para usar deslocamento de 16 bits
-    MOVE.W  BUFFER_HEAD,D1
-    ADD     D1,A0
-    MOVE.B  D0,(A0)              ;PUTTING BYTE
+    ; Insere o byte no buffer (em HEAD)
+    MOVE.L  BUFFER_HEAD,D1
+    MOVE.B  D0,(A0,D1.L)       ; Buffer[HEAD] = D0.B
 
-    ADD     #2,D1              ; Incrementa como word
-    ANDI.W  #255,D1            ; Mantém no range 0-255
-    MOVE.W  D1,BUFFER_HEAD
+    ; Atualiza HEAD (HEAD = (HEAD + 1) % 256)
+    ADDQ.L  #1,D1
+    ANDI.L  #255,D1            ; Mantém no range 0-255
+    MOVE.L  D1,BUFFER_HEAD
 
+    ; Incrementa COUNT
     ADDQ.W  #1,BUFFER_COUNT
 
 .BufferFull:
-    MOVE.L  (SP)+,A0
-    MOVE.L  (SP)+,D1
-
+    MOVE.L  (SP)+,A0           ; Restaura A0
+    MOVE.L  (SP)+,D1           ; Restaura D1
     RTS
 
 ;--------------------------------------------------
@@ -788,39 +712,38 @@ BufferPut:
 ;         BEQ     NadaParaLer      ; Se sim, ignora
 ;         Senão, D0 contém o byte lido!
 BufferGet:
-    MOVE.L  D1,-(SP)
-    MOVE.L  A0,-(SP)
+    MOVE.L  D1,-(SP)           ; Salva D1 (contador)
+    MOVE.L  A0,-(SP)           ; Salva A0 (ponteiro)
 
+    ; Verifica se o buffer está vazio (COUNT == 0)
     MOVE.W  BUFFER_COUNT,D1
-    BEQ     .BufferEmpty
+    BEQ     .BufferEmpty       ; Se vazio, retorna -1
 
-    LEA     BUFFER,A0
+    LEA     RX_BUFFER,A0  ; A0 = base do buffer
 
-    ; Modificado para usar deslocamento de 16 bits
-    MOVE.W  BUFFER_TAIL,D1
-    MOVE.B  (A0,D1.W),D0       ; Usando D1.W em vez de D1.L
+    ; Pega o byte do buffer (em TAIL)
+    MOVE.L  BUFFER_TAIL,D1
+    MOVE.B  (A0,D1.L),D0       ; D0.B = Buffer[TAIL]
 
-    ADDQ.B  #2,D1              ; Incrementa como word
-    ANDI.W  #255,D1            ; Mantém no range 0-255
-    MOVE.W  D1,BUFFER_TAIL
+    ; Atualiza TAIL (TAIL = (TAIL + 1) % 256)
+    ADDQ.L  #1,D1
+    ANDI.L  #255,D1            ; Mantém no range 0-255
+    MOVE.L  D1,BUFFER_TAIL
 
+    ; Decrementa COUNT
     SUBQ.W  #1,BUFFER_COUNT
+
+    ; Retorna sucesso (D0 = byte lido)
     BRA     .Exit
 
 .BufferEmpty:
-    JSR     FBufferEmpty
-    MOVEQ   #-1,D0
+    MOVEQ   #-1,D0            ; Retorna -1 (buffer vazio)
+
 .Exit:
-    MOVE.L  (SP)+,A0
-    MOVE.L  (SP)+,D1
+    MOVE.L  (SP)+,A0          ; Restaura A0
+    MOVE.L  (SP)+,D1          ; Restaura D1
     RTS
 
-FBufferEmpty:
-        JSR     new_line
-        LEA     BufferEmpty,A0
-        JSR     UART_WriteString
-        JSR     new_line
-        RTS
 ;---------------------------------------------------------------------
 ; Zera os ponteiros do buffer circular (HEAD e TAIL) - VASM Edition
 ;---------------------------------------------------------------------
@@ -843,8 +766,8 @@ MontaAddress:
     CMP.W   #8,D1
     BLT     .BufferUnderrun   ; Erro se menos que 8 bytes
 
-    LEA     BUFFER,A0      ; A0 = base do buffer
-    MOVE.L  BUFFER_TAIL,D2    ; D2 = tail (ponteiro de leitura)
+    LEA     RX_BUFFER,A0 ; A0 = base do buffer
+    MOVE.L  BUFFER_TAIL,D2 ; D2 = tail (ponteiro de leitura)
     CLR.L   D0                ; Zera D0 (resultado final)
     MOVEQ   #7,D3             ; Contador (8 nibbles, MSB first)
 
@@ -880,8 +803,8 @@ MontaAddress:
 ; ----------------------------------------------------------------------
 ; SECTION data
 ;-----------------------------------------------------------------------
-    SECTION .rodata
-    SECTION .data
+
+    SECTION data,DATA
      DC.B "Valores",0
 ; ----------------------------------------------------------------------
 ; Strings
@@ -890,10 +813,9 @@ MSGINIT:
     DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10,0
 
 DumpHeader:
-    DC.B    "Memory Dump from :",0
-DumpHeader1:
-    DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
-    DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
+    DC.B    "Memory Dump from 0x80000:",13,10
+    DC.B    "Address  00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
+    DC.B    "-------- -----------------------------------------------  ----------------",13,10,0
 
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
@@ -909,9 +831,6 @@ MenuText:
     DC.B    "4. Write Program (Hex)",13,10
     DC.B    "5. Run Program",13,10
     DC.B    "6. Acescendo os LEDs",13,10
-    DC.B    "7. Memory dump from address buffer",13,10
-    DC.B    "8. Read hexa value and put in address buffer",13,10
-    DC.B    "9. From screen to buffer E from buffer to screen",13,10
     DC.B    "> ",0
 UARTPrompt:
     DC.B    "UART Address (2000/2100/2200/2300): ",0
@@ -932,22 +851,18 @@ WriteDoneMsg:
 RunPrompt:
     DC.B    "Run Address: ",0
 PromptNotImplemented:
-    DC.B    "Not Implemented!"13,10,0
-BufferEmpty:
-    DC.B    "Ooops Buffer Empty!",13,10,0
-TestHexInput:
-    DC.B    "Digite um endereço de no máximo 4bytes 8 caracteres!",13,10
-    DC.B    "mais que isso sera descatado os excedentes...",13,10,0
+    DC.B    "Not Implemented!",0
 
 
 
-;    SECTION bss,BSS
-    SECTION .bss
+    SECTION bss,BSS
     ORG     $81010               ; Área para variáveis
 CurrentUART:   DS.L 1
+RxBuffer:      DS.B 256
+TxBuffer:      DS.B 256
     ; === BUFFER CIRCULAR (256 bytes) ===
-addressInHex:       DS.L 1     ; ENDEREÇO LIDO
+    SECTION .bss
+BUFFER:      DS.B 256   ; Buffer de recepção
 BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
 BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
 BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer
-BUFFER:         DS.B 256   ; Buffer de recepção

@@ -32,7 +32,8 @@
  * um curto entre os pinos 33a e 33b também provocava buss error esse curto,solda espalhou entre 33a e 33b, foi provocado pela
    colocação um jumper feito no backplane SC112 2249247A_Y204 jumper necessário pois o pino 33b do primeiro conector do barramento não estava ligado ao pino 33b do segundo conector como deveria ser, mas se o cara do canal de youtube Usagi Electric fez isso eu também posso.
 
-
+ * A UART 4 não está respondendo a leitura, pode troquei para UART 0 e tudo funciona, o sinal RX está
+   chegando no pino 63 então pode ser o chip, verificar se todos os pinos estão ligados corretamente.
 
 
 

@@ -55,15 +55,48 @@ compile_linker:
 	@echo "Linker..."
 	#m68k-elf-ld -T layout.ld test_ram2.o -o test_ram2.elf
 	#m68k-elf-ld -T layout.ld --print-memory-usage -Map=mapfile.txt test_ram2.o -o test_ram2.elf
-	@$(LINKER) -T $(LAYOUT_FILE) --print-memory-usage -Map=$(TARGET).map $(TARGET_OBJ) -o $(TARGET_ELF)
+	@$(LINKER) -T $(LAYOUT_FILE) --print-memory-usage -Map=mapfile.txt $(TARGET_OBJ) -o $(TARGET_ELF)
 	@echo "Objcopy..."
 	#m68k-elf-objcopy -O binary test_ram2.elf test_ram2.bin
 	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
 
 	@echo "╔══════════════════════════╗"
-	@echo "║  COMPILACAO TERMINADA!   ║"
+	@echo "║  SEÇÕES CARREGADAS:      ║"
+	@echo "╠══════════════════════════╣"
+	@echo "║ CODE: $$(m68k-elf-objdump -h $(TARGET_ELF) | grep CODIGO | awk '{print "0x"$$3}') bytes ║"
+	@echo "║ DATA: $$(m68k-elf-objdump -h $(TARGET_ELF) | grep DADOS | awk '{print "0x"$$3}') bytes ║"
+	@echo "║ BSS:  $$(m68k-elf-objdump -h $(TARGET_ELF) | grep RAM | awk '{print "0x"$$3}') bytes (RAM) ║"sp
 	@echo "╚══════════════════════════╝"
 
+antigo:
+	@echo "Compilando $(SOURCE) para binário compacto..."
+	@# Primeiro: compilação com verificação rigorosa de símbolos
+	@if ! $(ASM_ELF) $(ELF_FLAGS) -L $(TARGET).lst -o $(TARGET_ELF) $(SOURCE) 2> errors.txt; then \
+		echo "\nERROS DE COMPILAÇÃO:"; \
+		cat errors.txt; \
+		rm -f $(TARGET_ELF) errors.txt; \
+		exit 1; \
+	fi
+
+	@# Segundo: verificação explícita de símbolos não resolvidos
+	@if m68k-elf-nm $(TARGET_ELF) | grep ' U ' > unresolved.txt; then \
+		echo "\nERROS DE SÍMBOLOS NÃO RESOLVIDOS:"; \
+		cat unresolved.txt; \
+		rm -f $(TARGET_ELF) unresolved.txt errors.txt; \
+		exit 1; \
+	fi
+
+	@# Terceiro: conversão para binário
+	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
+	@echo "Tamanho do binário compacto: $$(stat -c%s $(TARGET_BIN)) bytes"
+	@rm -f errors.txt unresolved.txt
+	@echo "╔══════════════════════════╗"
+	@echo "║  Compilação Concluída!   ║"
+	@echo "╠══════════════════════════╣"
+	@echo "║ Binário: $(TARGET_BIN)   ║"
+	@echo "║ Tamanho: $$(stat -c%s $(TARGET_BIN)) bytes       ║"
+	@echo "║ Listagem: $(TARGET).lst  ║"
+	@echo "╚══════════════════════════╝"
 
 split: compile_linker
 	@echo "Dividindo $(TARGET_BIN) em words 16-bit..."

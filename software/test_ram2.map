@@ -1,0 +1,49 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ROM              0x00000000         0x00004000         xr
+RAM              0x00080000         0x00020000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.text           0x00000000      0x644
+                0x00000000                        _start = .
+ *(.vectors)
+ *(.text .text.*)
+ .text          0x00000000      0x642 test_ram2.o
+                0x00000644                        . = ALIGN (0x4)
+ *fill*         0x00000642        0x2 
+                0x00000644                        _start_end = .
+
+.rodata         0x00000644        0x0
+ *(.rodata .rodata.*)
+                0x00000644                        . = ALIGN (0x4)
+
+.data           0x00000644      0x37c
+                0x00000644                        __data_load = LOADADDR (.data)
+                0x00000644                        __data_start = .
+ *(.data .data.*)
+ .data          0x00000644      0x37b test_ram2.o
+                0x000009c0                        . = ALIGN (0x4)
+ *fill*         0x000009bf        0x1 
+                0x000009c0                        __data_end = .
+
+.bss            0x000009c0      0x114
+                0x000009c0                        __bss_start = .
+ *(.bss .bss.*)
+ .bss           0x000009c0      0x112 test_ram2.o
+ *(COMMON)
+                0x00000ad4                        . = ALIGN (0x4)
+ *fill*         0x00000ad2        0x2 
+                0x00000ad4                        __bss_end = .
+
+/DISCARD/
+ *(.comment)
+ *(.note.*)
+LOAD test_ram2.o
+OUTPUT(test_ram2.elf elf32-m68k)
