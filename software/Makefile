@@ -15,7 +15,7 @@ PROGRAMMER := minipro
 CHIP_TYPE := 28C64A  # Altere para o seu chip Flash
 
 # Nomes de arquivos
-SOURCE := test_ram2.asm
+SOURCE := monitor.asm
 TARGET := $(basename $(SOURCE))
 TARGET_OBJ := $(TARGET).o
 TARGET_ELF := $(TARGET).elf
@@ -89,7 +89,7 @@ programH: fill
 program: programL programH
 
 clean:
-	@rm -f *.bin *.o *.txt *.lst *.elf
+	@rm -f *.bin *.o *.txt *.lst *.elf *.map
 	@echo "Arquivos temporários removidos."
 
 help:

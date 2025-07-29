@@ -1,0 +1,48 @@
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+ROM              0x00000000         0x00004000         xr
+RAM              0x00080000         0x00020000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+
+.text           0x00000000      0x6b4
+                0x00000000                        _start = .
+ *(.vectors)
+ *(.text .text.*)
+ .text          0x00000000      0x6b2 monitor.o
+                0x000006b4                        . = ALIGN (0x4)
+ *fill*         0x000006b2        0x2 
+                0x000006b4                        _start_end = .
+
+.rodata         0x000006b4        0x0
+ *(.rodata .rodata.*)
+                0x000006b4                        . = ALIGN (0x4)
+
+.data           0x000006b4      0x3b4
+                0x000006b4                        __data_load = LOADADDR (.data)
+                0x000006b4                        __data_start = .
+ *(.data .data.*)
+ .data          0x000006b4      0x3b3 monitor.o
+                0x00000a68                        . = ALIGN (0x4)
+ *fill*         0x00000a67        0x1 
+                0x00000a68                        __data_end = .
+
+.bss            0x00000a68      0x124
+                0x00000a68                        __bss_start = .
+ *(.bss .bss.*)
+ .bss           0x00000a68      0x124 monitor.o
+ *(COMMON)
+                0x00000b8c                        . = ALIGN (0x4)
+                0x00000b8c                        __bss_end = .
+
+/DISCARD/
+ *(.comment)
+ *(.note.*)
+LOAD monitor.o
+OUTPUT(monitor.elf elf32-m68k)
