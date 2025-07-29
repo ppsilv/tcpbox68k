@@ -71,6 +71,7 @@ DELAY_INIT:
         bne     DELAY_INIT
 
         JSR     UART_Init
+        JSR     LED_INIT
 
         JSR     new_line
         JSR     new_line
@@ -80,8 +81,6 @@ DELAY_INIT:
 
         JSR     new_line
         JSR     new_line
-
-
 
 
 ; Loop principal do menu
@@ -117,21 +116,27 @@ MenuLoop:
     BRA     MenuLoop            ; Opção inválida, repete menu
 
 
-
-
 PISCA_LED:
         MOVE.W  #$FF00,D0
         MOVE.W  D0,$2400
-
         move.l  #500000,D3
 .DELAY1:
         subq.l  #1,D3
         bne     .DELAY1
-
         MOVE.W  #$0000,D0
         MOVE.W  D0,$2400
-
         BRA     MenuLoop
+LED_INIT:
+        MOVE.W  #$AA00,D0
+        MOVE.W  D0,$2400
+        move.l  #500000,D3
+.DELAY1:
+        subq.l  #1,D3
+        bne     .DELAY1
+        MOVE.W  #$0000,D0
+        MOVE.W  D0,$2400
+        RTS
+
 ; ----------------------------------------------------------------------
 ; Rotinas de E/S da UART
 ; ----------------------------------------------------------------------
@@ -540,8 +545,6 @@ PrintNibble:
 .Decimal:
     ADD.B   #'0',D0
     JMP     UART_WriteChar    ; Usa JMP para tail call optimization
-
-
 
 ClearRAM:
     LEA     $80000,A0
@@ -956,8 +959,6 @@ MontaAddress:
 ; ----------------------------------------------------------------------
 ; Strings
 ; ----------------------------------------------------------------------
-MSGINIT:
-    DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10,0
 
 DumpHeader:
     DC.B    "Memory Dump from :",0
@@ -968,9 +969,11 @@ DumpHeader1:
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
 ; ----------------------------------------------------------------------
-WelcomeMsg:
+MSGINIT:
+    DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10
     DC.B    "MC68000 System Monitor",13,10
-    DC.B    "---------------------",13,10,13,10,0
+    INCLUDE "build_date.inc"
+    DC.B    "-------------------------------------------",13,10,13,10,0
 
 MenuText:
     DC.B    "1. Select UART",13,10
@@ -982,6 +985,7 @@ MenuText:
     DC.B    "7. Memory dump from address buffer",13,10
     DC.B    "8. Read hexa value and put in address buffer",13,10
     DC.B    "9. From screen to buffer E from buffer to screen",13,10
+    DC.B    "0. Do baud divisor calculation",13,10
     DC.B    "> ",0
 UARTPrompt:
     DC.B    "UART Address (2000/2100/2200/2300): ",0
@@ -1011,21 +1015,21 @@ TestHexInput:
 HitAnyKey:
     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
 
-
-;    SECTION bss,BSS
-    SECTION .bss
-    ORG     $81010               ; Área para variáveis
-RamBase:            DS.l 1
-RamSize:            DS.L 1
-CurrentUART:        DS.L 1
-CurrentBaudRate:    DS.W 1
-BaudDivL:           DS.W 1
-BaudDivH:           DS.W 1
-Baud1DivL:          DS.W 1
-Baud1DivH:          DS.W 1
-    ; === BUFFER CIRCULAR (256 bytes) ===
-addressInHex:       DS.L 1     ; ENDEREÇO LIDO
+;    SECTION bss,BSS             
+    SECTION .bss                 
+    ORG     $81000               ; Área para variáveis
+RamBase:            DS.l 1             
+RamSize:            DS.L 1             
+CurrentUART:        DS.L 1             
+CurrentBaudRate:    DS.W 1             
+BaudDivL:           DS.W 1             
+BaudDivH:           DS.W 1             
+Baud1DivL:          DS.W 1             
+Baud1DivH:          DS.W 1             
+; === BUFFER CIRCULAR (256 bytes) ===             
+addressInHex:       DS.L 1     ; ENDEREÇO LIDO    
 BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
-BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
-BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer
-BUFFER:         DS.B 256   ; Buffer de recepção
+BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)   
+BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer                
+BUFFER:         DS.B 256   ; Buffer de recepção                         
+

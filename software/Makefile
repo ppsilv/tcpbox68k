@@ -50,6 +50,7 @@ compile:
 # Compilação segura que detecta TODOS os erros
 compile_linker:
 	@echo "Compiler..."
+	@build_date.sh
 	#vasmm68k_mot -Felf -quiet -L listing.txt -o test_ram2.o test_ram2.asm
 	@$(ASSEMBLER) $(ELF_FLAGS) -L $(TARGET).lst -o $(TARGET_OBJ) $(SOURCE)
 	@echo "Linker..."
@@ -79,17 +80,17 @@ fill: split
 programL: fill
 	@echo "Gravando parte LOW na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
-	@echo "Gravação concluída!"
+	@echo "Gravação concluída LOW! BOA SORTE"
 
 programH: fill
 	@echo "Gravando parte HIGH na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
-	@echo "Gravação concluída!"
+	@echo "Gravação concluída HIGH! GRAVE A LOW"
 
 program: programL programH
 
 clean:
-	@rm -f *.bin *.o *.txt *.lst *.elf *.map
+	@rm -f *.bin *.o *.txt *.lst *.elf *.map *.inc
 	@echo "Arquivos temporários removidos."
 
 help:
