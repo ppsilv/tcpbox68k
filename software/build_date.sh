@@ -1,4 +1,7 @@
 #!/bin/bash
+# Arquivo que guarda o número da compilação
+COUNTER_FILE="build_counter.txt"
+
 echo ";From here it is generated and pushed by update_build.sh"  > build_date.inc
 echo "BUILD_DATE:" >> monitor.asm >> build_date.inc
 #echo '              DC.B "Build: '"$(date +'%Y-%m-%d %H:%M:%S')"'",13,10' >> build_date.inc
@@ -17,3 +20,16 @@ TOTAL=$((10#$YEAR + 10#$MONTH + 10#$DAY + 10#$HOUR + 10#$MIN + 10#$SEC))
 echo '      DC.B "Build.: '"$(date +'%Y-%m-%d %H:%M:%S')"'",13,10' >> build_date.inc
 echo '      DC.B "Serial: '$DAY$TOTAL'",0' >> build_date.inc
 echo ";End generated code" >> build_date.inc
+
+# Se o arquivo não existe, cria com valor 1
+if [ ! -f "$COUNTER_FILE" ]; then
+    echo "1" > "$COUNTER_FILE"
+fi
+
+# Lê o valor atual, incrementa e salva
+CURRENT_VALUE=$(cat "$COUNTER_FILE")
+NEW_VALUE=$((CURRENT_VALUE + 1))
+echo "$NEW_VALUE" > "$COUNTER_FILE"
+
+# Gera o arquivo .asm com o contador
+echo '      DC.B "Compilation: #'$NEW_VALUE'",0' > build_counter.inc

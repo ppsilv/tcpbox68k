@@ -973,6 +973,7 @@ MSGINIT:
     DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10
     DC.B    "MC68000 System Monitor",13,10
     INCLUDE "build_date.inc"
+    INCLUDE "build_counter.inc"
     DC.B    "-------------------------------------------",13,10,13,10,0
 
 MenuText:

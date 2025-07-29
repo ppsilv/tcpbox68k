@@ -65,6 +65,18 @@ compile_linker:
 	@echo "║  COMPILACAO TERMINADA!   ║"
 	@echo "╚══════════════════════════╝"
 
+test:
+	@echo "Compiler..."
+	@$(ASSEMBLER) $(ELF_FLAGS) -L $(TARGET).lst -o $(TARGET_OBJ) $(SOURCE)
+	@echo "Linker..."
+	@$(LINKER) -T $(LAYOUT_FILE) --print-memory-usage -Map=$(TARGET).map $(TARGET_OBJ) -o $(TARGET_ELF)
+	@echo "Objcopy..."
+	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
+
+	@echo "╔═════════════════════════════════════╗"
+	@echo "║  COMPILACAO TTEESSTTEE TERMINADA!   ║"
+	@echo "╚═════════════════════════════════════╝"
+
 
 split: compile_linker
 	@echo "Dividindo $(TARGET_BIN) em words 16-bit..."
@@ -90,7 +102,7 @@ programH: fill
 program: programL programH
 
 clean:
-	@rm -f *.bin *.o *.txt *.lst *.elf *.map *.inc
+	@rm -f *.bin *.o *.txt *.lst *.elf *.map
 	@echo "Arquivos temporários removidos."
 
 help:

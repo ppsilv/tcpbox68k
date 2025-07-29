@@ -24,21 +24,21 @@ Linker script and memory map
  *(.rodata .rodata.*)
                 0x000006d4                        . = ALIGN (0x4)
 
-.data           0x000006d4      0x3f4
+.data           0x000006d4      0x424
                 0x000006d4                        __data_load = LOADADDR (.data)
                 0x000006d4                        __data_start = .
  *(.data .data.*)
- .data          0x000006d4      0x3f4 monitor.o
-                0x00000ac8                        . = ALIGN (0x4)
-                0x00000ac8                        __data_end = .
+ .data          0x000006d4      0x424 monitor.o
+                0x00000af8                        . = ALIGN (0x4)
+                0x00000af8                        __data_end = .
 
-.bss            0x00000ac8      0x124
-                0x00000ac8                        __bss_start = .
+.bss            0x00000af8      0x124
+                0x00000af8                        __bss_start = .
  *(.bss .bss.*)
- .bss           0x00000ac8      0x124 monitor.o
+ .bss           0x00000af8      0x124 monitor.o
  *(COMMON)
-                0x00000bec                        . = ALIGN (0x4)
-                0x00000bec                        __bss_end = .
+                0x00000c1c                        . = ALIGN (0x4)
+                0x00000c1c                        __bss_end = .
 
 /DISCARD/
  *(.comment)
