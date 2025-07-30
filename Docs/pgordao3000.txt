@@ -1,0 +1,37 @@
+Especificação da comunicação para envio de programas via serial
+
+0 - O o dispositivo que vai receber o programa via serial doravante é o receiver, e programa python,doravante apenas sender.
+    -
+1 - o sender tem que receber o nome do arquivo pela linha de comando
+2 - o sender tem que contar os bytes do arquivo a ser enviado e dividi-lo em pacote do mesmo tamanho
+    o tamanho do bloco deve ser uma constante no sender, o ultimo pacote se sobrar espaço deve ser
+    preenchido com 0xFF.
+3 - nesse ponto o sender tem:
+    - nome do arquivo.
+    - tamanho
+    - quantidade de pacotes a serem enviados
+    - checksum são 2 bytes no final de cada pacote.
+      se o pacote tem tamanho definido em 256bytes, o checksum fica no bytes 257 e 258.
+4 - O receiver é totalmente passivo só responde aos estimulos do sender.
+
+5 - O protocolo é ACK,NACK para todo envio do sender o receiver tem que enviar um ACK ou NACK
+
+6 - O sender pergunta ao receiver se pode começar a transmissão do header pois o primeiro pacote
+    é aquele que contém o nome do arquivo,tamanho,qtd pacotes.
+    - o receiver deve enviar um ACK
+    se retornar NACK o sender aborta tudo enviando 5 NACKs sem aguardar resposta e termina o program
+
+Loop
+    recebendo um ACK
+        calculka checksum
+        insere no pacote
+        envia pacote do arquivo a ser transmitido
+    se retornar NACK
+        reenvia o mesmo pacote, por 5 vezes se retornar NACK do receiver por 5 tentativas o sender
+        aborta a transmissão e envia 5 NACKs sem aguardar resposta e termina o programa
+    se retornar ACN
+        vai para o loop até enviar todos os pacotes.
+
+
+Acho que está a prova de falhas, oque voce acha meu amigo engenheiro retrô, mestres dos protocolos.
+

@@ -53,7 +53,11 @@
  * Problema: do nada a cpu para de rodar.
    Causa: Não tenho idéia do porque, aconteceu 2 vezes e na segunda vez foi na madrugada deixei para o outro
           dia, mas quando liguei pela manhão funcionou direitinho, estou apostando em um mau contato nos terminais da roms, mas é por puro achismo.
-
+          A causa foi DC.B "xxxxxxxx" no meio do código para por palavras chaves eu me esqueci do alinhamento que tem que ser par
+          então para usar isso tem que fazer isso
+          DC.B "xxxxxxxx"
+          ALIGN 2        ; com isso não interessa se a mensagem acima tem quantidade par ou impar de caracteres, o
+          codigo continua alinhado lembre-se o 68000 nãopode acessar endereço impar.
 
 
 

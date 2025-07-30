@@ -11,34 +11,35 @@ RAM              0x00080000         0x00020000         xrw
 Linker script and memory map
 
 
-.text           0x00000000      0x6d4
+.text           0x00000000      0x76c
                 0x00000000                        _start = .
  *(.vectors)
  *(.text .text.*)
- .text          0x00000000      0x6d2 monitor.o
-                0x000006d4                        . = ALIGN (0x4)
- *fill*         0x000006d2        0x2 
-                0x000006d4                        _start_end = .
+ .text          0x00000000      0x76c monitor.o
+                0x0000076c                        . = ALIGN (0x4)
+                0x0000076c                        _start_end = .
 
-.rodata         0x000006d4        0x0
+.rodata         0x0000076c        0x0
  *(.rodata .rodata.*)
-                0x000006d4                        . = ALIGN (0x4)
+                0x0000076c                        . = ALIGN (0x4)
 
-.data           0x000006d4      0x424
-                0x000006d4                        __data_load = LOADADDR (.data)
-                0x000006d4                        __data_start = .
+.data           0x0000076c      0x420
+                0x0000076c                        __data_load = LOADADDR (.data)
+                0x0000076c                        __data_start = .
  *(.data .data.*)
- .data          0x000006d4      0x424 monitor.o
-                0x00000af8                        . = ALIGN (0x4)
-                0x00000af8                        __data_end = .
+ .data          0x0000076c      0x41d monitor.o
+                0x00000b8c                        . = ALIGN (0x4)
+ *fill*         0x00000b89        0x3 
+                0x00000b8c                        __data_end = .
 
-.bss            0x00000af8      0x124
-                0x00000af8                        __bss_start = .
+.bss            0x00000b8c      0x628
+                0x00000b8c                        __bss_start = .
  *(.bss .bss.*)
- .bss           0x00000af8      0x124 monitor.o
+ .bss           0x00000b8c      0x626 monitor.o
  *(COMMON)
-                0x00000c1c                        . = ALIGN (0x4)
-                0x00000c1c                        __bss_end = .
+                0x000011b4                        . = ALIGN (0x4)
+ *fill*         0x000011b2        0x2 
+                0x000011b4                        __bss_end = .
 
 /DISCARD/
  *(.comment)

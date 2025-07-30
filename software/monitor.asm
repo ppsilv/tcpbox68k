@@ -43,13 +43,12 @@ BAUD_DIV        equ     (((F_CPU*10)/(16*BAUD_RATE))+5)/10 ; compute one extra d
 BAUD_DIV_L      equ     (BAUD_DIV&$FF)
 BAUD_DIV_U      equ     ((BAUD_DIV>>8)&$FF)
 
-;RAM_START     EQU     $080000      ; Início da RAM disponível
-;STACK_INIT    EQU     $100000      ; Topo da pilha (ajuste conforme necessário)
-;Variables
-;UART_CURRENT EQU $81000
-;BAUD_TABLE   EQU $81004         ; BAUD_DIV_L em $81004  ; BAUD_DIV_U em $81006
-
-
+;=== Uart receiver ================= CONSTANTES =================
+SOH            EQU     $01        ; Start Of Header
+EOT            EQU     $04        ; End Of Transmission
+ACK            EQU     $06        ; Acknowledge
+NAK            EQU     $15        ; Negative Acknowledge
+CAN            EQU     $18        ; Cancel
 
 _start:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
@@ -619,33 +618,12 @@ SetBaudRate:
 
 ; 3. Carrega programa via serial
 LoadProgram:
-    LEA     LoadPrompt,A0
-    JSR     UART_WriteString
-    JSR     UART_ReadHex        ; Lê endereço de destino
-    MOVE.L  D0,A1               ; A1 = ponteiro para RAM
 
-    JSR     new_line
-    JSR     PrintHexAddress
-    JSR     new_line
+    LEA     DEST_BUFFER,A0   ; Onde os dados serão salvos
+    MOVE.L  A0,user_buffer_ptr
+    JSR     XMODEM_Receive
 
-    ; Protocolo: [Tamanho(4B)][Dados...]
-    JSR     UART_ReadLong       ; Lê tamanho (32 bits)
-
-    LEA     LoadPromptReady,A0
-    JSR     UART_WriteString
-    JSR     new_line
-    MOVE.L  D0,D1               ; D1 = contador de bytes
-
-.LoadLoop:
-    JSR     UART_ReadByte       ; Lê byte
-    MOVE.B  D0,(A1)+            ; Armazena na RAM
-    SUBQ.L  #1,D1               ; Decrementa contador
-    BNE     .LoadLoop           ; Continua até terminar
-
-    LEA     LoadDoneMsg,A0
-    JSR     UART_WriteString
     RTS
-
 ; 4. Grava programa manualmente (hex)
 WriteProgram:
     LEA     WritePrompt,A0
@@ -950,25 +928,112 @@ MontaAddress:
     MOVEM.L (SP)+,D2-D5/A0    ; Restaura registradores
     RTS
 
+    DC.B "MERDA INCIA"
+    ALIGN 2
+; =====================================================================
+; XMODEM RECEIVER ROUTINE
+; =====================================================================
+XMODEM_Receive:
+                MOVEM.L D2-D7/A0-A6,-(SP)
+                LEA     xmodem_buffer,A0
+
+                ; ---- 1. INICIALIZAÇÃO ----
+                MOVE.B  #NAK,D0
+                JSR     UART_WriteChar      ; Solicita início
+
+                ; ---- 2. LOOP PRINCIPAL ----
+Receive_Loop:
+                JSR     UART_ReadChar
+                CMP.B   #EOT,D0
+                BEQ     Transfer_Complete   ; Fim da transmissão
+
+                CMP.B   #SOH,D0
+                BNE     Receive_Loop        ; Ignora bytes inválidos
+
+                ; ---- 3. RECEBE HEADER ----
+                JSR     UART_ReadChar       ; Block number
+                MOVE.B  D0,block_number
+                JSR     UART_ReadChar       ; ~Block number (complemento)
+
+                ; ---- 4. RECEBE DADOS ----
+                MOVE.W  #127,D1             ; 128 bytes (0-based)
+                LEA     xmodem_buffer,A1
+
+Receive_Data:
+                JSR     UART_ReadChar
+                MOVE.B  D0,(A1)+
+                DBF     D1,Receive_Data
+
+                ; ---- 5. VERIFICA CHECKSUM ----
+                JSR     UART_ReadChar       ; Checksum
+                MOVE.B  D0,D2
+
+                ; Calcula checksum local
+                LEA     xmodem_buffer,A1
+                MOVE.W  #127,D1
+                CLR.B   D3
+
+Calc_Checksum:
+                ADD.B   (A1)+,D3
+                DBF     D1,Calc_Checksum
+
+                CMP.B   D2,D3
+                BNE     Send_NAK            ; Erro no checksum
+
+                ; ---- 6. VALIDA NÚMERO DO BLOCO ----
+                MOVE.B  block_number,D0
+                CMP.B   expected_block,D0
+                BNE     Send_NAK            ; Bloco fora de ordem
+
+                ; ---- 7. COPIA DADOS VÁLIDOS ----
+                ; (Aqui você processa os 128 bytes recebidos)
+                ; Exemplo: copiar para RAM/Flash
+                LEA     xmodem_buffer,A1
+                MOVE.L  user_buffer_ptr,A2  ; Defina isso antes de chamar
+                MOVE.W  #127,D1
+Copy_Data:
+                MOVE.B  (A1)+,(A2)+
+                DBF     D1,Copy_Data
+
+                ; ---- 8. CONFIMA RECEPÇÃO ----
+                ADDQ.B  #1,expected_block   ; Próximo bloco
+                MOVE.B  #ACK,D0
+                JSR     UART_WriteChar
+                BRA     Receive_Loop
+
+Send_NAK:
+                MOVE.B  #NAK,D0
+                JSR     UART_WriteChar
+                BRA     Receive_Loop
+
+Transfer_Complete:
+                MOVE.B  #ACK,D0             ; Confirma EOT
+                JSR     UART_WriteChar
+                MOVEM.L (SP)+,D2-D7/A0-A6
+                RTS
+
+    DC.B "MERDA TERMINA"
+    ALIGN 2
+; =====================================================================
+; XMODEM RECEIVER ROUTINE
+; =====================================================================
+
 ; ----------------------------------------------------------------------
 ; SECTION data
 ;-----------------------------------------------------------------------
     SECTION .rodata
     SECTION .data
      DC.B "Valores",0
-; ----------------------------------------------------------------------
-; Strings
-; ----------------------------------------------------------------------
 
+; ----------------------------------------------------------------------
+; Strings do Sistema
+; ----------------------------------------------------------------------
 DumpHeader:
     DC.B    "Memory Dump from :",0
 DumpHeader1:
     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 
-; ----------------------------------------------------------------------
-; Strings do Sistema
-; ----------------------------------------------------------------------
 MSGINIT:
     DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10
     DC.B    "MC68000 System Monitor",13,10
@@ -993,7 +1058,7 @@ UARTPrompt:
 BaudPrompt:
     DC.B    "Baud Rate Value: ",0
 LoadPrompt:
-    DC.B    "Load Address format 8 bytes hex 01234567: ",0
+    DC.B    "Aguardando 68ksender to initiate: ",0
 LoadPromptReady:
     DC.B    "Ready to receive from PC!",0
 LoadDoneMsg:
@@ -1033,4 +1098,9 @@ BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
 BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)   
 BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer                
 BUFFER:         DS.B 256   ; Buffer de recepção                         
-
+;=== Uart receiver
+DEST_BUFFER     DS.B   1024
+user_buffer_ptr DS.B   128
+xmodem_buffer  DS.B    128        ; Buffer de dados
+block_number   DS.B    1           ; Número do bloco atual
+expected_block DS.B    1           ; Próximo bloco esperado
