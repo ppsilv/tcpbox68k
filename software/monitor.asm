@@ -70,6 +70,8 @@ DELAY_INIT:
         bne     DELAY_INIT
 
         JSR     UART_Init
+        LEA     cls_str,A0
+        JSR     UART_WriteString
         JSR     LED_INIT
 
         JSR     new_line
@@ -84,7 +86,6 @@ DELAY_INIT:
 
 ; Loop principal do menu
 MenuLoop:
-    JSR     new_line
     LEA     MenuText,A0
     JSR     UART_WriteString
 
@@ -173,7 +174,7 @@ UART_ReadChar:
     BEQ     .WaitRx
     MOVE.B  RHR(A0),D0
     MOVE.L  (SP)+,A0        ;Restaura A0
-    JSR     UART_WriteChar
+    ;JSR     UART_WriteChar
     RTS
 
 ; ----------------------------------------------------------------------
@@ -1023,8 +1024,8 @@ Transfer_Complete:
 ;-----------------------------------------------------------------------
     SECTION .rodata
     SECTION .data
-     DC.B "Valores",0
-
+    DC.B "Valores",0
+cls_str:    dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
 ; ----------------------------------------------------------------------
