@@ -5,18 +5,21 @@ from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop
 from PyQt6.QtGui import QTextCursor, QColor, QFont
 from PdTermMenu import PdTermMenu
 from PdTermWidget import TerminalWidget
+from PdTermXmodem import XMODEM_Transfer
 import serial
 import serial.tools.list_ports
 
 class PDTermPro(QMainWindow):
     def __init__(self):
         super().__init__()
-        
+
         # Configurações iniciais
         self.serial_port = None
         self.terminal = TerminalWidget()
         self.menu_handler = PdTermMenu(self)
-        
+        self.xmodem = None  # Será inicializado quando a serial conectar
+        self.current_data_handler = None  # Pode ser None, terminal ou xmodem
+
         self._init_ui()
         self._setup_theme()
         self._scan_ports()
@@ -128,7 +131,7 @@ class PDTermPro(QMainWindow):
         else:
             self.port_label.setText("Porta: Desconectado")
             self.baud_label.setText("Baudrate: -")
-            
+
     def _connect_to_port(self, port_name):
         """Conecta à porta serial com limpeza de buffers"""
         try:
@@ -144,17 +147,9 @@ class PDTermPro(QMainWindow):
                 timeout=1
             )
             
-            # Limpeza nuclear dos buffers
-            self.serial_port.reset_input_buffer()
-            self.serial_port.reset_output_buffer()
-            
-            # Espera para garantir a limpeza (opcional)
-            import time
-            time.sleep(0.1)
-            
-            self.port_label.setText(f"Porta: {port_name}")
-            self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
-            self.terminal.write_terminal(f"\n[INFO] Conectado à {port_name}\n")
+            # Inicializa XMODEM aqui, após ter uma serial válida
+            from PdTermXmodem import XMODEM_Transfer
+            self.xmodem = XMODEM_Transfer(self.serial_port, self.terminal)
             
         except Exception as e:
             self.terminal.write_terminal(f"\n[ERRO] Falha na conexão: {str(e)}\n")
@@ -198,7 +193,7 @@ class PDTermPro(QMainWindow):
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar: {str(e)}\n")
     
-    def _read_serial(self):
+    def _read_serialOLD(self):
         if self.serial_port and self.serial_port.is_open:
             try:
 
@@ -209,15 +204,41 @@ class PDTermPro(QMainWindow):
                 if available > 0:
                     data = self.serial_port.read(available)
                     self.terminal.write_terminal(data.decode('ascii', errors='replace'))
-
-                #if self.serial_port.in_waiting:
-                #    data = self.serial_port.read(self.serial_port.in_waiting)
-                #    self.terminal.write_terminal(data.decode('ascii', errors='replace'))
-                #    self.ser_received_data(data.decode('ascii', errors='replace'))
-                #    #self.hexdump(data)
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
                 self._disconnect_serial()
+    
+    def _bytes_to_hex(self, data):
+        """Converte bytes para string hexadecimal formatada"""
+        return ' '.join(f'{b:02X}' for b in data)
+                    
+    def _read_serial(self):
+        if self.serial_port and self.serial_port.is_open:
+            try:
+                max_bytes_per_read = 1024
+                available = min(self.serial_port.in_waiting, max_bytes_per_read)
+                
+                if available > 0:
+                    data = self.serial_port.read(available)
+                    
+                    # Roteamento inteligente dos dados recebidos
+                    if self.xmodem and self.xmodem.transfer_in_progress:
+                        # Se XMODEM está ativo, envia os dados brutos para ele
+                        self.xmodem.handle_received_data(data)
+                    else:
+                        # Modo normal: exibe no terminal
+                        try:
+                            text = data.decode('ascii', errors='replace')
+                            self.terminal.write_terminal(text)
+                        except UnicodeDecodeError:
+                            # Se não for texto, mostra hexdump
+                            self.terminal.write_terminal(f"\n[HEX] {self._bytes_to_hex(data)}\n")
+                
+            except Exception as e:
+                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
+                self._disconnect_serial()
+
+
 
     def ser_received_data(self, text):  
         self.terminal.write_terminal(f"Byte em hex: {text:02X}") 
@@ -257,10 +278,35 @@ class PDTermPro(QMainWindow):
 ########################################################################
 
 ########################################################################
+# INICIO XMODEM
+    def _init_xmodem(self):
+        """Inicializa o handler XMODEM"""
+        from PdTermXmodem import XMODEM_Transfer
+        self.xmodem = XMODEM_Transfer(self.serial_port, self.terminal)
+        self.xmodem.data_to_send.connect(self._send_to_serial)
+        self.xmodem.progress_updated.connect(self._update_xmodem_progress)
+        
+    def _update_xmodem_progress(self, percent, message):
+        """Atualiza a interface durante transferência"""
+        self.status.showMessage(f"XMODEM: {message} ({percent}%)")
+    
+    def _send_file_xmodem(self):
+        """Menu para enviar arquivo via XMODEM"""
+        if not hasattr(self, 'xmodem') or not self.xmodem:
+            self.terminal.write_terminal("\n[ERRO] Conecte-se a uma porta serial primeiro!\n")
+            return
+            
+        file_path, _ = QFileDialog.getOpenFileName(self, "Enviar via XMODEM")
+        if file_path:
+            self.terminal.write_terminal("\n[XMODEM] Iniciando transferência...\n")
+            self.xmodem.send_file(file_path)
+
+# FIM XMODEM        
+########################################################################
+
+########################################################################
 #      FILE E LOG INICIO
 #    
-
-    
     def _send_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Selecione o arquivo")
         if file_path:
@@ -343,6 +389,7 @@ class PDTermPro(QMainWindow):
             "\x1b[1;34;40m╚════════════════════════╝\n"
             "\x1b[33mUsuário: \x1b[37m"
         )
+
 #Deprecado            
 #    def _delay(self, ms):
 #        """Pausa a execução sem bloquear a interface"""

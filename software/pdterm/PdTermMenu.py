@@ -22,7 +22,8 @@ class PdTermMenu:
             ("Salvar Log", None, self.parent._save_log),
             ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),
-            ("Limpar Buffer", None, self.parent.terminal._emergency_clear),            
+            ("Limpar Buffer", None, self.parent.terminal._emergency_clear),    
+            ("Enviar XMODEM", None, self.parent._send_file_xmodem),     
             ("Sobre", None, self._create_about_menu())
         ]
 
@@ -38,10 +39,7 @@ class PdTermMenu:
         return toolbar
     
     def _verify_methods(self):
-        required_methods = ['test_cores_ansi', 'pgordao_terminal_mode']
-        for method in required_methods:
-            if not hasattr(self.parent, method):
-                raise AttributeError(f"O método '{method}' não existe na classe principal!")
+        pass
 
     def _create_main_menu(self):
         """Menu principal de opções"""
