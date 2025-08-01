@@ -74,18 +74,13 @@ DELAY_INIT:
         JSR     UART_WriteString
         JSR     LED_INIT
 
-        JSR     new_line
-        JSR     new_line
-
         LEA     MSGINIT,A0
         JSR     UART_WriteString
-
-        JSR     new_line
-        JSR     new_line
 
 
 ; Loop principal do menu
 MenuLoop:
+    JSR     new_line
     LEA     MenuText,A0
     JSR     UART_WriteString
 
@@ -174,7 +169,10 @@ UART_ReadChar:
     BEQ     .WaitRx
     MOVE.B  RHR(A0),D0
     MOVE.L  (SP)+,A0        ;Restaura A0
-    ;JSR     UART_WriteChar
+    CMP.B   #$1b,D0
+    BEQ     .fim
+    JSR     UART_WriteChar
+.fim
     RTS
 
 ; ----------------------------------------------------------------------
@@ -604,7 +602,7 @@ SelectUART:
     ;JSR     UART_ReadHex        ; Lê endereço da UART
     ;MOVE.L  D0,CurrentUART      ; Atualiza UART atual
     ;JSR     UART_Init           ; Reinicializa UART
-    RTS
+    BRA     MenuLoop
 
 ; 2. Configura Baud Rate
 SetBaudRate:
@@ -615,7 +613,7 @@ SetBaudRate:
     ;JSR     UART_ReadHex        ; Lê valor do baud rate
     ;MOVE.L  CurrentUART,A0
     ;MOVE.B  D0,(UART_BAUD,A0)   ; Configura registrador
-    RTS
+    BRA     MenuLoop
 
 ; 3. Carrega programa via serial
 LoadProgram:
@@ -624,7 +622,7 @@ LoadProgram:
     MOVE.L  A0,user_buffer_ptr
     JSR     XMODEM_Receive
 
-    RTS
+    BRA     MenuLoop
 ; 4. Grava programa manualmente (hex)
 WriteProgram:
     LEA     WritePrompt,A0
@@ -645,7 +643,7 @@ WriteProgram:
 
     LEA     WriteDoneMsg,A0
     JSR     UART_WriteString
-    RTS
+    BRA     MenuLoop
 
 ; 5. Executa programa na RAM
 RunProgram:
@@ -654,7 +652,7 @@ RunProgram:
     JSR     UART_ReadHex        ; Lê endereço
     MOVE.L  D0,A0
     JSR     (A0)                ; Chama subrotina
-    RTS
+    BRA     MenuLoop
 
 ; ----------------------------------------------------------------------
 ; Rotinas Auxiliares
@@ -1077,7 +1075,7 @@ PromptNotImplemented:
 BufferEmpty:
     DC.B    "Ooops Buffer Empty!",13,10,0
 TestHexInput:
-    DC.B    13,10,"Digite um endereço de no máximo 4bytes 8 caracteres!",13,10
+    DC.B    13,10,"Digite um endereco de no maximo 4bytes 8 caracteres!",13,10
     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
 HitAnyKey:
     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0

@@ -10,7 +10,7 @@ from AnsiProcessor import AnsiProcessor
 from PyQt6.QtGui import QFont, QFontMetrics  # Adicione esta importação
 from PyQt6.QtGui import QTextOption  # Importação adicionada
 
-from MyMenu import MyMenu
+from PdTermMenu import PdTermMenu
 
 class TerminalWidget(QPlainTextEdit):
     data_to_send = pyqtSignal(str)
