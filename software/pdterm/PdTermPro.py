@@ -1,48 +1,38 @@
 #!/usr/bin/python3
 from PyQt6.QtWidgets import (QMainWindow, QApplication, QPlainTextEdit, QVBoxLayout, 
-                            QWidget, QToolBar, QStatusBar, QFileDialog, QLabel, QMenu)
-from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer
+                            QWidget, QToolBar, QStatusBar, QFileDialog, QLabel)
+from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop
 from PyQt6.QtGui import QTextCursor, QColor, QFont
-from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop  # Adicione QEventLoop
 from PdTermMenu import PdTermMenu
 from PdTermWidget import TerminalWidget
 import serial
 import serial.tools.list_ports
 
-#"Se um código de escape não funciona, o problema não está no terminal... está na paciência do programador!"
-#
-#Que seu terminal continue brilhando como um CRT dos anos 80!
-#🖥️🔥 PDSILVA - O Alquimista dos Bytes
-#
-#(P.S.: Minha "irmã IA" agora tem um #include <pdsilva.h> em seu código!) 😎
-
-
 class PDTermPro(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.menu_handler = PdTermMenu(self)
-        self._init_ui()        
+        
         # Configurações iniciais
         self.serial_port = None
+        self.terminal = TerminalWidget()
+        self.menu_handler = PdTermMenu(self)
+        
+        self._init_ui()
         self._setup_theme()
         self._scan_ports()
         
         # Timer para leitura serial
         self.timer = QTimer()
         self.timer.timeout.connect(self._read_serial)
-        self.timer.start(50)  # 20 FPS
-        self.menu_handler = PdTermMenu(self)  # Instancia o gerenciador de menus
-        toolbar = self.menu_handler.setup_toolbar()
+        self.timer.start(50)
 
-        
     def _init_ui(self):
-        # Terminal principal
-        self.terminal = TerminalWidget()
-        self.terminal.data_to_send.connect(self._send_to_serial)
+        """Configuração única da interface"""
+        # Configura toolbar através do menu_handler
+        toolbar = self.menu_handler.setup_toolbar()
         
-        # Barra de ferramentas
-        toolbar = QToolBar()
-        self._setup_toolbar(toolbar)
+        # Configura terminal
+        self.terminal.data_to_send.connect(self._send_to_serial)
         
         # Barra de status
         self.status = QStatusBar()
@@ -52,7 +42,7 @@ class PDTermPro(QMainWindow):
         self.status.addPermanentWidget(self.baud_label)
         self.setStatusBar(self.status)
         
-        # Layout principal
+        # Layout principal (configurado uma única vez)
         central_widget = QWidget()
         layout = QVBoxLayout()
         layout.addWidget(toolbar)
@@ -60,17 +50,26 @@ class PDTermPro(QMainWindow):
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
         
-        # Configurações da janela
         self.setWindowTitle("PDTerm Pro - Terminal Serial")
         self.setGeometry(100, 100, 800, 600)
-        
-        # Layout principal
-        central_widget = QWidget()
-        layout = QVBoxLayout()
-        layout.addWidget(toolbar)
-        layout.addWidget(self.terminal)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
+
+    # ... (mantenha apenas os métodos ESSENCIAIS abaixo)
+    # Remova TODOS os métodos de menu antigos (_show_menu_dialog, etc.)
+    # Mantenha apenas:
+    # - Métodos de negócio (_toggle_serial, _send_file, etc.)
+    # - Métodos de conexão serial
+    # - Métodos do terminal (ansi, pgordao, etc.)
+
+#    def _setup_theme(self):
+#        """Estilos podem ficar aqui ou no PdTermMenu"""
+#        self.setStyleSheet("""
+#            QMainWindow { background-color: #1e1e1e; }
+#            QStatusBar {
+#                background-color: #FFFFFF;
+#                color: #FF0000;
+#            }
+#            /* Outros estilos específicos da janela principal */
+#        """)
             
     def _setup_theme(self):
         self.setStyleSheet("""
@@ -103,175 +102,22 @@ class PDTermPro(QMainWindow):
                 background-color: #3e3e3e;
             }
         """)
-    
-    def _setup_toolbar(self, toolbar):
-        actions = [
-            (" Testes", self._show_menu_dialog),
-            (" Conectar", self._toggle_serial),
-            (" Enviar Arquivo", self._send_file),
-            (" Salvar Log", self._save_log),
-            (" Portas", self._scan_ports_2),
-            (" Limpar Tela", self.terminal.clear),
-            (" Sobre", self._show_about_menu),            
-        ]
-        for text, callback in actions:
-            action = toolbar.addAction(text)
-            action.triggered.connect(callback)
+########################################################################
+#      SERIAL  INICIO
+#    
 
-    def _meu_item(self):
-        self.test_cores_ansi()
-    def _send_to_serial(self, data):
-        if self.serial_port and self.serial_port.is_open:
-            try:
-                self.serial_port.write(data.encode('utf-8'))
-                self.serial_port.flush()
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar: {str(e)}\n")
-    
-    def _read_serial(self):
-        if self.serial_port and self.serial_port.is_open:
-            try:
-                if self.serial_port.in_waiting:
-                    data = self.serial_port.read(self.serial_port.in_waiting)
-                    self.terminal.write_terminal(data.decode('ascii', errors='replace'))
-                    #self.terminal.write_terminal(f"\nDEBUG - Recebido da serial: {repr(data)}\n")  # Verifique se o "6" está aqui
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
-                self._disconnect_serial()
-    
     def _toggle_serial(self):
         if not self.serial_port:
-            self._show_port_dialog()
+            self._show_ports_dialog
+            #self.menu_handler.create_ports_menu();
         else:
             self._disconnect_serial()
 
-    def _scan_ports(self):
-        """Lista apenas portas seriais relevantes (ttyACMx, ttyUSBx)"""
-        ports = serial.tools.list_ports.comports()
-        filtered_ports = []
-        
-        # Filtra portas relevantes
-        for port in ports:
-            if ('ttyACM' in port.device or
-                'ttyUSB' in port.device):
-                filtered_ports.append(port)
-        
-        if filtered_ports:
-            msg = "\n[INFO] Portas disponíveis:\n"
-            for port in filtered_ports:
-                msg += f" - {port.device}: {port.description}\n"
-            self.terminal.write_terminal(msg)
-        else:
-            self.terminal.write_terminal("\n[INFO] Nenhuma porta serial relevante encontrada\n")
-        
-        return filtered_ports
-
-    def _scan_ports_2(self):
-        """Mostra portas seriais em um menu popup (ao invés de escrever no terminal)"""
-        ports = serial.tools.list_ports.comports()
-        filtered_ports = []
-        
-        # Filtra portas relevantes (ttyACM*, ttyUSB*)
-        for port in ports:
-            if ('ttyACM' in port.device or 'ttyUSB' in port.device):
-                filtered_ports.append(port)
-        
-        if not filtered_ports:
-            self.terminal.write_terminal("\n[ERRO] Nenhuma porta serial encontrada!\n")
-            return
-        
-        # Cria o menu popup
-        menu = QMenu(self)
-        menu.setTitle("Portas Disponíveis")
-        
-        # Adiciona cada porta como uma opção clicável
-        for port in filtered_ports:
-            action = menu.addAction(f"{port.device} - {port.description}")
-            action.triggered.connect(
-                lambda _, p=port.device: self._connect_to_port(p)
-            )
-        
-        # Mostra o menu abaixo do botão "Portas" na toolbar
-        toolbar = self.findChild(QToolBar)
-        for action in toolbar.actions():
-            if "Portas" in action.text():
-                btn = toolbar.widgetForAction(action)
-                menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
-                break
-    def _show_about_menu(self):
-        """Mostra um menu popup com informações sobre o programa (não clicável)"""
-        menu = QMenu(self)
-        menu.setTitle("Sobre o PDTerm Pro")
-        
-        # Adiciona itens não clicáveis
-        about_items = [
-            "PDTerm Pro - Terminal Serial Avançado",
-            "Versão: 1.0.0",
-            "Autor: Seu Nome",
-            "Licença: GPLv3",
-            "GitHub: github.com/seuuser/pdterm",
-            "🖥️🔥 PDSILVA - O Alquimista dos Bytes"
-        ]
-        
-        for item in about_items:
-            action = menu.addAction(item)
-            action.setEnabled(False)  # Desabilita cliques
+    def _show_ports_dialog(self):
+        """Mostra o menu de portas"""
+        menu = self.menu_handler.create_ports_menu()
+        self.menu_handler._show_menu(menu, "Portas")      
             
-        # Mostra o menu abaixo do botão "Sobre" na toolbar
-        toolbar = self.findChild(QToolBar)
-        for action in toolbar.actions():
-            if "Sobre" in action.text():
-                btn = toolbar.widgetForAction(action)
-                menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
-                break
-                                    
-    def _show_port_dialog(self):
-        """Mostra diálogo apenas com portas relevantes"""
-        ports = self._scan_ports()  # Agora usa a lista filtrada
-        
-        if not ports:
-            self.terminal.write_terminal("\n[ERRO] Nenhuma porta serial relevante encontrada!\n")
-            return
-        
-        menu = QMenu(self)
-        
-        for port in ports:
-            action = menu.addAction(f"{port.device} - {port.description}")
-            action.triggered.connect(lambda _, p=port.device: self._connect_to_port(p))
-        
-        # Mostra menu abaixo do botão de conexão
-        toolbar = self.findChild(QToolBar)
-        for action in toolbar.actions():
-            if "Conectar" in action.text():
-                btn = toolbar.widgetForAction(action)
-                menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
-                break
-
-    def _show_menu_dialog(self):
-        options = [
-            (" Option 1", self._toggle_serial),
-            (" Option 2", self._send_file),
-            (" Option 3", self._save_log),
-            (" Option 4", self._scan_ports),
-            (" Option 5", self._meu_item),
-            (" Option 6", self.terminal.clear),
-        ]
-        menu = QMenu(self)
-        
-        for option, descript in ports:
-            action = menu.addAction(f"{option} - {descript}")
-            #action.triggered.connect(lambda _, p=option: self.descript(p))
-            action.setEnabled(False)
-            
-        # Mostra menu abaixo do botão de conexão
-        toolbar = self.findChild(QToolBar)
-        for action in toolbar.actions():
-            if "Conectar1" in action.text():
-                btn = toolbar.widgetForAction(action)
-                menu.exec(btn.mapToGlobal(btn.rect().bottomLeft()))
-                break
-
-    
     def _connect_to_port(self, port_name):
         """Conecta a uma porta serial específica"""
         if self.serial_port and self.serial_port.is_open:
@@ -301,6 +147,56 @@ class PDTermPro(QMainWindow):
         self.serial_port = None
         self.port_label.setText("Porta: Desconectada")
         self.baud_label.setText("Baudrate: -")
+        
+    def _send_to_serial(self, data):
+        if self.serial_port and self.serial_port.is_open:
+            try:
+                self.serial_port.write(data.encode('utf-8'))
+                self.serial_port.flush()
+            except Exception as e:
+                self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar: {str(e)}\n")
+    
+    def _read_serial(self):
+        if self.serial_port and self.serial_port.is_open:
+            try:
+                if self.serial_port.in_waiting:
+                    data = self.serial_port.read(self.serial_port.in_waiting)
+                    self.terminal.write_terminal(data.decode('ascii', errors='replace'))
+                    #self.terminal.write_terminal(f"\nDEBUG - Recebido da serial: {repr(data)}\n")  # Verifique se o "6" está aqui
+            except Exception as e:
+                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
+                self._disconnect_serial()
+    
+    def _scan_ports(self):
+        """Lista apenas portas seriais relevantes (ttyACMx, ttyUSBx)"""
+        ports = serial.tools.list_ports.comports()
+        filtered_ports = []
+        
+        # Filtra portas relevantes
+        for port in ports:
+            if ('ttyACM' in port.device or
+                'ttyUSB' in port.device):
+                filtered_ports.append(port)
+        
+        if filtered_ports:
+            msg = "\n[INFO] Portas disponíveis:\n"
+            for port in filtered_ports:
+                msg += f" - {port.device}: {port.description}\n"
+            self.terminal.write_terminal(msg)
+        else:
+            self.terminal.write_terminal("\n[INFO] Nenhuma porta serial relevante encontrada\n")
+        
+        return filtered_ports
+
+        
+#
+#      SERIAL  FIM
+########################################################################
+
+########################################################################
+#      FILE E LOG INICIO
+#    
+
     
     def _send_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Selecione o arquivo")
@@ -322,11 +218,15 @@ class PDTermPro(QMainWindow):
                 self.terminal.write_terminal(f"\n[INFO] Log salvo em: {file_path}\n")
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Falha ao salvar log: {str(e)}\n")
+#
+#      FILE E LOG  FIM
+########################################################################
 
     def closeEvent(self, event):
         self._disconnect_serial()
         event.accept()
-        
+ 
+ 
     def clear_screen(self):
         """Limpa a tela e envia comando VT102 para limpeza"""
         self.terminal.clear()
@@ -380,10 +280,10 @@ class PDTermPro(QMainWindow):
             "\x1b[1;34;40m╚════════════════════════╝\n"
             "\x1b[33mUsuário: \x1b[37m"
         )
-            
-    def _delay(self, ms):
-        """Pausa a execução sem bloquear a interface"""
-        loop = QEventLoop()
-        QTimer.singleShot(ms, loop.quit)
-        loop.exec()
+#Deprecado            
+#    def _delay(self, ms):
+#        """Pausa a execução sem bloquear a interface"""
+#        loop = QEventLoop()
+#        QTimer.singleShot(ms, loop.quit)
+#        loop.exec()
 

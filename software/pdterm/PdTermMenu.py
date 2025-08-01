@@ -7,8 +7,9 @@ import serial.tools.list_ports
 class PdTermMenu:
     def __init__(self, parent):
         self.parent = parent  # Referência para PDTermPro
+        self._verify_methods()
         self._setup_styles()
-
+    
     def setup_toolbar(self):
         """Configura toda a toolbar e seus menus"""
         toolbar = QToolBar()
@@ -19,7 +20,7 @@ class PdTermMenu:
             ("Conectar", None, self.parent._toggle_serial),
             ("Enviar Arquivo", None, self.parent._send_file),
             ("Salvar Log", None, self.parent._save_log),
-            ("Portas", None, self._create_ports_menu()),
+            ("PortasNovo", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),
             ("Sobre", None, self._create_about_menu())
         ]
@@ -34,31 +35,57 @@ class PdTermMenu:
                 action.triggered.connect(target)                
             toolbar.addAction(action)
         return toolbar
+    
+    def _verify_methods(self):
+        required_methods = ['test_cores_ansi', 'pgordao_terminal_mode']
+        for method in required_methods:
+            if not hasattr(self.parent, method):
+                raise AttributeError(f"O método '{method}' não existe na classe principal!")
 
     def _create_main_menu(self):
         """Menu principal de opções"""
         menu = QMenu(self.parent)
         options = [
             ("Alternar Serial", self.parent._toggle_serial),
-            ("Testar Cores ANSI", self.parent._meu_item),
+            ("Testar Cores ANSI", self.parent.test_cores_ansi),  # Nome corrigido aqui
             ("Modo PGORDÃO", self.parent.pgordao_terminal_mode)
         ]
         for text, callback in options:
             menu.addAction(text, callback)
         return menu
+#Deprecada
+#    def _create_ports_menu(self):
+#        """Menu de portas seriais"""
+#        menu = QMenu(self.parent)
+#        ports = [p for p in serial.tools.list_ports.comports() 
+#                if 'ttyACM' in p.device or 'ttyUSB' in p.device]
+#        
+#        for port in ports:
+#            menu.addAction(
+#                f"{port.device} - {port.description}",
+#                lambda p=port.device: self.parent._connect_to_port(p)
+#            )
+#        return menu
 
-    def _create_ports_menu(self):
-        """Menu de portas seriais"""
-        menu = QMenu(self.parent)
+    def create_ports_menu(self):
+        """Cria e retorna o menu de portas serial"""
         ports = [p for p in serial.tools.list_ports.comports() 
                 if 'ttyACM' in p.device or 'ttyUSB' in p.device]
+        
+        menu = QMenu(self.parent)
+        menu.setTitle("Portas Disponíveis")
+        
+        if not ports:
+            menu.addAction("Nenhuma porta encontrada").setEnabled(False)
+            return menu
         
         for port in ports:
             menu.addAction(
                 f"{port.device} - {port.description}",
                 lambda p=port.device: self.parent._connect_to_port(p)
             )
-        return menu
+        return menu 
+
 
     def _create_about_menu(self):
         """Menu 'Sobre' informativo"""
