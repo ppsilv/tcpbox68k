@@ -20,8 +20,9 @@ class PdTermMenu:
             ("Conectar", None, self.parent._toggle_serial),
             ("Enviar Arquivo", None, self.parent._send_file),
             ("Salvar Log", None, self.parent._save_log),
-            ("PortasNovo", None, self.parent._show_ports_dialog),
+            ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),
+            ("Limpar Buffer", None, self.parent.terminal._emergency_clear),            
             ("Sobre", None, self._create_about_menu())
         ]
 

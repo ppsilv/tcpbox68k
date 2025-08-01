@@ -154,7 +154,14 @@ class TerminalWidget(QPlainTextEdit):
                     cursor.insertText('\n')
                 cursor.insertText(char)
         self.ensureCursorVisible()
-        
+
+    def _emergency_clear(self):
+        """Limpeza de emergência estilo Ctrl+J nos antigos terminais"""
+        if self.serial_port:
+            self.serial_port.reset_input_buffer()
+            self.terminal.clear()
+            self.terminal.write_terminal("\n[SISTEMA] Buffer limpo com sucesso!\n")
+
     def write_terminal(self, text):
         """Escreve texto na posição atual do cursor"""
         cursor = self.textCursor()

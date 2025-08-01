@@ -134,6 +134,8 @@ class PDTermPro(QMainWindow):
                 if self.serial_port.in_waiting:
                     data = self.serial_port.read(self.serial_port.in_waiting)
                     self.terminal.write_terminal(data.decode('ascii', errors='replace'))
+                    #if data.decode(ascii, errors='replace') < 0x20:
+                    self.terminal.write_terminal(f"Byte em hex: {data.decode('ascii', errors='replace'):02X}")                      
                     #self.terminal.write_terminal(f"\nDEBUG - Recebido da serial: {repr(data)}\n")  # Verifique se o "6" está aqui
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")

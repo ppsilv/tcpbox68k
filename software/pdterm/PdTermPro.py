@@ -108,8 +108,10 @@ class PDTermPro(QMainWindow):
 
     def _toggle_serial(self):
         if not self.serial_port:
-            self._show_ports_dialog
-            #self.menu_handler.create_ports_menu();
+            # Mostra portas e conecta automaticamente quando selecionada
+            menu = self.menu_handler.create_ports_menu()
+            menu.triggered.connect(lambda: self._update_connection_status())
+            self.menu_handler._show_menu(menu, "Conectar")
         else:
             self._disconnect_serial()
 
@@ -117,8 +119,48 @@ class PDTermPro(QMainWindow):
         """Mostra o menu de portas"""
         menu = self.menu_handler.create_ports_menu()
         self.menu_handler._show_menu(menu, "Portas")      
+
+    def _update_connection_status(self):
+        """Atualiza a UI com o status atual da conexão serial"""
+        if self.serial_port and self.serial_port.is_open:
+            self.port_label.setText(f"Porta: {self.serial_port.port}")
+            self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
+        else:
+            self.port_label.setText("Porta: Desconectado")
+            self.baud_label.setText("Baudrate: -")
             
     def _connect_to_port(self, port_name):
+        """Conecta à porta serial com limpeza de buffers"""
+        try:
+            if self.serial_port and self.serial_port.is_open:
+                self._disconnect_serial()
+            
+            self.serial_port = serial.Serial(
+                port=port_name,
+                baudrate=9600,
+                bytesize=8,
+                parity='N',
+                stopbits=1,
+                timeout=1
+            )
+            
+            # Limpeza nuclear dos buffers
+            self.serial_port.reset_input_buffer()
+            self.serial_port.reset_output_buffer()
+            
+            # Espera para garantir a limpeza (opcional)
+            import time
+            time.sleep(0.1)
+            
+            self.port_label.setText(f"Porta: {port_name}")
+            self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
+            self.terminal.write_terminal(f"\n[INFO] Conectado à {port_name}\n")
+            
+        except Exception as e:
+            self.terminal.write_terminal(f"\n[ERRO] Falha na conexão: {str(e)}\n")
+            self.serial_port = None
+
+    def _connect_to_portOLD(self, port_name):
         """Conecta a uma porta serial específica"""
         if self.serial_port and self.serial_port.is_open:
             self._disconnect_serial()
@@ -159,14 +201,35 @@ class PDTermPro(QMainWindow):
     def _read_serial(self):
         if self.serial_port and self.serial_port.is_open:
             try:
-                if self.serial_port.in_waiting:
-                    data = self.serial_port.read(self.serial_port.in_waiting)
+
+                # Limita a quantidade de dados lidos por vez
+                max_bytes_per_read = 1024
+                available = min(self.serial_port.in_waiting, max_bytes_per_read)
+                
+                if available > 0:
+                    data = self.serial_port.read(available)
                     self.terminal.write_terminal(data.decode('ascii', errors='replace'))
-                    #self.terminal.write_terminal(f"\nDEBUG - Recebido da serial: {repr(data)}\n")  # Verifique se o "6" está aqui
+
+                #if self.serial_port.in_waiting:
+                #    data = self.serial_port.read(self.serial_port.in_waiting)
+                #    self.terminal.write_terminal(data.decode('ascii', errors='replace'))
+                #    self.ser_received_data(data.decode('ascii', errors='replace'))
+                #    #self.hexdump(data)
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
                 self._disconnect_serial()
-    
+
+    def ser_received_data(self, text):  
+        self.terminal.write_terminal(f"Byte em hex: {text:02X}") 
+        self.terminal.write_terminal(text)
+
+    def hexdump(self,data):
+        for i in range(0, len(data), 16):
+            chunk = data[i:i+16]
+            hex_str = " ".join(f"{b:02X}" for b in chunk)
+            ascii_str = "".join(chr(b) if 32 <= b <= 126 else '.' for b in chunk)
+            self.terminal.write_terminal(f"{i:04X}: {hex_str.ljust(47)}  {ascii_str}")
+
     def _scan_ports(self):
         """Lista apenas portas seriais relevantes (ttyACMx, ttyUSBx)"""
         ports = serial.tools.list_ports.comports()
