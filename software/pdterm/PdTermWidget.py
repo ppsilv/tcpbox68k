@@ -9,6 +9,7 @@ from PyQt6.QtCore import QTimer
 from AnsiProcessor import AnsiProcessor
 from PyQt6.QtGui import QFont, QFontMetrics  # Adicione esta importação
 from PyQt6.QtGui import QTextOption  # Importação adicionada
+from PdTermXmodem import XMODEM_Transfer
 
 from PdTermMenu import PdTermMenu
 
@@ -26,7 +27,7 @@ class TerminalWidget(QPlainTextEdit):
         font.setFixedPitch(True)  # Garante monoespaçamento
         font.setPointSize(12)
         self.setFont(font)
-        self.setFixedSize(800, 500)  # Ajuste baseado na sua fonte
+        self.setFixedSize(800, 600)  # Ajuste baseado na sua fonte
          
         # Atualiza medidas reais
         fm = QFontMetrics(font)
@@ -44,6 +45,7 @@ class TerminalWidget(QPlainTextEdit):
         self._history = []
         self._history_index = 0
         self._ansi_processor = AnsiProcessor(self)  # Novo processador ANSI
+        self._xmodem = XMODEM_Transfer()
 
         # Tamanho baseado em colunas x linhas
         self.COLUNAS = 80
@@ -142,11 +144,10 @@ class TerminalWidget(QPlainTextEdit):
         cursor = self.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.End)
         self.setTextCursor(cursor)
-        #cursor.insertText(f"Colunas cursor  : {cursor.positionInBlock()}\n")
-        #cursor.insertText(f"Colunas terminal: {self.COLUNAS}\n")
-        
         """Método unificado que preserva cores E alinhamento"""
-        if '\x1b[' in text:  # Se tiver códigos ANSI
+        if '\x11[' in text:  # Se tiver códigos Xmodem
+            self.xmodem.init_xmodem();
+        elif '\x1b[' in text:  # Se tiver códigos ANSI
             self._ansi_processor.process_text(text)
         else:
             for char in text.replace('\t', '    '):  # Substitui tabs

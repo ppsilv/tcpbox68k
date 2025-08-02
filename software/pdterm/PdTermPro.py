@@ -56,23 +56,7 @@ class PDTermPro(QMainWindow):
         self.setWindowTitle("PDTerm Pro - Terminal Serial")
         self.setGeometry(100, 100, 800, 600)
 
-    # ... (mantenha apenas os métodos ESSENCIAIS abaixo)
-    # Remova TODOS os métodos de menu antigos (_show_menu_dialog, etc.)
-    # Mantenha apenas:
-    # - Métodos de negócio (_toggle_serial, _send_file, etc.)
-    # - Métodos de conexão serial
-    # - Métodos do terminal (ansi, pgordao, etc.)
 
-#    def _setup_theme(self):
-#        """Estilos podem ficar aqui ou no PdTermMenu"""
-#        self.setStyleSheet("""
-#            QMainWindow { background-color: #1e1e1e; }
-#            QStatusBar {
-#                background-color: #FFFFFF;
-#                color: #FF0000;
-#            }
-#            /* Outros estilos específicos da janela principal */
-#        """)
             
     def _setup_theme(self):
         self.setStyleSheet("""
@@ -146,36 +130,12 @@ class PDTermPro(QMainWindow):
                 stopbits=1,
                 timeout=1
             )
-            
-            # Inicializa XMODEM aqui, após ter uma serial válida
-            from PdTermXmodem import XMODEM_Transfer
-            self.xmodem = XMODEM_Transfer(self.serial_port, self.terminal)
+           
             
         except Exception as e:
             self.terminal.write_terminal(f"\n[ERRO] Falha na conexão: {str(e)}\n")
             self.serial_port = None
 
-    def _connect_to_portOLD(self, port_name):
-        """Conecta a uma porta serial específica"""
-        if self.serial_port and self.serial_port.is_open:
-            self._disconnect_serial()
-        
-        try:
-            self.serial_port = serial.Serial(
-                port=port_name,
-                baudrate=9600,
-                bytesize=8,
-                parity='N',
-                stopbits=1,
-                timeout=1
-            )
-            self.port_label.setText(f"Porta: {port_name}")
-            self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
-            self.terminal.write_terminal(f"\n[INFO] Conectado à {port_name}\n")
-            self.serial_port.reset_input_buffer()
-        except Exception as e:
-            self.terminal.write_terminal(f"\n[ERRO] Falha na conexão com {port_name}: {str(e)}\n")
-            self.serial_port = None
     
     def _disconnect_serial(self):
         if self.serial_port:
@@ -277,32 +237,7 @@ class PDTermPro(QMainWindow):
 #      SERIAL  FIM
 ########################################################################
 
-########################################################################
-# INICIO XMODEM
-    def _init_xmodem(self):
-        """Inicializa o handler XMODEM"""
-        from PdTermXmodem import XMODEM_Transfer
-        self.xmodem = XMODEM_Transfer(self.serial_port, self.terminal)
-        self.xmodem.data_to_send.connect(self._send_to_serial)
-        self.xmodem.progress_updated.connect(self._update_xmodem_progress)
-        
-    def _update_xmodem_progress(self, percent, message):
-        """Atualiza a interface durante transferência"""
-        self.status.showMessage(f"XMODEM: {message} ({percent}%)")
-    
-    def _send_file_xmodem(self):
-        """Menu para enviar arquivo via XMODEM"""
-        if not hasattr(self, 'xmodem') or not self.xmodem:
-            self.terminal.write_terminal("\n[ERRO] Conecte-se a uma porta serial primeiro!\n")
-            return
-            
-        file_path, _ = QFileDialog.getOpenFileName(self, "Enviar via XMODEM")
-        if file_path:
-            self.terminal.write_terminal("\n[XMODEM] Iniciando transferência...\n")
-            self.xmodem.send_file(file_path)
 
-# FIM XMODEM        
-########################################################################
 
 ########################################################################
 #      FILE E LOG INICIO
@@ -390,10 +325,4 @@ class PDTermPro(QMainWindow):
             "\x1b[33mUsuário: \x1b[37m"
         )
 
-#Deprecado            
-#    def _delay(self, ms):
-#        """Pausa a execução sem bloquear a interface"""
-#        loop = QEventLoop()
-#        QTimer.singleShot(ms, loop.quit)
-#        loop.exec()
 

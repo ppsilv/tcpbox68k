@@ -23,7 +23,7 @@ class PdTermMenu:
             ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),
             ("Limpar Buffer", None, self.parent.terminal._emergency_clear),    
-            ("Enviar XMODEM", None, self.parent._send_file_xmodem),     
+            #("Enviar XMODEM", None, self.parent._send_file_xmodem),     
             ("Sobre", None, self._create_about_menu())
         ]
 

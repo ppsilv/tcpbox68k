@@ -934,6 +934,10 @@ MontaAddress:
 ; =====================================================================
 XMODEM_Receive:
                 MOVEM.L D2-D7/A0-A6,-(SP)
+                ; Inicializa variáveis
+                LEA     expected_block,A0
+                MOVE.B  #1,D0
+                MOVE.B  D0,(A0)             ; Bloco esperado (0)
                 LEA     xmodem_buffer,A0
 
                 ; ---- 1. INICIALIZAÇÃO ----
@@ -1079,6 +1083,10 @@ TestHexInput:
     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
 HitAnyKey:
     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
+XmodemInit:
+    DC.B    "XMODEM Receiver Initialized",13,10,0
+XmodemWaitingSoh:    
+    DC.B    "Waiting for SOH (Start of Header)...",13,10,
 
 ;    SECTION bss,BSS             
     SECTION .bss                 
