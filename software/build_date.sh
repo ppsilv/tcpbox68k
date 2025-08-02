@@ -18,7 +18,7 @@ TOTAL=$((10#$YEAR + 10#$MONTH + 10#$DAY + 10#$HOUR + 10#$MIN + 10#$SEC))
 
 # Gera o arquivo .asm com a string e a soma
 echo '      DC.B "Build.: '"$(date +'%Y-%m-%d %H:%M:%S')"'",13,10' >> build_date.inc
-echo '      DC.B "Serial: '$DAY$TOTAL'",0' >> build_date.inc
+echo '      DC.B "Serial: '$DAY$TOTAL'",13,10,0' >> build_date.inc
 echo ";End generated code" >> build_date.inc
 
 # Se o arquivo não existe, cria com valor 1

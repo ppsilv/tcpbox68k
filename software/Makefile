@@ -97,7 +97,7 @@ programL: fill
 programH: fill
 	@echo "Gravando parte HIGH na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
-	@echo "Gravação concluída HIGH! GRAVE A LOW"
+	@echo "Gravação concluída HIGH! GRAVE A MEMORIA LOW"
 
 program: programL programH
 

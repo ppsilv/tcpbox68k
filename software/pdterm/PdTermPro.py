@@ -6,13 +6,16 @@ from PyQt6.QtGui import QTextCursor, QColor, QFont
 from PdTermMenu import PdTermMenu
 from PdTermWidget import TerminalWidget
 from PdTermXmodem import XMODEM_Transfer
+from PdTermFileHandler import FileHandler  # Importe sua classe
 import serial
 import serial.tools.list_ports
+
+import os
 
 class PDTermPro(QMainWindow):
     def __init__(self):
         super().__init__()
-
+        self.file_handler = FileHandler(parent=self)  # Passa a referência
         # Configurações iniciais
         self.serial_port = None
         self.terminal = TerminalWidget()
@@ -93,6 +96,20 @@ class PDTermPro(QMainWindow):
 #      SERIAL  INICIO
 #    
 
+    def _check_serial_in_use(port="/dev/ttyUSB0"):
+        try:
+            port="/dev/ttyUSB0"
+            # Usando lsof via Python
+            print(f"lsof {port}")
+            output = os.popen(f"sudo lsof -X {port}").read()
+            if output:
+                print(f"[ERRO] A porta {port} está em uso por:\n{output}")
+                return True
+            return False
+        except Exception as e:
+            print(f"Erro ao verificar porta: {e}")
+            return False
+    
     def _toggle_serial(self):
         if not self.serial_port:
             # Mostra portas e conecta automaticamente quando selecionada
@@ -117,6 +134,12 @@ class PDTermPro(QMainWindow):
             self.baud_label.setText("Baudrate: -")
 
     def _connect_to_port(self, port_name):
+        #lockfile = "/var/lock/LCK..ttyUSB0"  # ou /run/lock/LCK..ttyUSB0
+        #if os.path.exists(lockfile):
+        #    print("Erro: A porta está travada por outro programa (Minicom?)")
+        #    exit(1)
+        if self._check_serial_in_use():
+            exit(1)            
         """Conecta à porta serial com limpeza de buffers"""
         try:
             if self.serial_port and self.serial_port.is_open:
@@ -153,63 +176,63 @@ class PDTermPro(QMainWindow):
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar: {str(e)}\n")
     
-    def _read_serialOLD(self):
+    def _read_serial(self):
         if self.serial_port and self.serial_port.is_open:
             try:
-
                 # Limita a quantidade de dados lidos por vez
                 max_bytes_per_read = 1024
-                available = min(self.serial_port.in_waiting, max_bytes_per_read)
-                
+                available = min(self.serial_port.in_waiting, max_bytes_per_read)                
                 if available > 0:
+                    data = ""
                     data = self.serial_port.read(available)
+                    print("_read_serial:INIT")
+                    for byte in data:  # 'byte' já é um inteiro (0-255)
+                        print(f"'{chr(byte)}' -> {hex(byte)}")  # Converte para char e hex
+                    print("--------------------------------------------")
+                    print("_read_serial:END")
+
                     self.terminal.write_terminal(data.decode('ascii', errors='replace'))
             except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
+                self.terminal.write_terminal(f"\n[ERRO]1011 Leitura serial: {str(e)}\n")
                 self._disconnect_serial()
     
     def _bytes_to_hex(self, data):
         """Converte bytes para string hexadecimal formatada"""
         return ' '.join(f'{b:02X}' for b in data)
-                    
-    def _read_serial(self):
-        if self.serial_port and self.serial_port.is_open:
-            try:
-                max_bytes_per_read = 1024
-                available = min(self.serial_port.in_waiting, max_bytes_per_read)
-                
-                if available > 0:
-                    data = self.serial_port.read(available)
-                    
-                    # Roteamento inteligente dos dados recebidos
-                    if self.xmodem and self.xmodem.transfer_in_progress:
-                        # Se XMODEM está ativo, envia os dados brutos para ele
-                        self.xmodem.handle_received_data(data)
-                    else:
-                        # Modo normal: exibe no terminal
-                        try:
-                            text = data.decode('ascii', errors='replace')
-                            self.terminal.write_terminal(text)
-                        except UnicodeDecodeError:
-                            # Se não for texto, mostra hexdump
-                            self.terminal.write_terminal(f"\n[HEX] {self._bytes_to_hex(data)}\n")
-                
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
-                self._disconnect_serial()
+
+#DEPRECADA                    
+#    def _read_serialOLD(self):
+#        if self.serial_port and self.serial_port.is_open:
+#            try:
+#                max_bytes_per_read = 1024
+#                available = min(self.serial_port.in_waiting, max_bytes_per_read)
+#                
+#                if available > 0:
+#                    data = self.serial_port.read(available)
+#                    
+#                    # Roteamento inteligente dos dados recebidos
+#                    if self.xmodem and self.xmodem.transfer_in_progress:
+#                        # Se XMODEM está ativo, envia os dados brutos para ele
+#                        self.xmodem.handle_received_data(data)
+#                    else:
+#                        # Modo normal: exibe no terminal
+#                        try:
+#                            text = data.decode('ascii', errors='replace')
+#                            self.terminal.write_terminal(text)
+#                        except UnicodeDecodeError:
+#                            # Se não for texto, mostra hexdump
+#                            self.terminal.write_terminal(f"\n[HEX] {self._bytes_to_hex(data)}\n")
+#                
+#            except Exception as e:
+#                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
+#                self._disconnect_serial()
 
 
+#DEPRECADA
+#    def ser_received_data(self, text):  
+#        self.terminal.write_terminal(f"Byte em hex: {text:02X}") 
+#        self.terminal.write_terminal(text)
 
-    def ser_received_data(self, text):  
-        self.terminal.write_terminal(f"Byte em hex: {text:02X}") 
-        self.terminal.write_terminal(text)
-
-    def hexdump(self,data):
-        for i in range(0, len(data), 16):
-            chunk = data[i:i+16]
-            hex_str = " ".join(f"{b:02X}" for b in chunk)
-            ascii_str = "".join(chr(b) if 32 <= b <= 126 else '.' for b in chunk)
-            self.terminal.write_terminal(f"{i:04X}: {hex_str.ljust(47)}  {ascii_str}")
 
     def _scan_ports(self):
         """Lista apenas portas seriais relevantes (ttyACMx, ttyUSBx)"""

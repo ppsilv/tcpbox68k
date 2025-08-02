@@ -4,12 +4,15 @@ from PyQt6.QtGui import QAction, QIcon  # QAction agora está em QtGui
 from PyQt6.QtCore import Qt
 import serial.tools.list_ports
 
+from PdTermXmodem import XMODEM_Transfer
+
 class PdTermMenu:
     def __init__(self, parent):
         self.parent = parent  # Referência para PDTermPro
         self._verify_methods()
         self._setup_styles()
-    
+        self._xmodem = XMODEM_Transfer()
+
     def setup_toolbar(self):
         """Configura toda a toolbar e seus menus"""
         toolbar = QToolBar()
@@ -23,7 +26,7 @@ class PdTermMenu:
             ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),
             ("Limpar Buffer", None, self.parent.terminal._emergency_clear),    
-            #("Enviar XMODEM", None, self.parent._send_file_xmodem),     
+            ("Enviar XMODEM", None, self._xmodem._send_file_xmodem),
             ("Sobre", None, self._create_about_menu())
         ]
 

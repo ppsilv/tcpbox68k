@@ -50,6 +50,8 @@ ACK            EQU     $06        ; Acknowledge
 NAK            EQU     $15        ; Negative Acknowledge
 CAN            EQU     $18        ; Cancel
 
+
+
 _start:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
         ;Clear entire ram
@@ -80,13 +82,13 @@ DELAY_INIT:
 
 ; Loop principal do menu
 MenuLoop:
-    JSR     new_line
-    LEA     MenuText,A0
-    JSR     UART_WriteString
+    ;JSR     new_line
+    ;LEA     MenuText,A0
+    ;JSR     UART_WriteString
 
     ; Lê seleção do usuário
     JSR     UART_ReadChar
-    JSR     new_line
+    ;JSR     new_line
     ; Processa opção selecionada
     CMP.B   #'1',D0
     BEQ     SelectUART
@@ -108,7 +110,47 @@ MenuLoop:
     BEQ     UART_ReadHex1
     CMP.B   #'0',D0
     BEQ     CalcBaudDiv
+    CMP.B   #'A',D0
+    BEQ     fxSOH
+    CMP.B   #'B',D0
+    BEQ     fxEOT
+    CMP.B   #'C',D0
+    BEQ     fxACK
+    CMP.B   #'D',D0
+    BEQ     fxNAK
+    CMP.B   #'E',D0
+    BEQ     fxCAN
+    CMP.B   #'F',D0
+    BEQ     fxEND
     BRA     MenuLoop            ; Opção inválida, repete menu
+
+
+fxSOH:
+    LEA     xSOH,A0
+    JSR     UART_WriteString
+    BRA     MenuLoop            ; Opção inválida, repete menu
+fxEOT:
+    LEA     xEOT,A0
+    JSR     UART_WriteString    
+    BRA     MenuLoop            ; Opção inválida, repete menu
+fxACK:
+    LEA     xACK,A0
+    JSR     UART_WriteString
+    BRA     MenuLoop            ; Opção inválida, repete menu
+fxNAK:
+    LEA     xNAK,A0
+    JSR     UART_WriteString
+    BRA     MenuLoop            ; Opção inválida, repete menu
+fxCAN:
+    LEA     xCAN,A0
+    JSR     UART_WriteString
+    BRA     MenuLoop            ; Opção inválida, repete menu
+fxEND: 
+    LEA     xEND,A0
+    JSR     UART_WriteString
+    BRA     MenuLoop            ; Opção inválida, repete menu
+
+
 
 
 PISCA_LED:
@@ -172,6 +214,20 @@ UART_ReadChar:
     CMP.B   #$1b,D0
     BEQ     .fim
     JSR     UART_WriteChar
+.fim
+    RTS
+
+; Lê caractere (retorna em D0)
+UART_ReadCharNonEcho:
+    MOVE.L  A0,-(SP)        ; Preserva A0
+    move.l   CurrentUART,A0
+.WaitRx:
+    BTST    #0,LSR(A0)        ; RX ready?
+    BEQ     .WaitRx
+    MOVE.B  RHR(A0),D0
+    MOVE.L  (SP)+,A0        ;Restaura A0
+    CMP.B   #$1b,D0
+    BEQ     .fim
 .fim
     RTS
 
@@ -618,9 +674,20 @@ SetBaudRate:
 ; 3. Carrega programa via serial
 LoadProgram:
 
-    LEA     DEST_BUFFER,A0   ; Onde os dados serão salvos
-    MOVE.L  A0,user_buffer_ptr
-    JSR     XMODEM_Receive
+    LEA    xSOH,A0
+    JSR     UART_WriteString
+    LEA    xEOT,A0
+    JSR     UART_WriteString
+    LEA    xACK,A0
+    JSR     UART_WriteString
+    LEA    xNAK,A0
+    JSR     UART_WriteString
+    LEA    xCAN,A0
+    JSR     UART_WriteString
+
+    ;LEA     DEST_BUFFER,A0   ; Onde os dados serão salvos
+    ;MOVE.L  A0,user_buffer_ptr
+    ;JSR     XMODEM_Receive
 
     BRA     MenuLoop
 ; 4. Grava programa manualmente (hex)
@@ -1027,7 +1094,13 @@ Transfer_Complete:
     SECTION .rodata
     SECTION .data
     DC.B "Valores",0
-cls_str:    dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
+cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
+xSOH       dc.b    $41,'[-',$31,0        ; Start Of Header
+xEOT       dc.b    $41,'[-',$34,0        ; End Of Transmission
+xACK       dc.b    $41,'[-',$36,0        ; Acknowledge
+xNAK       dc.b    $41,'[-',$35,0        ; Negative Acknowledge
+xCAN       dc.b    $41,'[-',$38,0        ; Cancel
+xEND       dc.b    $42,'[-',$1A,0        ; End of Transmission
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
 ; ----------------------------------------------------------------------
@@ -1086,7 +1159,7 @@ HitAnyKey:
 XmodemInit:
     DC.B    "XMODEM Receiver Initialized",13,10,0
 XmodemWaitingSoh:    
-    DC.B    "Waiting for SOH (Start of Header)...",13,10,
+    DC.B    "Waiting for SOH (Start of Header)...",13,10,0
 
 ;    SECTION bss,BSS             
     SECTION .bss                 
