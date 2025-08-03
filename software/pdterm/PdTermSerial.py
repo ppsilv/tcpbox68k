@@ -11,6 +11,14 @@ class PdSerial():
         self.timer = QTimer()
         self.timer.timeout.connect(self._read_serial)
         self.timer.start(50)
+
+
+    def _emergency_clear(self):
+        """Limpeza de emergência estilo Ctrl+J nos antigos terminais"""
+        if self.serial_port:
+            self.serial_port.reset_input_buffer()
+            self.terminal.clear()
+            self.terminal.write_terminal("\n[SISTEMA] Buffer limpo com sucesso!\n")
         
 ########################################################################
 #       _connect_to_port

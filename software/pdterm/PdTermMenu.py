@@ -7,12 +7,14 @@ import sys
 
 from PdTermXmodem import XMODEM_Transfer
 
+
 class PdTermMenu:
     def __init__(self, parent):
         self.parent = parent  # Referência para PDTermPro
         self._verify_methods()
         self._setup_styles()
         self._xmodem = XMODEM_Transfer()
+
 
     def setup_toolbar(self):
         """Configura toda a toolbar e seus menus"""
@@ -24,8 +26,7 @@ class PdTermMenu:
             ("Conectar", None, self.parent._toggle_serial),
             ("Salvar Log", None, self.parent._save_log),
             ("Portas", None, self.parent._show_ports_dialog),
-            ("Limpar", None, self.parent.terminal.clear),
-            ("Limpar Buffer", None, self.parent.terminal._emergency_clear),    
+            ("Limpar", None, self.parent.terminal.clear),   
             ("Enviar XMODEM", None, self._xmodem._send_file_xmodem),
             ("Sobre", None, self._create_about_menu()),
             ("Exit", None, self.exit)

@@ -13,6 +13,7 @@ from PdTermXmodem import XMODEM_Transfer
 
 from PdTermMenu import PdTermMenu
 
+
 class TerminalWidget(QPlainTextEdit):
     data_to_send = pyqtSignal(str)
     
@@ -94,6 +95,7 @@ class TerminalWidget(QPlainTextEdit):
         # Timer para controle manual
         self._blink_timer.start(self._blink_rate)
         #****************************************************************
+                    
     def test_largura(self):
         # Desenha uma linha de referência
         self.insertPlainText("|" + "-" * (self.COLUNAS-2) + "|\n")
@@ -142,12 +144,7 @@ class TerminalWidget(QPlainTextEdit):
                 painter.end()            
         #****************************************************************
 
-    def _emergency_clear(self):
-        """Limpeza de emergência estilo Ctrl+J nos antigos terminais"""
-        if self.serial_port:
-            self.serial_port.reset_input_buffer()
-            self.terminal.clear()
-            self.terminal.write_terminal("\n[SISTEMA] Buffer limpo com sucesso!\n")
+
 
     def write_terminal(self, text):
         """Escreve texto na posição atual do cursor"""
