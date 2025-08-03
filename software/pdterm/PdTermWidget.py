@@ -9,9 +9,8 @@ from PyQt6.QtCore import QTimer
 from AnsiProcessor import AnsiProcessor
 from PyQt6.QtGui import QFont, QFontMetrics  # Adicione esta importação
 from PyQt6.QtGui import QTextOption  # Importação adicionada
-from PdTermXmodem import XMODEM_Transfer
 
-from PdTermMenu import PdTermMenu
+
 
 
 class TerminalWidget(QPlainTextEdit):
@@ -47,7 +46,8 @@ class TerminalWidget(QPlainTextEdit):
         self._history = []
         self._history_index = 0
         self._ansi_processor = AnsiProcessor(self)  # Novo processador ANSI
-        self._xmodem = XMODEM_Transfer()
+
+
 
         # Tamanho baseado em colunas x linhas
         self.COLUNAS = 80

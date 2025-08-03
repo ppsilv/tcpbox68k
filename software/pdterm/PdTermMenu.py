@@ -5,15 +5,14 @@ from PyQt6.QtCore import Qt
 import serial.tools.list_ports
 import sys
 
-from PdTermXmodem import XMODEM_Transfer
-
 
 class PdTermMenu:
-    def __init__(self, parent):
+    def __init__(self, parent, pdserial):
         self.parent = parent  # Referência para PDTermPro
+        self.serial = pdserial
         self._verify_methods()
         self._setup_styles()
-        self._xmodem = XMODEM_Transfer()
+
 
 
     def setup_toolbar(self):
@@ -23,11 +22,9 @@ class PdTermMenu:
         # Lista de ações: (texto, ícone, menu ou callback)
         actions = [
             ("Opções", None, self._create_main_menu()),
-            ("Conectar", None, self.parent._toggle_serial),
+            ("Conectar", None, self.serial._toggle_serial),
             ("Salvar Log", None, self.parent._save_log),
-            ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),   
-            ("Enviar XMODEM", None, self._xmodem._send_file_xmodem),
             ("Sobre", None, self._create_about_menu()),
             ("Exit", None, self.exit)
         ]
@@ -53,7 +50,7 @@ class PdTermMenu:
         """Menu principal de opções"""
         menu = QMenu(self.parent)
         options = [
-            ("Alternar Serial", self.parent._toggle_serial),
+            ("Alternar Serial", self.serial._toggle_serial),
             ("Testar Cores ANSI", self.parent.test_cores_ansi),  # Nome corrigido aqui
             ("Modo PGORDÃO", self.parent.pgordao_terminal_mode)
         ]
@@ -89,7 +86,7 @@ class PdTermMenu:
         for port in ports:
             menu.addAction(
                 f"{port.device} - {port.description}",
-                lambda p=port.device: self.parent._connect_to_port(p)
+                lambda p=port.device: self.serial._connect_to_port(p)
             )
         return menu 
 

@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop
 from PyQt6.QtGui import QTextCursor, QColor, QFont
 from PdTermMenu import PdTermMenu
 from PdTermWidget import TerminalWidget
+from PdTermSerial import PdSerial
 from PdTermFileHandler import FileHandler  # Importe sua classe
 import serial
 import serial.tools.list_ports
@@ -14,30 +15,42 @@ import os
 class PDTermPro(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.file_handler = FileHandler(parent=self)  # Passa a referência
-        # Configurações iniciais
+        self.file_handler = FileHandler(parent=self)
         self.serial_port = None
         self.terminal = TerminalWidget()
-        self.menu_handler = PdTermMenu(self)
+
+        # Cria PdSerial UMA ÚNICA VEZ com todos os parâmetros necessários
+        self.cserial = PdSerial(
+            pdterminal=self.terminal,
+            parent=self,  # Garante que parent não seja None
+            menu_handler=None  # Será definido depois
+        )
+        # Depois cria o menu
+        self.menu_handler = PdTermMenu(parent=self, pdserial=self.cserial)
+        # Completa a referência
+        self.cserial.menu_handler = self.menu_handler
+        
+        
         self.xmodem = None  # Será inicializado quando a serial conectar
         self.current_data_handler = None  # Pode ser None, terminal ou xmodem
 
         self._init_ui()
         self._setup_theme()
-        self._scan_ports()
+        #self._scan_ports()
         
         # Timer para leitura serial
-        self.timer = QTimer()
-        self.timer.timeout.connect(self._read_serial)
-        self.timer.start(50)
+        #self.timer = QTimer()
+        #self.timer.timeout.connect(self._read_serial)
+        #self.timer.start(50)
+
+        # Configura terminal
+        #self.terminal.data_to_send.connect(self._send_to_serial)
+
 
     def _init_ui(self):
         """Configuração única da interface"""
         # Configura toolbar através do menu_handler
         toolbar = self.menu_handler.setup_toolbar()
-        
-        # Configura terminal
-        self.terminal.data_to_send.connect(self._send_to_serial)
         
         # Barra de status
         self.status = QStatusBar()
@@ -55,7 +68,7 @@ class PDTermPro(QMainWindow):
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
         
-        self.setWindowTitle("PDTerm Pro - Terminal Serial")
+        self.setWindowTitle("PDTerm Pro - Terminal Serial V1")
         self.setGeometry(100, 100, 800, 600)
 
 
@@ -94,178 +107,6 @@ class PDTermPro(QMainWindow):
 ########################################################################
 #      SERIAL  INICIO
 #    
-    #DEPRECADA
-    #def _toggle_serial(self):
-    #    if not self.serial_port:
-    #        # Mostra portas e conecta automaticamente quando selecionada
-    #        menu = self.menu_handler.create_ports_menu()
-    #        self.menu_handler._show_menu(menu, "Conectar")
-    #        menu.triggered.connect(lambda: self._update_connection_status())
-    #    else:
-    #        self._disconnect_serial()
-
-
-            
-    def _toggle_serial(self):
-        if not self.serial_port:
-            # Mostra portas e conecta quando selecionada
-            menu = self.menu_handler.create_ports_menu()
-            # Conecta o sinal triggered para chamar _connect_to_port com a ação selecionada
-            menu.triggered.connect(lambda action: self._connect_to_port(action.text()))
-            self.menu_handler._show_menu(menu, "Conectar")
-        else:
-            self._disconnect_serial()
-
-
-    def _show_ports_dialog(self):
-        """Mostra o menu de portas"""
-        menu = self.menu_handler.create_ports_menu()
-        self.menu_handler._show_menu(menu, "Portas")      
-
-#DEPRECADA
-#    def _update_connection_statusOLD(self):
-#        """Atualiza a UI com o status atual da conexão serial"""
-#        if self.serial_port and self.serial_port.is_open:
-#            self.port_label.setText(f"Porta: {self.serial_port.port}")
-#            self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
-#        else:
-#            self.port_label.setText("Porta: Desconectado")
-#            self.baud_label.setText("Baudrate: -")
-
-    def _update_connection_status(self):
-        """Atualiza a UI com o status atual da conexão serial"""
-        try:
-            if self.serial_port and self.serial_port.is_open:
-                self.port_label.setText(f"Porta: {self.serial_port.port}")
-                self.baud_label.setText(f"Baudrate: {self.serial_port.baudrate}")
-                self.port_label.setStyleSheet("color: green;")
-                self.baud_label.setStyleSheet("color: green;")
-            else:
-                self.port_label.setText("Porta: Desconectado")
-                self.baud_label.setText("Baudrate: -")
-                self.port_label.setStyleSheet("color: red;")
-                self.baud_label.setStyleSheet("color: red;")
-        except:
-            # Fallback caso ocorra qualquer erro
-            self.port_label.setText("Porta: Erro")
-            self.baud_label.setText("Baudrate: Erro")
-            self.port_label.setStyleSheet("color: orange;")
-            self.baud_label.setStyleSheet("color: orange;")
-
-#DEPRECADA            
-#    def _connect_to_portOLD(self, port_name):
-#        lockfile = "/var/lock/LCK..ttyUSB0"  # ou /run/lock/LCK..ttyUSB0
-#        if os.path.exists(lockfile):
-#            print("Erro: A porta está travada por outro programa (Minicom?)")
-#            exit(1)         
-#        """Conecta à porta serial com limpeza de buffers"""
-#        try:
-#            if self.serial_port and self.serial_port.is_open:
-#                self._disconnect_serial()
-#            
-#            self.serial_port = serial.Serial(
-#                port=port_name,
-#                baudrate=9600,
-#                bytesize=8,
-#                parity='N',
-#                stopbits=1,
-#                timeout=1
-#            )
-#        except Exception as e:
-#            self.terminal.write_terminal(f"\n[ERRO] Falha na conexão: {str(e)}\n")
-#            self.serial_port = None
-
-    def _connect_to_port(self, port_name):
-        lockfile = f"/var/lock/LCK..{port_name.split('/')[-1]}"  # Ajusta para o nome da porta
-        if os.path.exists(lockfile):
-            self.terminal.write_terminal(f"\n[ERRO] A porta {port_name} está travada por outro programa\n")
-            return False
-         
-        try:
-            if self.serial_port and self.serial_port.is_open:
-                self._disconnect_serial()
-            
-            self.serial_port = serial.Serial(
-                port=port_name,
-                baudrate=9600,
-                bytesize=8,
-                parity='N',
-                stopbits=1,
-                timeout=1
-            )
-            
-            # Limpa buffers
-            self.serial_port.reset_input_buffer()
-            self.serial_port.reset_output_buffer()
-            
-            self.terminal.write_terminal(f"\n[INFO] Conectado à porta {port_name}\n")
-            self._update_connection_status()  # Atualiza a UI
-            return True
-            
-        except Exception as e:
-            self.terminal.write_terminal(f"\n[ERRO] Falha na conexão: {str(e)}\n")
-            self.serial_port = None
-            self._update_connection_status()  # Atualiza para "Desconectado"
-            return False
-    
-
-    
-    def _disconnect_serial(self):
-        if self.serial_port:
-            self.serial_port.close()
-            self.terminal.write_terminal("\n[INFO] Porta serial desconectada\n")
-        self.serial_port = None
-        self.port_label.setText("Porta: Desconectada")
-        self.baud_label.setText("Baudrate: -")
-        
-    def _send_to_serial(self, data):
-        if self.serial_port and self.serial_port.is_open:
-            try:
-                self.serial_port.write(data.encode('utf-8'))
-                self.serial_port.flush()
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar: {str(e)}\n")
-    
-    def _read_serial(self):
-        if self.serial_port and self.serial_port.is_open:
-            try:
-                # Limita a quantidade de dados lidos por vez
-                max_bytes_per_read = 1024
-                available = min(self.serial_port.in_waiting, max_bytes_per_read)                
-                if available > 0:
-                    data = ""
-                    data = self.serial_port.read(available)
-
-                    self.terminal.write_terminal(data.decode('ascii', errors='replace'))
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO]1011 Leitura serial: {str(e)}\n")
-                self._disconnect_serial()
-    
-    def _bytes_to_hex(self, data):
-        """Converte bytes para string hexadecimal formatada"""
-        return ' '.join(f'{b:02X}' for b in data)
-
-
-    def _scan_ports(self):
-        """Lista apenas portas seriais relevantes (ttyACMx, ttyUSBx)"""
-        ports = serial.tools.list_ports.comports()
-        filtered_ports = []
-        
-        # Filtra portas relevantes
-        for port in ports:
-            if ('ttyACM' in port.device or
-                'ttyUSB' in port.device):
-                filtered_ports.append(port)
-        
-        if filtered_ports:
-            msg = "\n[INFO] Portas disponíveis:\n"
-            for port in filtered_ports:
-                msg += f" - {port.device}: {port.description}\n"
-            self.terminal.write_terminal(msg)
-        else:
-            self.terminal.write_terminal("\n[INFO] Nenhuma porta serial relevante encontrada\n")
-        
-        return filtered_ports
 
         
 #
@@ -287,13 +128,12 @@ class PDTermPro(QMainWindow):
                 self.terminal.write_terminal(f"\n[INFO] Log salvo em: {file_path}\n")
             except Exception as e:
                 self.terminal.write_terminal(f"\n[ERRO] Falha ao salvar log: {str(e)}\n")
+
+
 #
 #      FILE E LOG  FIM
 ########################################################################
 
-    def closeEvent(self, event):
-        self._disconnect_serial()
-        event.accept()
  
  
     def clear_screen(self):
