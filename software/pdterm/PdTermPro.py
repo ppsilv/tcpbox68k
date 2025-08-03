@@ -31,8 +31,9 @@ class PDTermPro(QMainWindow):
         # Completa a referência
         self.cserial.menu_handler = self.menu_handler
         
+        self.xmodem = XMODEM_Transfer(parent=self, pdserial=self.cserial)
+
         
-        self.xmodem = None  # Será inicializado quando a serial conectar
         self.current_data_handler = None  # Pode ser None, terminal ou xmodem
 
         self._init_ui()
@@ -48,9 +49,9 @@ class PDTermPro(QMainWindow):
         #self.terminal.data_to_send.connect(self._send_to_serial)
 
     def _start_xmodem_transfer(self):
-        self.xmodem = XMODEM_Transfer()
+        self.xmodem = XMODEM_Transfer(parent=self, pdserial=self.cserial)
         self.xmodem.serial = self.cserial  # Injeta dependência
-        self.xmodem.start_transfer()
+        self.xmodem._send_file_xmodem()
 
     def _init_ui(self):
         """Configuração única da interface"""

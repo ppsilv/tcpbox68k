@@ -13,8 +13,10 @@ TOTAL_REENVIOS = 3
 
 class XMODEM_Transfer(QObject):
 
-    def __init__(self):
-        self.serial_conectada = True  # Flag booleana inicialmente desligada
+    def __init__(self, parent, pdserial):
+        self.parent = parent
+        self.serial = pdserial
+        self.serial_conectada = False  # Flag booleana inicialmente desligada
         self._handler = FileHandler(self.parent)  # parent_window é sua janela principal Qt
         super().__init__()
         self.cancelled = False
@@ -22,7 +24,6 @@ class XMODEM_Transfer(QObject):
         self.current_packet_number = 0
         self.checksum = 0
         self.total_reenvios = 1;
-        self.ser = PdSerial()
         
         # Máquina de estados
         #self.state = 'IDLE'  # Estados possíveis: IDLE, WAIT_NAK, SEND_BLOCK, WAIT_ACK, WAIT_EOT_ACK
