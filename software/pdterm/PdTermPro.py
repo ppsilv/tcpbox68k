@@ -5,7 +5,6 @@ from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop
 from PyQt6.QtGui import QTextCursor, QColor, QFont
 from PdTermMenu import PdTermMenu
 from PdTermWidget import TerminalWidget
-from PdTermXmodem import XMODEM_Transfer
 from PdTermFileHandler import FileHandler  # Importe sua classe
 import serial
 import serial.tools.list_ports
@@ -95,20 +94,6 @@ class PDTermPro(QMainWindow):
 ########################################################################
 #      SERIAL  INICIO
 #    
-
-    def _check_serial_in_use_OBSOLETA(port="/dev/ttyUSB0"):
-        try:
-            port="/dev/ttyUSB0"
-            # Usando lsof via Python
-            print(f"lsof {port}")
-            output = os.popen(f"sudo lsof -X {port}").read()
-            if output:
-                print(f"[ERRO] A porta {port} está em uso por:\n{output}")
-                return True
-            return False
-        except Exception as e:
-            print(f"Erro ao verificar porta: {e}")
-            return False
     
     def _toggle_serial(self):
         if not self.serial_port:
@@ -193,39 +178,6 @@ class PDTermPro(QMainWindow):
     def _bytes_to_hex(self, data):
         """Converte bytes para string hexadecimal formatada"""
         return ' '.join(f'{b:02X}' for b in data)
-
-#DEPRECADA                    
-#    def _read_serialOLD(self):
-#        if self.serial_port and self.serial_port.is_open:
-#            try:
-#                max_bytes_per_read = 1024
-#                available = min(self.serial_port.in_waiting, max_bytes_per_read)
-#                
-#                if available > 0:
-#                    data = self.serial_port.read(available)
-#                    
-#                    # Roteamento inteligente dos dados recebidos
-#                    if self.xmodem and self.xmodem.transfer_in_progress:
-#                        # Se XMODEM está ativo, envia os dados brutos para ele
-#                        self.xmodem.handle_received_data(data)
-#                    else:
-#                        # Modo normal: exibe no terminal
-#                        try:
-#                            text = data.decode('ascii', errors='replace')
-#                            self.terminal.write_terminal(text)
-#                        except UnicodeDecodeError:
-#                            # Se não for texto, mostra hexdump
-#                            self.terminal.write_terminal(f"\n[HEX] {self._bytes_to_hex(data)}\n")
-#                
-#            except Exception as e:
-#                self.terminal.write_terminal(f"\n[ERRO] Leitura serial: {str(e)}\n")
-#                self._disconnect_serial()
-
-
-#DEPRECADA
-#    def ser_received_data(self, text):  
-#        self.terminal.write_terminal(f"Byte em hex: {text:02X}") 
-#        self.terminal.write_terminal(text)
 
 
     def _scan_ports(self):

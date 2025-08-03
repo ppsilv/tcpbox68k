@@ -50,8 +50,6 @@ ACK            EQU     $06        ; Acknowledge
 NAK            EQU     $15        ; Negative Acknowledge
 CAN            EQU     $18        ; Cancel
 
-
-
 _start:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
         ;Clear entire ram
@@ -82,20 +80,21 @@ DELAY_INIT:
 
 ; Loop principal do menu
 MenuLoop:
-    ;JSR     new_line
-    ;LEA     MenuText,A0
-    ;JSR     UART_WriteString
+    JSR     new_line
+    LEA     MenuText,A0
+    JSR     UART_WriteString
 
     ; Lê seleção do usuário
-    JSR     UART_ReadChar
+    JSR     UART_ReadCharNonEcho
     ;JSR     new_line
     ; Processa opção selecionada
+    CMP.B   #'3',D0             ;para essa opção não pode ter echo
+    BEQ     LoadProgram
+    JSR     UART_WriteChar
     CMP.B   #'1',D0
     BEQ     SelectUART
     CMP.B   #'2',D0
     BEQ     SetBaudRate
-    CMP.B   #'3',D0
-    BEQ     LoadProgram
     CMP.B   #'4',D0
     BEQ     WriteProgram
     CMP.B   #'5',D0
@@ -110,47 +109,7 @@ MenuLoop:
     BEQ     UART_ReadHex1
     CMP.B   #'0',D0
     BEQ     CalcBaudDiv
-    CMP.B   #'A',D0
-    BEQ     fxSOH
-    CMP.B   #'B',D0
-    BEQ     fxEOT
-    CMP.B   #'C',D0
-    BEQ     fxACK
-    CMP.B   #'D',D0
-    BEQ     fxNAK
-    CMP.B   #'E',D0
-    BEQ     fxCAN
-    CMP.B   #'F',D0
-    BEQ     fxEND
     BRA     MenuLoop            ; Opção inválida, repete menu
-
-
-fxSOH:
-    LEA     xSOH,A0
-    JSR     UART_WriteString
-    BRA     MenuLoop            ; Opção inválida, repete menu
-fxEOT:
-    LEA     xEOT,A0
-    JSR     UART_WriteString    
-    BRA     MenuLoop            ; Opção inválida, repete menu
-fxACK:
-    LEA     xACK,A0
-    JSR     UART_WriteString
-    BRA     MenuLoop            ; Opção inválida, repete menu
-fxNAK:
-    LEA     xNAK,A0
-    JSR     UART_WriteString
-    BRA     MenuLoop            ; Opção inválida, repete menu
-fxCAN:
-    LEA     xCAN,A0
-    JSR     UART_WriteString
-    BRA     MenuLoop            ; Opção inválida, repete menu
-fxEND: 
-    LEA     xEND,A0
-    JSR     UART_WriteString
-    BRA     MenuLoop            ; Opção inválida, repete menu
-
-
 
 
 PISCA_LED:
@@ -673,23 +632,11 @@ SetBaudRate:
 
 ; 3. Carrega programa via serial
 LoadProgram:
-
-    LEA    xSOH,A0
-    JSR     UART_WriteString
-    LEA    xEOT,A0
-    JSR     UART_WriteString
-    LEA    xACK,A0
-    JSR     UART_WriteString
-    LEA    xNAK,A0
-    JSR     UART_WriteString
-    LEA    xCAN,A0
-    JSR     UART_WriteString
-
-    ;LEA     DEST_BUFFER,A0   ; Onde os dados serão salvos
-    ;MOVE.L  A0,user_buffer_ptr
-    ;JSR     XMODEM_Receive
-
+    LEA     DEST_BUFFER,A0   ; Onde os dados serão salvos
+    MOVE.L  A0,user_buffer_ptr
+    JSR     XMODEM_Receive
     BRA     MenuLoop
+
 ; 4. Grava programa manualmente (hex)
 WriteProgram:
     LEA     WritePrompt,A0
@@ -1013,7 +960,7 @@ XMODEM_Receive:
 
                 ; ---- 2. LOOP PRINCIPAL ----
 Receive_Loop:
-                JSR     UART_ReadChar
+                JSR     UART_ReadCharNonEcho
                 CMP.B   #EOT,D0
                 BEQ     Transfer_Complete   ; Fim da transmissão
 
@@ -1021,21 +968,21 @@ Receive_Loop:
                 BNE     Receive_Loop        ; Ignora bytes inválidos
 
                 ; ---- 3. RECEBE HEADER ----
-                JSR     UART_ReadChar       ; Block number
+                JSR     UART_ReadCharNonEcho       ; Block number
                 MOVE.B  D0,block_number
-                JSR     UART_ReadChar       ; ~Block number (complemento)
+                JSR     UART_ReadCharNonEcho       ; ~Block number (complemento)
 
                 ; ---- 4. RECEBE DADOS ----
                 MOVE.W  #127,D1             ; 128 bytes (0-based)
                 LEA     xmodem_buffer,A1
 
 Receive_Data:
-                JSR     UART_ReadChar
+                JSR     UART_ReadCharNonEcho
                 MOVE.B  D0,(A1)+
                 DBF     D1,Receive_Data
 
                 ; ---- 5. VERIFICA CHECKSUM ----
-                JSR     UART_ReadChar       ; Checksum
+                JSR     UART_ReadCharNonEcho       ; Checksum
                 MOVE.B  D0,D2
 
                 ; Calcula checksum local
@@ -1095,12 +1042,6 @@ Transfer_Complete:
     SECTION .data
     DC.B "Valores",0
 cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
-xSOH       dc.b    $41,'[-',$31,0        ; Start Of Header
-xEOT       dc.b    $41,'[-',$34,0        ; End Of Transmission
-xACK       dc.b    $41,'[-',$36,0        ; Acknowledge
-xNAK       dc.b    $41,'[-',$35,0        ; Negative Acknowledge
-xCAN       dc.b    $41,'[-',$38,0        ; Cancel
-xEND       dc.b    $42,'[-',$1A,0        ; End of Transmission
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
 ; ----------------------------------------------------------------------

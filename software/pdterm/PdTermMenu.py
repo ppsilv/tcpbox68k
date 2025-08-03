@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-from PyQt6.QtWidgets import QMenu, QToolBar
+from PyQt6.QtWidgets import QMenu, QToolBar,QApplication
 from PyQt6.QtGui import QAction, QIcon  # QAction agora está em QtGui
 from PyQt6.QtCore import Qt
 import serial.tools.list_ports
+import sys
 
 from PdTermXmodem import XMODEM_Transfer
 
@@ -26,7 +27,8 @@ class PdTermMenu:
             ("Limpar", None, self.parent.terminal.clear),
             ("Limpar Buffer", None, self.parent.terminal._emergency_clear),    
             ("Enviar XMODEM", None, self._xmodem._send_file_xmodem),
-            ("Sobre", None, self._create_about_menu())
+            ("Sobre", None, self._create_about_menu()),
+            ("Exit", None, self.exit)
         ]
 
         for text, icon, target in actions:
@@ -39,7 +41,10 @@ class PdTermMenu:
                 action.triggered.connect(target)                
             toolbar.addAction(action)
         return toolbar
-    
+        
+    def exit(self):
+        QApplication.quit() 
+        
     def _verify_methods(self):
         pass
 

@@ -7,6 +7,7 @@ import termios
 import time
 from PyQt6.QtCore import QObject, pyqtSignal
 from PdTermFileHandler import FileHandler  # Importe sua classe
+from PdTermSerial import PdSerial
 
 TOTAL_REENVIOS = 3
 
@@ -21,6 +22,8 @@ class XMODEM_Transfer(QObject):
         self.current_packet_number = 0
         self.checksum = 0
         self.total_reenvios = 1;
+        self.ser = PdSerial()
+        
         # Máquina de estados
         #self.state = 'IDLE'  # Estados possíveis: IDLE, WAIT_NAK, SEND_BLOCK, WAIT_ACK, WAIT_EOT_ACK
         #self.current_block = 0
@@ -36,7 +39,17 @@ class XMODEM_Transfer(QObject):
         self.CAN = 0x18
         self.timeout = 50
         self.retries = 10
+        self.buffer = bytearray()  # Buffer para armazenar dados
 
+    def append_data(self, data: bytes):
+        """Adiciona dados ao buffer."""
+        self.buffer.extend(data)
+
+    def read_data(self, size: int) -> bytes:
+        """Lê 'size' bytes do buffer (e os remove)."""
+        chunk = self.buffer[:size]
+        self.buffer = self.buffer[size:]
+        return bytes(chunk)
 
     def extract_number(self, text):
         """
@@ -71,27 +84,15 @@ class XMODEM_Transfer(QObject):
             return 0
 
 
-    def receive_byte_from_serial(self,text):
-        print("xmodem initiated...");
-        length = len(str(text))
-        print(f"receive_byte_from_serial:Len text = {length}")
-        textc = self.extract_number(text)
-        print(f"receive_byte_from_serial:Dado [{textc}]")
-        #hex_str = hex(textc)  # Retorna string no formato '0xff'
-        #print(hex_str) 
-
-
     def verificar_conexao(self):
         if self.serial_conectada:
             print("✅ Serial está conectada.")
         else:
             print("❌ Serial NÃO está conectada.")
 
-    def _send_xmodem_packet(self,chunk, packet_num):
-        print(f"chunk:{chunck}   packet_num:{packet_num}");
-        return True
+
         
-    def _transmite_pacote(self):
+
         #0. The sender says it is ready to transmit
         #   wait for receiver start 
         #1. The receiver start a transmission sending $15
@@ -106,31 +107,7 @@ class XMODEM_Transfer(QObject):
         #5. If sender receive NACK send the same packet
         #   but this happens just for X times
         #6. When sender sent all packets it send EOT          
-        while True:
-            chunk, packet_num = self.handler.get_next_chunk()
-            if chunk is None:
-                break            
-            try:
-                if send_xmodem_packet(chunk, packet_num):  # Sucesso
-                    self.handler.commit_chunk()
-                else:  # Falha
-                    self.handler.reset_to_packet(packet_num)  # Repete o mesmo pacote
-                time.sleep(5)    
-            except Exception:
-                self.handler.reset_to_packet(packet_num)
-
-    def calculate_checksum(self, chunk):
-        """
-        Calcula o checksum simples (soma de bytes módulo 256) para um chunk de dados
-        Args:
-            chunk: bytes - Dados binários a serem verificados
-        Returns:
-            int - Valor do checksum (0-255)
-        """
-        if not isinstance(chunk, (bytes, bytearray)):
-            raise TypeError("O chunk deve ser do tipo bytes ou bytearray")
-    
-        return sum(chunk) % 256                
+           
 
 
 
