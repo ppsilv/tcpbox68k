@@ -21,7 +21,6 @@ class PdTermMenu:
         actions = [
             ("Opções", None, self._create_main_menu()),
             ("Conectar", None, self.parent._toggle_serial),
-            ("Enviar Arquivo", None, self.parent._send_file),
             ("Salvar Log", None, self.parent._save_log),
             ("Portas", None, self.parent._show_ports_dialog),
             ("Limpar", None, self.parent.terminal.clear),

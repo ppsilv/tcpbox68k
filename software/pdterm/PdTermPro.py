@@ -96,7 +96,7 @@ class PDTermPro(QMainWindow):
 #      SERIAL  INICIO
 #    
 
-    def _check_serial_in_use(port="/dev/ttyUSB0"):
+    def _check_serial_in_use_OBSOLETA(port="/dev/ttyUSB0"):
         try:
             port="/dev/ttyUSB0"
             # Usando lsof via Python
@@ -134,12 +134,11 @@ class PDTermPro(QMainWindow):
             self.baud_label.setText("Baudrate: -")
 
     def _connect_to_port(self, port_name):
-        #lockfile = "/var/lock/LCK..ttyUSB0"  # ou /run/lock/LCK..ttyUSB0
-        #if os.path.exists(lockfile):
-        #    print("Erro: A porta está travada por outro programa (Minicom?)")
-        #    exit(1)
-        if self._check_serial_in_use():
-            exit(1)            
+        lockfile = "/var/lock/LCK..ttyUSB0"  # ou /run/lock/LCK..ttyUSB0
+        if os.path.exists(lockfile):
+            print("Erro: A porta está travada por outro programa (Minicom?)")
+            exit(1)
+         
         """Conecta à porta serial com limpeza de buffers"""
         try:
             if self.serial_port and self.serial_port.is_open:
@@ -185,11 +184,6 @@ class PDTermPro(QMainWindow):
                 if available > 0:
                     data = ""
                     data = self.serial_port.read(available)
-                    print("_read_serial:INIT")
-                    for byte in data:  # 'byte' já é um inteiro (0-255)
-                        print(f"'{chr(byte)}' -> {hex(byte)}")  # Converte para char e hex
-                    print("--------------------------------------------")
-                    print("_read_serial:END")
 
                     self.terminal.write_terminal(data.decode('ascii', errors='replace'))
             except Exception as e:
@@ -263,18 +257,8 @@ class PDTermPro(QMainWindow):
 
 
 ########################################################################
-#      FILE E LOG INICIO
+#       LOG INICIO
 #    
-    def _send_file(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Selecione o arquivo")
-        if file_path:
-            try:
-                with open(file_path, 'r') as file:
-                    content = file.read()
-                    self._send_to_serial(content)
-                    self.terminal.write_terminal(f"\n[INFO] Arquivo enviado: {file_path}\n")
-            except Exception as e:
-                self.terminal.write_terminal(f"\n[ERRO] Falha ao enviar arquivo: {str(e)}\n")
     
     def _save_log(self):
         file_path, _ = QFileDialog.getSaveFileName(self, "Salvar Log")

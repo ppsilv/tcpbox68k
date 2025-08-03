@@ -20,7 +20,7 @@ class XMODEM_Transfer(QObject):
         self.chunk =0
         self.current_packet_number = 0
         self.checksum = 0
-        self.total_reenvios = 0;
+        self.total_reenvios = 1;
         # Máquina de estados
         #self.state = 'IDLE'  # Estados possíveis: IDLE, WAIT_NAK, SEND_BLOCK, WAIT_ACK, WAIT_EOT_ACK
         #self.current_block = 0
@@ -153,7 +153,7 @@ class XMODEM_Transfer(QObject):
         self.chunk =0
         self._handler.reset_current_packet_number()
         self.checksum = 0
-        self.total_reenvios = 0;        
+        self.total_reenvios = 1;        
 
         ################################################################
         # 1. Carrega o arquivo
@@ -181,18 +181,19 @@ class XMODEM_Transfer(QObject):
                     break
 
                 #print("Enviando SOH")
-                
-                print(f"Enviando pacote {packet_number:02X}")
+                print(f"{self.SOH:02X}", end='')
+                #print(f"Enviando pacote {packet_number:02X}")
+                print(f"{packet_number:02X}", end='')
                 pn = ~packet_number & 0xFF
-                print(f"Enviando pacote complemento 2 {pn:02X}")
+                print(f"{pn:02X}", end='')
            
-                cs = sum(chunk) % 256 
-                print(f"Enviando Bloco {chunk_counter} ({len(chunk)} bytes packet_number:{packet_number} checksum:{cs}) ---")
-                print(f"Enviando cs:{cs:02X}")
+                #print(f"Enviando Bloco {chunk_counter} ({len(chunk)} bytes packet_number:{packet_number} checksum:{cs}) ---")
                 
                 # Pegar apenas os 5 primeiros bytes
                 primeiros_5_bytes = chunk[:5]
-                print("Primeiros 5 bytes:", ' '.join(f"{b:02X}" for b in primeiros_5_bytes))
+                #print("Primeiros 5 bytes:", ' '.join(f"{b:02X}" for b in primeiros_5_bytes))
+                print( ''.join(f"{b:02X}" for b in primeiros_5_bytes), end='' )
+                
                 #for i, byte in enumerate(primeiros_5_bytes):
                 #    print(f"Byte {i}: "
                 #          f"Hex: {byte:02X} | "
@@ -201,22 +202,26 @@ class XMODEM_Transfer(QObject):
                 #          f"Char: {chr(byte) if 32 <= byte <= 126 else '.'}")
     
                 ################################################################
+
+                cs = sum(chunk) % 256 
+                print(f"{cs:02X} ->", end='', flush=True)        
+            
                 # 2 - Aguarda receiver enviar 
                 resposta = self.ask_user_yes_no("Aguardando receiver enviar ACK ou NACK?")            
                 if resposta:
                     print("Recebeu ACK pacote enviado com sucesso")
                     chunk_counter += 1
                     send_next_packet = True
-                    total_reenvios = 1
+                    self.total_reenvios = 1
                 else:
                     print(f"Recebeu NACK renviar mesmo pacote{packet_number}")
                     send_next_packet = False
-                    total_reenvios += 1
-                    if total_reenvios == TOTAL_REENVIOS:
-                        total_reenvios += 1
+                    if self.total_reenvios == TOTAL_REENVIOS:
+                        self.total_reenvios = 1
                         print("Excedido o total de reenvios do mesmo pacote abortando")
                         return
-                        
+                    self.total_reenvios += 1
+
     
             self._handler.close_file()
         else:

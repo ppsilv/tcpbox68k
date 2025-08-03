@@ -153,29 +153,16 @@ class TerminalWidget(QPlainTextEdit):
         """Escreve texto na posição atual do cursor"""
         cursor = self.textCursor()
         
-        print("write_terminal:")
-        print("--------------------------------------------")
-        for i in range(len(text)):
-            print(text[i])
-        print("--------------------------------------------")
-        for caractere in text:
-            print(f"'{caractere}' -> {hex(ord(caractere))}")
-        print("--------------------------------------------")
-        print("write_terminal:")
-                    
         # Remove seleção se houver
         cursor.clearSelection()
-        length = len(str(text))
-        print(F"write_terminal:Len text = {length}")
-        # Insere o texto na posição atual
-        """Método unificado que preserva cores E alinhamento"""
+
         if 'A[' in text:  # Se tiver códigos Xmodem Init
             print("Xmodem INIT")
             self.transfer_in_progress = True
         if 'B[' in text:  # Se tiver códigos Xmodem End
             print("Xmodem END")
             self.transfer_in_progress = False
-        elif '\x1b[-' in text:  # Se tiver códigos ANSI
+        if '\x1b[-' in text:  # Se tiver códigos ANSI
             print("ANSI")
             self._ansi_processor.process_text(text)
             
@@ -186,25 +173,6 @@ class TerminalWidget(QPlainTextEdit):
             if cursor.positionInBlock() >= self.COLUNAS:
                 cursor.insertText('\n')
             cursor.insertText(text)
-
-#        if '\x11[' in text:  # Se tiver códigos Xmodem Init
-#            print("Xmodem INIT")
-#            self.transfer_in_progress = True
-#        if '\x12[' in text:  # Se tiver códigos Xmodem End
-#            print("Xmodem END")
-#            self.transfer_in_progress = False
-#        elif '\x1b[-' in text:  # Se tiver códigos ANSI
-#            print("ANSI")
-#            self._ansi_processor.process_text(text)
-#            
-#        if self.transfer_in_progress == True:    
-#            self._xmodem.receive_byte_from_serial(text)
-#        else:
-#            print("Normal")
-#            if cursor.positionInBlock() >= self.COLUNAS:
-#                cursor.insertText('\n')
-#            cursor.insertText(text)
-        
         
         # Mantém o cursor visível
         self.setTextCursor(cursor)
