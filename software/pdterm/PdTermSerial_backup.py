@@ -20,8 +20,8 @@ class PdSerial():
 
         self._scan_ports()
 
-        # Configura terminal para escrita na serial
-        self.terminal.data_to_send.connect(self._send_to_serial)
+        # Configura terminal
+       # self.terminal.data_to_send.connect(self._send_to_serial)
 
                     
 ########################################################################

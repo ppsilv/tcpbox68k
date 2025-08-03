@@ -24,7 +24,8 @@ class PdTermMenu:
             ("Opções", None, self._create_main_menu()),
             ("Conectar", None, self.serial._toggle_serial),
             ("Salvar Log", None, self.parent._save_log),
-            ("Limpar", None, self.parent.terminal.clear),   
+            ("Limpar", None, self.parent.terminal.clear),  
+            ("Enviar Arquivo", None,self.parent._start_xmodem_transfer), 
             ("Sobre", None, self._create_about_menu()),
             ("Exit", None, self.exit)
         ]
