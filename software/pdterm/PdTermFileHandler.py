@@ -67,6 +67,9 @@ class FileHandler:
         """Destrutor - garante que o arquivo será fechado"""
         self.close_file()
     
+    def reset_current_packet_number(self):
+        self.current_packet_number = 1
+    
     def get_next_chunk(self, chunk_size=128, include_packet_number=False):
         """
         Retorna o próximo chunk do buffer
@@ -93,13 +96,13 @@ class FileHandler:
         self.current_position += len(chunk)
         self.current_packet_number += 1
         return result
-
-    def commit_chunk(self):
-        """Confirma o envio bem-sucedido, avançando para o próximo chunk"""
-        self.current_position += 128
-        self.current_packet_number += 1
-
-    def reset_to_packet(self, packet_number):
-        """Reinicia a posição para um pacote específico (retry)"""
-        self.current_position = (packet_number - 1) * 128
-        self.current_packet_number = packet_number    
+    #DEPRECADAS
+    #def commit_chunk(self):
+    #    """Confirma o envio bem-sucedido, avançando para o próximo chunk"""
+    #    self.current_position += 128
+    #    self.current_packet_number += 1
+    #
+    #def reset_to_packet(self, packet_number):
+    #    """Reinicia a posição para um pacote específico (retry)"""
+    #    self.current_position = (packet_number - 1) * 128
+    #    self.current_packet_number = packet_number    
