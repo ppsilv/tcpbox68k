@@ -23,9 +23,10 @@ class PdTermMenu:
         actions = [
             ("Opções", None, self._create_main_menu()),
             ("Conectar", None, self.serial._toggle_serial),
+            ("Ler", None, self.serial.ler),
             ("Salvar Log", None, self.parent._save_log),
             ("Limpar", None, self.parent.terminal.clear),  
-            ("Enviar Arquivo", None,self.parent._start_xmodem_transfer), 
+            ("Enviar Arquivo", None,self.parent._start_xmodem_transfer),             
             ("Sobre", None, self._create_about_menu()),
             ("Exit", None, self.exit)
         ]
@@ -58,22 +59,9 @@ class PdTermMenu:
         for text, callback in options:
             menu.addAction(text, callback)
         return menu
-#Deprecada
-#    def _create_ports_menu(self):
-#        """Menu de portas seriais"""
-#        menu = QMenu(self.parent)
-#        ports = [p for p in serial.tools.list_ports.comports() 
-#                if 'ttyACM' in p.device or 'ttyUSB' in p.device]
-#        
-#        for port in ports:
-#            menu.addAction(
-#                f"{port.device} - {port.description}",
-#                lambda p=port.device: self.parent._connect_to_port(p)
-#            )
-#        return menu
 
     def create_ports_menu(self):
-        """Cria e retorna o menu de portas serial"""
+        """Apenas lista as portas, sem conectar diretamente"""
         ports = [p for p in serial.tools.list_ports.comports() 
                 if 'ttyACM' in p.device or 'ttyUSB' in p.device]
         
@@ -85,11 +73,12 @@ class PdTermMenu:
             return menu
         
         for port in ports:
-            menu.addAction(
-                f"{port.device} - {port.description}",
-                lambda p=port.device: self.serial._connect_to_port(p)
-            )
-        return menu 
+            # Apenas adiciona a ação, sem conectar
+            action = menu.addAction(f"{port.device} - {port.description}")
+            action.setData(port.device)  # Armazena o nome da porta nos dados da ação
+        
+        return menu
+
 
 
     def _create_about_menu(self):

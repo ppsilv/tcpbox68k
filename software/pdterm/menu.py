@@ -6,11 +6,17 @@ class App:
         self.root = root
         self.root.title("Menu de Opções")
         
-        # Botão principal que abre o menu
-        self.btn_opcoes = tk.Button(root, text="Opções", command=self._mostrar_opcoes)
-        self.btn_opcoes.pack(pady=20)
+        # Frame container para os botões (organização)
+        btn_frame = tk.Frame(root)
+        btn_frame.pack(pady=10)
+        
+        # Botões LADO A LADO
+        self.btn_opcoes = tk.Button(btn_frame, text="Opções", command=self._mostrar_opcoes)
+        self.btn_opcoes1 = tk.Button(btn_frame, text="Opções1", command=self._mostrar_opcoes1)
+        self.btn_opcoes.pack(side=tk.LEFT, padx=5)  # Lado a lado
+        self.btn_opcoes1.pack(side=tk.LEFT, padx=5)
 
-        # Terminal simulado (apenas para exemplo)
+        # Terminal abaixo dos botões
         self.terminal = tk.Text(root, height=10, width=50)
         self.terminal.pack()
 
@@ -36,6 +42,26 @@ class App:
         menu_opcoes.tk_popup(
             self.btn_opcoes.winfo_rootx(),
             self.btn_opcoes.winfo_rooty() + self.btn_opcoes.winfo_height()
+        )
+    def _mostrar_opcoes1(self):
+        """Cria um menu popup com as opções."""
+        menu_opcoes = tk.Menu(self.root, tearoff=0)  # tearoff=0 remove a linha tracejada
+        
+        # Lista de opções e seus métodos associados
+        options = [
+            ("Option1 1", self._toggle_serial),
+            ("Option1 2", self._send_file),
+            ("Option1 3", self._save_log),
+        ]
+        
+        # Adiciona cada opção ao menu
+        for text, command in options:
+            menu_opcoes.add_command(label=text, command=command)
+        
+        # Mostra o menu na posição do mouse
+        menu_opcoes.tk_popup(
+            self.btn_opcoes1.winfo_rootx(),
+            self.btn_opcoes1.winfo_rooty() + self.btn_opcoes.winfo_height()
         )
 
     # Métodos das opções

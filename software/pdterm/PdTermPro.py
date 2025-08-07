@@ -4,7 +4,7 @@ from PyQt6.QtWidgets import (QMainWindow, QApplication, QPlainTextEdit, QVBoxLay
 from PyQt6.QtCore import Qt, QObject, pyqtSignal, QTimer, QEventLoop
 from PyQt6.QtGui import QTextCursor, QColor, QFont
 from PdTermMenu import PdTermMenu
-from PdTermWidget import TerminalWidget
+from PdTermTerminal import Terminal
 from PdTermSerial import PdSerial
 from PdTermXmodem import XMODEM_Transfer
 from PdTermFileHandler import FileHandler  # Importe sua classe
@@ -18,7 +18,7 @@ class PDTermPro(QMainWindow):
         super().__init__()
         self.file_handler = FileHandler(parent=self)
         #self.serial_port = None
-        self.terminal = TerminalWidget()
+        self.terminal = Terminal()
 
         # Cria PdSerial UMA ÚNICA VEZ com todos os parâmetros necessários
         self.cserial = PdSerial(
@@ -39,14 +39,7 @@ class PDTermPro(QMainWindow):
         self._init_ui()
         self._setup_theme()
         #self._scan_ports()
-        
-        # Timer para leitura serial
-        #self.timer = QTimer()
-        #self.timer.timeout.connect(self._read_serial)
-        #self.timer.start(50)
-
-        # Configura terminal
-        #self.terminal.data_to_send.connect(self._send_to_serial)
+       
 
     def _start_xmodem_transfer(self):
         self.xmodem = XMODEM_Transfer(parent=self, pdserial=self.cserial)
@@ -110,15 +103,6 @@ class PDTermPro(QMainWindow):
                 background-color: #3e3e3e;
             }
         """)
-########################################################################
-#      SERIAL  INICIO
-#    
-
-        
-#
-#      SERIAL  FIM
-########################################################################
-
 
 
 ########################################################################

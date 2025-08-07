@@ -1064,7 +1064,7 @@ MenuText:
     DC.B    "3. Load Program (PC)",13,10
     DC.B    "4. Write Program (Hex)",13,10
     DC.B    "5. Run Program",13,10
-    DC.B    "6. Acescendo os LEDs",13,10
+    DC.B    "6. Acendendo os LEDs",13,10
     DC.B    "7. Memory dump from address buffer",13,10
     DC.B    "8. Read hexa value and put in address buffer",13,10
     DC.B    "9. From screen to buffer E from buffer to screen",13,10

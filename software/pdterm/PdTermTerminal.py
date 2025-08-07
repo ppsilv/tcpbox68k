@@ -10,14 +10,17 @@ from AnsiProcessor import AnsiProcessor
 from PyQt6.QtGui import QFont, QFontMetrics  # Adicione esta importação
 from PyQt6.QtGui import QTextOption  # Importação adicionada
 
-from MyMenu import MyMenu
 
-class TerminalWidget(QPlainTextEdit):
+from PdTermSerial import PdSerial
+
+class Terminal(QPlainTextEdit):
     data_to_send = pyqtSignal(str)
     
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.parent = parent
         self._last_key_was_enter = False  
+        self.transfer_in_progress = False
         # Configura fonte monoespaçada
         #font = QFont("Courier New", 12)  # Ou outra fonte monospace
         font = QFont()
@@ -26,7 +29,11 @@ class TerminalWidget(QPlainTextEdit):
         font.setFixedPitch(True)  # Garante monoespaçamento
         font.setPointSize(12)
         self.setFont(font)
-        self.setFixedSize(800, 500)  # Ajuste baseado na sua fonte
+        self.setFixedSize(800, 600)  # Ajuste baseado na sua fonte
+        
+        self.serial = PdSerial(self,parent)
+         
+        self.data_to_send.connect(self.serial._send_to_serial) 
          
         # Atualiza medidas reais
         fm = QFontMetrics(font)
@@ -44,6 +51,8 @@ class TerminalWidget(QPlainTextEdit):
         self._history = []
         self._history_index = 0
         self._ansi_processor = AnsiProcessor(self)  # Novo processador ANSI
+
+
 
         # Tamanho baseado em colunas x linhas
         self.COLUNAS = 80
@@ -91,6 +100,7 @@ class TerminalWidget(QPlainTextEdit):
         # Timer para controle manual
         self._blink_timer.start(self._blink_rate)
         #****************************************************************
+                    
     def test_largura(self):
         # Desenha uma linha de referência
         self.insertPlainText("|" + "-" * (self.COLUNAS-2) + "|\n")
@@ -138,23 +148,9 @@ class TerminalWidget(QPlainTextEdit):
             finally:
                 painter.end()            
         #****************************************************************
-    def write_terminal_bkp(self, text):
-        cursor = self.textCursor()
-        cursor.movePosition(QTextCursor.MoveOperation.End)
-        self.setTextCursor(cursor)
-        #cursor.insertText(f"Colunas cursor  : {cursor.positionInBlock()}\n")
-        #cursor.insertText(f"Colunas terminal: {self.COLUNAS}\n")
-        
-        """Método unificado que preserva cores E alinhamento"""
-        if '\x1b[' in text:  # Se tiver códigos ANSI
-            self._ansi_processor.process_text(text)
-        else:
-            for char in text.replace('\t', '    '):  # Substitui tabs
-                if cursor.positionInBlock() >= self.COLUNAS:
-                    cursor.insertText('\n')
-                cursor.insertText(char)
-        self.ensureCursorVisible()
-        
+
+
+
     def write_terminal(self, text):
         """Escreve texto na posição atual do cursor"""
         cursor = self.textCursor()
@@ -162,29 +158,25 @@ class TerminalWidget(QPlainTextEdit):
         # Remove seleção se houver
         cursor.clearSelection()
         
-        # Insere o texto na posição atual
-        """Método unificado que preserva cores E alinhamento"""
-        if '\x1b[' in text:  # Se tiver códigos ANSI
-            self._ansi_processor.process_text(text)
+        if text == None:
+            return
+
+        #if 'A[' in text:  # Se tiver códigos Xmodem Init
+        #    print("Xmodem INIT")
+        #    self.transfer_in_progress = True
+        #if 'B[' in text:  # Se tiver códigos Xmodem End
+        #    print("Xmodem END")
+        #    self.transfer_in_progress = False
+        #if '\x1b[-' in text:  # Se tiver códigos ANSI
+        #    print("ANSI")
+        #    self._ansi_processor.process_text(text)
+            
+        if self.transfer_in_progress == True:    
+            self._xmodem.receive_byte_from_serial(text)
         else:
             if cursor.positionInBlock() >= self.COLUNAS:
                 cursor.insertText('\n')
             cursor.insertText(text)
-        
-        # Mantém o cursor visível
-        self.setTextCursor(cursor)
-        self.ensureCursorVisible()
-
-            
-    def write_terminal1(self, text):
-        """Escreve texto na posição atual do cursor"""
-        cursor = self.textCursor()
-        
-        # Remove seleção se houver
-        cursor.clearSelection()
-        
-        # Insere o texto na posição atual
-        cursor.insertText(text)
         
         # Mantém o cursor visível
         self.setTextCursor(cursor)
@@ -279,23 +271,6 @@ class TerminalWidget(QPlainTextEdit):
         }
         return key_map.get(key, text)  # Usa o texto fornecido para teclas normais
     
-#Deprecada
-#    def _recall_history(self, direction):
-#        if not self._history:
-#            return
-#            
-#        self._history_index = max(0, min(self._history_index + direction, len(self._history) - 1))
-    
-#Deprecada
-#    def _update_display(self):
-#        cursor = self.textCursor()
-#        cursor.movePosition(QTextCursor.MoveOperation.End)
-#        cursor.select(QTextCursor.SelectionType.LineUnderCursor)
-#        #cursor.removeSelectedText()
-#        #cursor.insertText(self._prompt)
-#        #cursor.insertText(self._prompt + self._command_buffer)
-#        self.setTextCursor(cursor)
-    
     def _envia_enter(self):
         cmd = self._command_buffer
         self.data_to_send.emit(cmd)
@@ -316,6 +291,7 @@ class TerminalWidget(QPlainTextEdit):
         self._cursor_visible = True
         self._blink_timer.start(self._blink_rate)
         self.viewport().update()    
+        
     def mousePressEvent(self, event):
         """Atualiza posição do cursor ao clicar"""
         super().mousePressEvent(event)

@@ -133,6 +133,8 @@ class XMODEM_Transfer(QObject):
         self.checksum = 0
         self.total_reenvios = 1;        
 
+        #Set flag
+        self.serial._set_flag_serial()
         ################################################################
         # 1. Carrega o arquivo
         if self._handler.load_file_to_buffer():
@@ -142,11 +144,33 @@ class XMODEM_Transfer(QObject):
             # 2 - Aguarda receiver enviar 
             resposta = self.ask_user_yes_no("Aguardando receiver enviar NACK?")            
             if resposta:
-                print("Recebeu NACK")
+                print("Recebeu NACK do dialogo")
                 # Faça algo se for Sim
             else:
                print("Recebeu ACK")
-                    
+            self.serial._send_to_serial('3')
+            
+            print("Lendo primeira")
+            byte = self.serial._read_serial()
+            if byte is None:
+                time.sleep(1)
+                print("Lendo segunda")
+                byte = self.serial._read_serial()
+                if byte is None:
+                    print(f"ERRO estava aguardando NACK")
+                    self.serial._reset_flag_serial()
+                    return
+                else:        
+                    if byte == 0x15:
+                        print(f"Recebido NACK: {byte:02X}")
+                    else:    
+                        print(f"ERRO estava aguardando NACK")
+                        self.serial._reset_flag_serial()
+                        return
+            else:
+                    self.serial._reset_flag_serial()
+                    return
+
             # Recebido o NACK começar transmissão           
             send_next_packet = True
             chunk_counter = 1
@@ -200,10 +224,17 @@ class XMODEM_Transfer(QObject):
                         return
                     self.total_reenvios += 1
 
-    
+            #Set flag
+            self.serial._reset_flag_serial()
+
             self._handler.close_file()
         else:
             print("Falha ao carregar arquivo")
 
 
         #self._transmite_pacote()
+
+    def _bytes_to_hex(self, data):
+        """Converte bytes para string hexadecimal formatada"""
+        return ' '.join(f'{b:02X}' for b in data)  
+        
