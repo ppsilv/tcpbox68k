@@ -14,8 +14,9 @@ from PyQt6.QtGui import QTextOption  # Importação adicionada
 from PdTermSerial import PdSerial
 
 class Terminal(QPlainTextEdit):
-    data_to_send = pyqtSignal(str)
-    
+    #data_to_send = pyqtSignal(str)
+    signal_write_terminal = pyqtSignal(str)
+        
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
@@ -33,7 +34,8 @@ class Terminal(QPlainTextEdit):
         
         self.serial = PdSerial(self,parent)
          
-        self.data_to_send.connect(self.serial._send_to_serial) 
+#        self.data_to_send.connect(self.serial._send_to_serial) 
+        self.signal_write_terminal.connect(self.write_terminal) 
          
         # Atualiza medidas reais
         fm = QFontMetrics(font)
@@ -231,11 +233,13 @@ class Terminal(QPlainTextEdit):
             if char and key != Qt.Key.Key_Backspace and key != Qt.Key.Key_Return and key != Qt.Key.Key_Enter:
                 self._command_buffer = char
                 self._envia_char()
+                self.serial._send_to_serial(char)
                 return
                 
             if key == Qt.Key.Key_Return or key == Qt.Key.Key_Enter:
                 self._command_buffer = '\n'
                 self._envia_enter()
+                self.serial._send_to_serial(char)
                 return
                 
             if key == Qt.Key.Key_Backspace:
@@ -273,12 +277,12 @@ class Terminal(QPlainTextEdit):
     
     def _envia_enter(self):
         cmd = self._command_buffer
-        self.data_to_send.emit(cmd)
+#        self.data_to_send.emit(cmd)
         self._command_buffer = ""
         
     def _envia_char(self):    
         cmd = self._command_buffer
-        self.data_to_send.emit(cmd)
+#        self.data_to_send.emit(cmd)
         self._command_buffer = ""
        
     def print_buffer_hex(self):
@@ -357,36 +361,7 @@ class Terminal(QPlainTextEdit):
             if cursor.positionInBlock() >= self.COLUNAS:
                 cursor.insertText('\n')
             cursor.insertText(char)
+            print(char)
         self.setTextCursor(cursor)
-#Deprecada
-#    def _move_cursor1(self, row, col):
-#        """Move o cursor de forma confiável para linha/coluna específica"""
-#        # 1. Obtém o documento
-#        doc = self.terminal.document()
-#        
-#        # 2. Garante que a linha existe (cria se necessário)
-#        while row >= doc.blockCount():
-#            cursor = self.terminal.textCursor()
-#            cursor.movePosition(QTextCursor.MoveOperation.End)
-#            cursor.insertText("\n")
-#        
-#        # 3. Obtém o bloco (linha) desejado
-#        block = doc.findBlockByNumber(row)
-#        
-#        # 4. Prepara o cursor
-#        cursor = QTextCursor(block)
-#        
-#        # 5. Garante que a coluna existe (preenche com espaços se necessário)
-#        if col >= block.length() - 1:
-#            cursor.movePosition(QTextCursor.MoveOperation.EndOfLine)
-#            cursor.insertText(" " * (col - block.length() + 1))
-#        else:
-#            cursor.setPosition(block.position() + col)
-#        
-#        # 6. Aplica o cursor
-#        self.terminal.setTextCursor(cursor)
-#        self.terminal.ensureCursorVisible()
-#        
-#        # DEBUG (mostra a posição real)
-#        current_block = self.terminal.textCursor().block().blockNumber()
-#        print(f"Cursor REAL: linha {current_block+1}, col {self.terminal.textCursor().positionInBlock()+1}")
+
+ 

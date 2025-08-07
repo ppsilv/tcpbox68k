@@ -6,7 +6,7 @@ import serial.tools.list_ports
 from typing import Optional
 from typing import Optional, Union
 import time
-
+from PyQt6.QtCore import pyqtSignal
 
 class SerialReadWrite:
     # Buffer de saída (escrita)
@@ -17,6 +17,8 @@ class SerialReadWrite:
     serial_port = None  # Variável privada
     port = None
     baud = None
+    serial_lock = Lock()
+    
     def __init__(self, terminal):
         """
         Inicializa o leitor/escritor serial com uma porta específica.
@@ -156,7 +158,7 @@ class SerialReadWrite:
         while self.running and self.is_connected():
             try:
                 if SerialReadWrite.serial_port.in_waiting > 0:
-                    data = SerialReadWrite.serial_port.readline().decode('utf-8').strip()
+                    data = SerialReadWrite.serial_port.readline().decode('utf-8')
                     if data:
                         SerialReadWrite.input_buffer.put(data)     
             except (serial.SerialException, UnicodeDecodeError) as e:
@@ -168,31 +170,32 @@ class SerialReadWrite:
         """Thread para escrita contínua na porta serial."""
         current_port = SerialReadWrite.serial_port
         while self.running: # and self.is_connected():
-            try:
+            with SerialReadWrite.serial_lock:
                 try:
-                    #print(f"\n[DEBUG] Tamanho do buffer: {self.output_buffer.qsize()}")  
-                    #print(f"Lendo do buffer (ID: {id(SerialReadWrite.output_buffer)})")
-                    #if current_port and current_port.is_open:
-                    #    print("_write_serial: SerialReadWrite.serial_port conectada")
-                    #else:
-                    #    print("_write_serial: SerialReadWrite.serial_port Desconectada")
-                    data="VAZIO"   
-                    data = SerialReadWrite.output_buffer.get(timeout=0.1)
-                    if isinstance(data, str):
-                        data = data.encode('utf-8')
-                        print(f"_write_serial: Thread  data to send{data}")    
-                    else:
-                        print("_write_serial: Thread No data to send") 
-                        continue   
-                    current_port.write(data)
-                    current_port.flush()
-                except queue.Empty:
-                    #print("DEBUG: Buffer vazio (comportamento esperado)")
+                    try:
+                        #print(f"\n[DEBUG] Tamanho do buffer: {self.output_buffer.qsize()}")  
+                        #print(f"Lendo do buffer (ID: {id(SerialReadWrite.output_buffer)})")
+                        #if current_port and current_port.is_open:
+                        #    print("_write_serial: SerialReadWrite.serial_port conectada")
+                        #else:
+                        #    print("_write_serial: SerialReadWrite.serial_port Desconectada") 
+                        data = SerialReadWrite.output_buffer.get(timeout=0.1)
+                        if isinstance(data, str):
+                            data = data.encode('utf-8')
+                            print(f"_write_serial: Thread  data to send{data}")    
+                        else:
+                            print("_write_serial: Thread No data to send") 
+                            continue   
+                        current_port.write(data)
+                        current_port.flush()
+                    except queue.Empty:
+                        #print("DEBUG: Buffer vazio (comportamento esperado)")
+                        continue
+                    time.sleep(0.01)     
+                except serial.SerialException as e:
+                    print(f"Erro na escrita serial: {e}")
+                    self._reconnect()
                     continue
-            except serial.SerialException as e:
-                print(f"Erro na escrita serial: {e}")
-                self._reconnect()
-                continue
         print("Thread write serial encerrada...");
 
     def _write_terminal(self):
@@ -203,8 +206,8 @@ class SerialReadWrite:
                 try:
                     if self.has_data('leitor1'):
                         data = self.read_data('leitor1')
-                        data = data.encode('utf-8')
                         if data:
+                            self.terminal.signal_write_terminal.emit(data)
                             print(f"Dados recebidos: {data}")
                 except queue.Empty:
                     continue
@@ -213,7 +216,7 @@ class SerialReadWrite:
                 continue
         print("Thread write terminal encerrada...");
 
-    
+  
     def _reconnect(self):
         """Tenta reconectar à porta serial após falha."""
         self.stop()
@@ -244,16 +247,6 @@ class SerialReadWrite:
         return False
     
     def read_data(self, reader_id: str) -> Optional[str]:
-        """
-        Lê dados do buffer para um leitor específico.
-        
-        Args:
-            reader_id: Identificador do leitor
-            
-        Returns:
-            Os dados lidos ou None se não houver dados disponíveis ou se outro leitor
-            estiver com o acesso no momento.
-        """
         if self.reader_lock.locked() and self.current_reader != reader_id:
             return None
         
@@ -265,16 +258,16 @@ class SerialReadWrite:
                 return None
             finally:
                 self.current_reader = None
-
-    def non_blocking_input(self,prompt="", timeout=1):
-      
-        # Verifica se há dados disponíveis no stdin
-        ready, _, _ = select.select([sys.stdin], [], [], timeout)
-        
-        if ready:
-            return sys.stdin.readline().rstrip("\n")
-        else:
-            return None  # Nenhum input disponível
+#
+#    def non_blocking_input(self,prompt="", timeout=1):
+#      
+#        # Verifica se há dados disponíveis no stdin
+#        ready, _, _ = select.select([sys.stdin], [], [], timeout)
+#        
+#        if ready:
+#            return sys.stdin.readline().rstrip("\n")
+#        else:
+#            return None  # Nenhum input disponível
             
     def _disconnect_serial(self, silent=True):
         """Desconecta a porta serial. Se silent=True, não mostra mensagem."""
