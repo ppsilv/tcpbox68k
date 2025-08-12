@@ -5,7 +5,7 @@ import serial.tools.list_ports
 import termios
 import time
 from PdTermSerialMonoThread import SerialReadWrite
-
+from typing import Optional, Union
 
 class PdSerial():
     def __init__(self, pdterminal, parent=None, menu_handler=None):
@@ -116,14 +116,26 @@ class PdSerial():
         finally:
             if not (SerialReadWrite.serial_port and SerialReadWrite.serial_port.is_open):
                 self._update_connection_status()
+
+    def stop_thread_write_to_terminal():
+        print("PdTermSerial.py: Calling thread_serial.stop_thread_write_to_terminal" )
+        self.thread_serial.stop_thread_write_to_terminal.stop()
                 
 ########################################################################
-#       _disconnect_serial
-#    def _disconnect_serial(self, silent=False):
-#        self.thread_serial._disconnect_serial()
-#        self._update_connection_status()
+#       stop_thread_write_terminal
+    def stop_thread_write_terminal(self, silent=False):
+        self.thread_serial.stop_thread_write_to_terminal()
+        
+########################################################################
+#       stop_thread_write_terminal
+    def start_thread_write_terminal(self, silent=False):
+        self.thread_serial.star_thread_write_to_terminal()
 
-
+    def write_to_serial(self, data: Union[str, bytes]):
+        self.thread_serial.write(data)
+        
+    def read_serial_input_buffer(self):
+        return self.thread_serial.read_input_buffer()
 ########################################################################
 #       _send_to_serial
     def _send_to_serial(self, data):

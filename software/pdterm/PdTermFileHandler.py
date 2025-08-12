@@ -69,33 +69,87 @@ class FileHandler:
     
     def reset_current_packet_number(self):
         self.current_packet_number = 1
-    
-    def get_next_chunk(self, chunk_size=128, include_packet_number=False):
+
+    def get_next_chunk(self, chunk_size=128, include_packet_number=False, include_checksum=False):
         """
-        Retorna o próximo chunk do buffer
+        Formas de chamar
+        chunk = handler.get_next_chunk(128)
+        chunk, pkt_num = handler.get_next_chunk(128, include_packet_number=True)
+        chunk, pkt_num, checksum = handler.get_next_chunk(128, include_packet_number=True, include_checksum=True)
+        
+        Retorna o próximo chunk do buffer com opções adicionais
         Args:
             chunk_size: tamanho do bloco (padrão: 128 bytes)
-            include_packet_number: se True, retorna também o número do pacote
+            include_packet_number: se True, inclui o número do pacote
+            include_checksum: se True, calcula checksum do chunk
         Returns:
-            Se include_packet_number=False: bytes ou None
-            Se include_packet_number=True: tuple (bytes, int) ou (None, None)
+            Dependendo dos parâmetros:
+            - chunk (bytes)
+            - (chunk, packet_number) 
+            - (chunk, packet_number, checksum)
+            - (chunk, checksum)
+            Retorna None ou (None, None) ou (None, None, None) quando acabar
         """
         if self.file_buffer is None:
             raise ValueError("Nenhum arquivo carregado. Chame load_file_to_buffer() primeiro.")
         
         if self.current_position >= len(self.file_buffer):
-            return (None, None) if include_packet_number else None
+            if include_packet_number and include_checksum:
+                return (None, None, None)
+            elif include_packet_number or include_checksum:
+                return (None, None)
+            return None
             
         chunk = self.file_buffer[self.current_position:self.current_position + chunk_size]
+        result = [chunk]
         
         if include_packet_number:
-            result = (chunk, self.current_packet_number)
-        else:
-            result = chunk
-            
+            result.append(self.current_packet_number)
+        
+        if include_checksum:
+            checksum = self._calculate_checksum(chunk)
+            result.append(checksum)
+        
         self.current_position += len(chunk)
         self.current_packet_number += 1
-        return result
+        
+        return tuple(result) if len(result) > 1 else chunk
+
+    def _calculate_checksum(self, data):
+        """Calcula checksum simples (soma de bytes modulo 256)"""
+        if not data:
+            return 0
+        return sum(data) % 256
+
+    
+#DEPRECADA        
+#    def get_next_chunk(self, chunk_size=128, include_packet_number=False):
+#        """
+#        Retorna o próximo chunk do buffer
+#        Args:
+#            chunk_size: tamanho do bloco (padrão: 128 bytes)
+#            include_packet_number: se True, retorna também o número do pacote
+#        Returns:
+#            Se include_packet_number=False: bytes ou None
+#            Se include_packet_number=True: tuple (bytes, int) ou (None, None)
+#        """
+#        if self.file_buffer is None:
+#            raise ValueError("Nenhum arquivo carregado. Chame load_file_to_buffer() primeiro.")
+#        
+#        if self.current_position >= len(self.file_buffer):
+#            return (None, None) if include_packet_number else None
+#            
+#        chunk = self.file_buffer[self.current_position:self.current_position + chunk_size]
+#        
+#        if include_packet_number:
+#            result = (chunk, self.current_packet_number)
+#        else:
+#            result = chunk
+#            
+#        self.current_position += len(chunk)
+#        self.current_packet_number += 1
+#        return result
+        
     #DEPRECADAS
     #def commit_chunk(self):
     #    """Confirma o envio bem-sucedido, avançando para o próximo chunk"""

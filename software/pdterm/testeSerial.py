@@ -120,12 +120,12 @@ class SerialManager:
         if not status:
             print(f"\n[ERRO] {msg}")
             return False
-            
+        print(f"Conteúdo real: {dados!r}")    
         try:
-            if isinstance(dados, str):
-                dados = dados.encode('utf-8')
-                
-            print(f"\n[ESCRITA] Enviando {len(dados)} bytes...")
+            
+            #if isinstance(dados, str):
+            #    dados = dados.encode('utf-8')              
+
             escritos = self.porta_serial.write(dados)
             self.porta_serial.flush()
             
@@ -184,11 +184,13 @@ def main():
             
         elif opcao == "2":
             porta = input("\nPorta (ex: /dev/ttyUSB0): ").strip()
+            porta = "/dev/ttyUSB0"
             if not porta:
                 print("[ERRO] Nome da porta não pode ser vazio")
                 continue
                 
             baud = input("Baud rate (padrão: 9600): ").strip() or "9600"
+            baud = "9600"
             if not baud.isdigit():
                 print("[ERRO] Baud rate deve ser numérico")
                 continue
@@ -205,11 +207,25 @@ def main():
             
         elif opcao == "4":
             dados = input("\nDados a enviar: ").strip()
+            print(f"tamanho dados {len(dados)}")
+            
             if not dados:
                 print("[ERRO] Dados não podem ser vazios")
                 continue
-                
-            gerenciador.escrever_dados(dados)
+        
+            try:
+                # Se for um único dígito (0-9)
+                if len(dados) == 1 and dados.isdigit():
+                    valor_numerico = int(dados)
+                    print(f"Valor numérico: {valor_numerico}")
+                # Se for um número maior
+                else:
+                    valor_numerico = int(dados)
+                    
+                gerenciador.escrever_dados(valor_numerico)
+        
+            except ValueError:
+                print("[ERRO] Os dados devem ser um número válido")
             
         elif opcao == "5":
             gerenciador.desconectar()

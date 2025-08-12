@@ -109,6 +109,16 @@ MenuLoop:
     BEQ     UART_ReadHex1
     CMP.B   #'0',D0
     BEQ     CalcBaudDiv
+    CMP.B   #'A',D0
+    BEQ     NOVO_PISCA
+    CMP.B   #'T',D0
+    BEQ     TESTE_BUFFER
+    CMP.B   #'U',D0
+    BEQ     TESTE_BUFFER2
+    CMP.B   #'V',D0
+    BEQ     TESTE_BUFFER3
+    CMP.B   #'X',D0
+    BEQ     TESTE_BUFFER4
     BRA     MenuLoop            ; Opção inválida, repete menu
 
 
@@ -122,16 +132,94 @@ PISCA_LED:
         MOVE.W  #$0000,D0
         MOVE.W  D0,$2400
         BRA     MenuLoop
+
+
 LED_INIT:
+        MOVE.L  D0,-(SP)        ; Preserva D0
         MOVE.W  #$AA00,D0
         MOVE.W  D0,$2400
-        move.l  #500000,D3
+        move.l  #250000,D3
 .DELAY1:
         subq.l  #1,D3
         bne     .DELAY1
         MOVE.W  #$0000,D0
         MOVE.W  D0,$2400
+        MOVE.L  (SP)+,D0        ;Restaura D0
         RTS
+
+WRITE_LEDS:
+        MOVE.W  D0,$2400
+        RTS
+;Esse loop funciona
+TESTE_BUFFER:
+    MOVE.W  #128/2,D1        ; 32 iterações (128 bytes / 4 bytes por long)
+    LEA     xmodem_buffer,A1
+    MOVE.W  #$0101,D0    ; Valor inicial
+.Loop:
+    MOVE.W  D0,(A1)+
+    ADD.W   #$0101,D0    ; Incrementa cada byte do long
+    SUBQ.W  #1,D1
+    BNE     .Loop
+
+TESTE_BUFFER2:
+    MOVE.L  #$00000080,D1        ; 32 iterações (128 bytes / 4 bytes por long)
+    LEA     xmodem_buffer,A1
+    MOVE.L  #$00000001,D0    ; Valor inicial
+.Loop:
+    MOVE.B  D0,(A1)+
+    ADD.B   #$01,D0    ; Incrementa cada byte do long
+    SUBQ.B  #1,D1
+    BNE     .Loop
+
+TESTE_BUFFER3:
+    ALIGN   2
+    LEA     $82000,A0
+    LEA     $8FFFF,A1
+    MOVEQ   #0,D0
+.ClearLoop:
+    ADD.W   #$0101,D0
+    MOVE.W  D0,(A0)+
+    CMPA.L  A0,A1
+    BHI     .ClearLoop
+    BRA     MenuLoop
+
+TESTE_BUFFER4:
+    ALIGN   1
+    LEA     $82000,A0
+    LEA     $8FFFF,A1
+    MOVEQ   #0,D0
+.ClearLoop:
+    ADD.B   #$0101,D0
+    MOVE.B  D0,(A0)+
+    CMPA.L  A0,A1
+    BHI     .ClearLoop
+    BRA     MenuLoop
+
+    ORG     $00081530          ; Endereço de carga do código
+
+NOVO_PISCA:
+        MOVE.L  #$0010,D1
+.LOOP_PISCA:
+        MOVE.W  #$FF00,D0
+        MOVE.W  D0,$2400
+        JSR     .NEW_DELAY
+
+        MOVE.W  #$0000,D0
+        MOVE.W  D0,$2400
+        JSR     .NEW_DELAY
+        SUB.B   #$01,D1
+        BNE     .LOOP_PISCA
+        BRA     MenuLoop
+
+.NEW_DELAY:
+        MOVE.L  #500000,D3
+.DELAY1:
+        SUBQ.L  #1,D3
+        BNE     .DELAY1
+        RTS
+
+
+
 
 ; ----------------------------------------------------------------------
 ; Rotinas de E/S da UART
@@ -164,7 +252,7 @@ UART_WriteChar:
 ; Lê caractere (retorna em D0)
 UART_ReadChar:
     MOVE.L  A0,-(SP)        ; Preserva A0
-    move.l   CurrentUART,A0
+    MOVE.L   CurrentUART,A0
 .WaitRx:
     BTST    #0,LSR(A0)        ; RX ready?
     BEQ     .WaitRx
@@ -179,15 +267,14 @@ UART_ReadChar:
 ; Lê caractere (retorna em D0)
 UART_ReadCharNonEcho:
     MOVE.L  A0,-(SP)        ; Preserva A0
-    move.l   CurrentUART,A0
+    MOVE.L  CurrentUART,A0
 .WaitRx:
     BTST    #0,LSR(A0)        ; RX ready?
     BEQ     .WaitRx
+
     MOVE.B  RHR(A0),D0
     MOVE.L  (SP)+,A0        ;Restaura A0
-    CMP.B   #$1b,D0
-    BEQ     .fim
-.fim
+
     RTS
 
 ; ----------------------------------------------------------------------
@@ -663,9 +750,18 @@ WriteProgram:
 RunProgram:
     LEA     RunPrompt,A0
     JSR     UART_WriteString
-    JSR     UART_ReadHex        ; Lê endereço
-    MOVE.L  D0,A0
-    JSR     (A0)                ; Chama subrotina
+    LEA     $81016,A0   ; A0 aponta para o endereço $81016 (onde está 0x00081000)
+    MOVE.L  (A0),A0     ; A0 agora contém o valor 0x00081000
+
+; Passo 2: Executa o código no endereço armazenado em A0 ($00081000)
+    JSR     (A0)        ; Chama o código como uma sub-rotina (salva o endereço de retorno)
+    ; ou
+;    JMP     (A0)        ; Pula diretamente para o endereço (sem retorno)
+
+
+;    JSR     UART_ReadHex        ; Lê endereço
+;    MOVE.L  D0,A0
+;    JSR     (A0)                ; Chama subrotina
     BRA     MenuLoop
 
 ; ----------------------------------------------------------------------
@@ -945,6 +1041,11 @@ MontaAddress:
     ALIGN 2
 ; =====================================================================
 ; XMODEM RECEIVER ROUTINE
+;bloco.append(0x01);        // SOH
+;bloco.append(blockNumber); // Número do bloco (começa com 1)
+;bloco.append(255 - blockNumber); // Complemento
+;bloco.append(dados);       // Seus 128 bytes de dados
+;bloco.append(checksum);    // Checksum calculado
 ; =====================================================================
 XMODEM_Receive:
                 MOVEM.L D2-D7/A0-A6,-(SP)
@@ -958,62 +1059,108 @@ XMODEM_Receive:
                 MOVE.B  #NAK,D0
                 JSR     UART_WriteChar      ; Solicita início
 
+                ;SINALIZA NACK SENT
+                MOVE.W  #$0800,D0
+                JSR     WRITE_LEDS
+
                 ; ---- 2. LOOP PRINCIPAL ----
 Receive_Loop:
                 JSR     UART_ReadCharNonEcho
+
                 CMP.B   #EOT,D0
                 BEQ     Transfer_Complete   ; Fim da transmissão
 
                 CMP.B   #SOH,D0
                 BNE     Receive_Loop        ; Ignora bytes inválidos
 
+                ;SINALIZA leds
+                MOVE.W  #$0C00,D0
+                JSR     WRITE_LEDS
+
                 ; ---- 3. RECEBE HEADER ----
                 JSR     UART_ReadCharNonEcho       ; Block number
                 MOVE.B  D0,block_number
+
                 JSR     UART_ReadCharNonEcho       ; ~Block number (complemento)
 
-                ; ---- 4. RECEBE DADOS ----
-                MOVE.W  #127,D1             ; 128 bytes (0-based)
-                LEA     xmodem_buffer,A1
+                ;SINALIZA leds
+                MOVE.W  #$0800,D0
+                JSR     WRITE_LEDS
 
-Receive_Data:
-                JSR     UART_ReadCharNonEcho
-                MOVE.B  D0,(A1)+
-                DBF     D1,Receive_Data
+                ; ---- 4. RECEBE DADOS ----
+                MOVE.L  #128/4,D1        ; 32 longs (128 bytes)
+                LEA     xmodem_buffer,A1
+Read_Loop:
+                ; Lê 4 bytes da UART e armazena em D0 (usando shifts/ORs)
+                JSR     UART_ReadCharNonEcho    ; Byte 1 (bits 24-31)
+                LSL.L   #8,D0
+                JSR     UART_ReadCharNonEcho    ; Byte 2 (bits 16-23)
+                LSL.L   #8,D0
+                JSR     UART_ReadCharNonEcho    ; Byte 3 (bits 8-15)
+                LSL.L   #8,D0
+                JSR     UART_ReadCharNonEcho    ; Byte 4 (bits 0-7)
+                MOVE.L  D0,(A1)+         ; Grava os 4 bytes
+                SUBQ.L  #1,D1
+                BNE     Read_Loop
+
+                MOVE.W  #$0600,D0
+                JSR     WRITE_LEDS
 
                 ; ---- 5. VERIFICA CHECKSUM ----
                 JSR     UART_ReadCharNonEcho       ; Checksum
                 MOVE.B  D0,D2
 
+
+;******************************************************************************************
+                ;SEM CHECKSUM NESSE MOMENTO SEM COPIAR DADOS SO TESTANDO ENVIO
+           ;     BRA     Send_ACK
+;******************************************************************************************
+
                 ; Calcula checksum local
-                LEA     xmodem_buffer,A1
-                MOVE.W  #127,D1
-                CLR.B   D3
+           ;     LEA     xmodem_buffer,A1
+           ;     MOVE.W  #127,D1
+           ;     CLR.B   D3
 
 Calc_Checksum:
-                ADD.B   (A1)+,D3
-                DBF     D1,Calc_Checksum
+           ;     ADD.B   (A1)+,D3
+           ;     DBF     D1,Calc_Checksum;
 
-                CMP.B   D2,D3
-                BNE     Send_NAK            ; Erro no checksum
+           ;     CMP.B   D2,D3
+           ;     BNE     Send_NAK            ; Erro no checksum
 
                 ; ---- 6. VALIDA NÚMERO DO BLOCO ----
-                MOVE.B  block_number,D0
-                CMP.B   expected_block,D0
-                BNE     Send_NAK            ; Bloco fora de ordem
+           ;     MOVE.B  block_number,D0
+           ;     CMP.B   expected_block,D0
+           ;     BNE     Send_NAK            ; Bloco fora de ordem
 
                 ; ---- 7. COPIA DADOS VÁLIDOS ----
                 ; (Aqui você processa os 128 bytes recebidos)
-                ; Exemplo: copiar para RAM/Flash
-                LEA     xmodem_buffer,A1
-                MOVE.L  user_buffer_ptr,A2  ; Defina isso antes de chamar
-                MOVE.W  #127,D1
+                ; Exemplo: copiar do buffer para a RAM
+                ; 1. Copia os 128 bytes do XMODEM para o buffer destino
+                LEA     xmodem_buffer,A1     ; Origem (128 bytes)
+                MOVE.L  user_buffer_ptr,A2   ; Destino (garanta alinhamento em 4 bytes)
+                MOVE.L  #32,D1              ; 32 longs = 128 bytes (contador exato)
 Copy_Data:
-                MOVE.B  (A1)+,(A2)+
-                DBF     D1,Copy_Data
+                MOVE.L  (A1)+,(A2)+         ; Copia 4 bytes por vez
+                SUBQ.L  #1,D1               ; Decrementa contador
+                BNE     Copy_Data            ; Repete até D1 = 0
+                ; 2. Atualiza user_buffer_ptr para o próximo bloco (+128 bytes)
+                MOVE.L  user_buffer_ptr,D0
+                ADDI.L  #128,D0
+                MOVE.L  D0,user_buffer_ptr
+
+
 
                 ; ---- 8. CONFIMA RECEPÇÃO ----
                 ADDQ.B  #1,expected_block   ; Próximo bloco
+                MOVE.B  #ACK,D0
+                JSR     UART_WriteChar
+                BRA     Receive_Loop
+
+Send_ACK:
+                ;SINALIZA NACK SENT
+                MOVE.W  #$0400,D0
+                JSR     WRITE_LEDS
                 MOVE.B  #ACK,D0
                 JSR     UART_WriteChar
                 BRA     Receive_Loop
@@ -1028,6 +1175,47 @@ Transfer_Complete:
                 JSR     UART_WriteChar
                 MOVEM.L (SP)+,D2-D7/A0-A6
                 RTS
+
+;Receive_XMODEM:
+;    MOVE.L  #64,D1           ; 128 bytes / 2 (64 words)
+;    LEA     xmodem_buffer,A1
+;Receive_Loop:
+;    JSR     UART_ReadChar    ; Lê byte alto (D0.b)
+;    LSL.W   #8,D0            ; Desloca para o byte alto da word
+;    MOVE.B  D0,D2            ; Armazena temporariamente
+;    JSR     UART_ReadChar    ; Lê byte baixo (D0.b)
+;    OR.B    D2,D0            ; Combina os dois bytes em uma word (D0.w)
+;    MOVE.W  D0,(A1)+         ; Grava a word na memória
+;    SUBQ    #1,D1
+;    BNE     Receive_Loop
+
+;Receive_XMODEM:
+;    LEA     xmodem_buffer,A0
+;    LEA     128(A0),A1       ; A1 = fim do buffer (A0 + 128)
+;    MOVEQ   #0,D0            ; Limpa D0 (opcional)
+;Read_Loop:
+;    JSR     UART_ReadChar    ; Lê byte 1 (D0.b)
+;    LSL.W   #8,D0            ; Armazena no byte alto da word
+;    JSR     UART_ReadChar    ; Lê byte 2 (D0.b)
+;    MOVE.W  D0,(A0)+         ; Grava a word
+;    CMPA.L  A0,A1            ; A0 >= A1?
+;    BLO     Read_Loop        ; Se não, continua
+
+;Receive_XMODEM:
+;    MOVE.L  #128/4,D1        ; 32 longs (128 bytes)
+;    LEA     xmodem_buffer,A1
+;Read_Loop:
+;    ; Lê 4 bytes da UART e armazena em D0 (usando shifts/ORs)
+;    JSR     UART_ReadChar    ; Byte 1 (bits 24-31)
+;    LSL.L   #8,D0
+;    JSR     UART_ReadChar    ; Byte 2 (bits 16-23)
+;    LSL.L   #8,D0
+;    JSR     UART_ReadChar    ; Byte 3 (bits 8-15)
+;    LSL.L   #8,D0
+;    JSR     UART_ReadChar    ; Byte 4 (bits 0-7)
+;    MOVE.L  D0,(A1)+         ; Grava os 4 bytes
+;    SUBQ.L  #1,D1
+;    BNE     Read_Loop
 
     DC.B "MERDA TERMINA"
     ALIGN 2
@@ -1087,7 +1275,7 @@ WriteSizePrompt:
 WriteDoneMsg:
     DC.B    "Data written to memory!",13,10,0
 RunPrompt:
-    DC.B    "Run Address: ",0
+    DC.B    "Running at Address: ",0
 PromptNotImplemented:
     DC.B    "Not Implemented!",13,10,0
 BufferEmpty:
@@ -1120,8 +1308,9 @@ BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
 BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer                
 BUFFER:         DS.B 256   ; Buffer de recepção                         
 ;=== Uart receiver
-DEST_BUFFER     DS.B   1024
-user_buffer_ptr DS.B   128
-xmodem_buffer  DS.B    128        ; Buffer de dados
+xmodem_buffer  DS.B    512        ; Buffer de dados
 block_number   DS.B    1           ; Número do bloco atual
 expected_block DS.B    1           ; Próximo bloco esperado
+user_buffer_ptr DS.B   512
+    ALIGN 4
+DEST_BUFFER     DS.B   1024

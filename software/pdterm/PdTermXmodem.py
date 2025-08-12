@@ -134,7 +134,8 @@ class XMODEM_Transfer(QObject):
         self.total_reenvios = 1;        
 
         #Set flag
-        self.serial._set_flag_serial()
+        self.serial.stop_thread_write_terminal()
+
         ################################################################
         # 1. Carrega o arquivo
         if self._handler.load_file_to_buffer():
@@ -148,39 +149,75 @@ class XMODEM_Transfer(QObject):
                 # Faça algo se for Sim
             else:
                print("Recebeu ACK")
-            self.serial._send_to_serial('3')
+            self.serial.write_to_serial('3')
             
             print("Lendo primeira")
-            byte = self.serial._read_serial()
-            if byte is None:
+            byte = self.serial.read_serial_input_buffer()
+            while byte == None:
+                byte = self.serial.read_serial_input_buffer()
                 time.sleep(1)
-                print("Lendo segunda")
-                byte = self.serial._read_serial()
-                if byte is None:
-                    print(f"ERRO estava aguardando NACK")
-                    self.serial._reset_flag_serial()
-                    return
-                else:        
-                    if byte == 0x15:
-                        print(f"Recebido NACK: {byte:02X}")
-                    else:    
-                        print(f"ERRO estava aguardando NACK")
-                        self.serial._reset_flag_serial()
-                        return
+                if byte != None:
+                    print(f"Recebido Oque?: {byte.encode('utf-8')}")
+            
+            byte_as_bytes = byte.encode('latin1')  # latin1 preserva os bytes 0-255
+
+            if byte_as_bytes == b'\x15':
+                print("É um NACK")
             else:
-                    self.serial._reset_flag_serial()
-                    return
+                print("[ERRO] Terminando Xmodem com erro: Não veio NACK inicial")
+                self.serial.start_thread_write_terminal()
+                self._handler.close_file()
+                return
 
             # Recebido o NACK começar transmissão           
             send_next_packet = True
             chunk_counter = 1
             while True:
                 if send_next_packet:
-                    chunk, packet_number = self._handler.get_next_chunk(128,True)
+                    #chunk, packet_number = self._handler.get_next_chunk(128,True)
+                    chunk, packet_number, checksum = self._handler.get_next_chunk(128, include_packet_number=True, include_checksum=True)
                 
                 if chunk is None:
                     print("\nFim do arquivo alcançado")
                     break
+
+                print(f"pacote numero {packet_number}");
+                #Escrevendo na serial
+                resposta = self.ask_user_yes_no("Enviar soh")  
+                print(f"Enviando: {self.SOH:02X}")   
+                self.serial.write_to_serial(self.SOH)
+                resposta = self.ask_user_yes_no("Enviar packet_number")     
+
+
+                print(f"Enviando: {packet_number:02X}")   
+                self.serial.write_to_serial(packet_number)
+
+                pn = ~packet_number & 0xFF
+                resposta = self.serial._send_to_serial("Enviar ~packet_number")     
+                self.serial.write_to_serial(pn)
+                resposta = self.ask_user_yes_no("Enviar chunk")     
+                self.serial.write_to_serial(chunk)
+                resposta = self.ask_user_yes_no("Enviar checksum")     
+                self.serial.write_to_serial(checksum)
+                resposta = self.ask_user_yes_no("Aguardando receiver enviar ACK?")     
+ 
+                print("Pacote enviado, aguardando ACK")
+                byte = self.serial.read_serial_input_buffer()
+                while byte == None:
+                    byte = self.serial.read_serial_input_buffer()
+                    time.sleep(1)
+                    if byte != None:
+                        print(f"Recebido Oque?: {byte.encode('utf-8')}")
+
+                byte_as_bytes = byte.encode('latin1')  # latin1 preserva os bytes 0-255
+    
+                if byte_as_bytes == b'\x15':
+                    print("É um NACK")
+                else:
+                    print("[ERRO] Terminando Xmodem com erro: Não veio NACK de pacote")
+                    self.serial.start_thread_write_terminal()
+                    self._handler.close_file()
+                    return
 
                 #print("Enviando SOH")
                 print(f"{self.SOH:02X}", end='')
@@ -189,7 +226,7 @@ class XMODEM_Transfer(QObject):
                 pn = ~packet_number & 0xFF
                 print(f"{pn:02X}", end='')
            
-                #print(f"Enviando Bloco {chunk_counter} ({len(chunk)} bytes packet_number:{packet_number} checksum:{cs}) ---")
+                print(f"Enviando Bloco {chunk_counter} ({len(chunk)} bytes packet_number:{packet_number} checksum:{cs}) ---")
                 
                 # Pegar apenas os 5 primeiros bytes
                 primeiros_5_bytes = chunk[:5]
@@ -220,13 +257,14 @@ class XMODEM_Transfer(QObject):
                     send_next_packet = False
                     if self.total_reenvios == TOTAL_REENVIOS:
                         self.total_reenvios = 1
-                        print("Excedido o total de reenvios do mesmo pacote abortando")
+                        print("[ERRO] Excedido o total de reenvios do mesmo pacote abortando")
+                        self.serial.start_thread_write_terminal()
+                        self._handler.close_file()
                         return
                     self.total_reenvios += 1
-
-            #Set flag
-            self.serial._reset_flag_serial()
-
+            #Fim do while de transmissão
+            print("[INFO] Terminando Xmodem com sucesso")
+            self.serial.start_thread_write_terminal()
             self._handler.close_file()
         else:
             print("Falha ao carregar arquivo")

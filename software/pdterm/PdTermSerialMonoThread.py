@@ -3,7 +3,6 @@ from threading import  Thread,Lock
 import serial
 import queue
 import serial.tools.list_ports
-from typing import Optional
 from typing import Optional, Union
 import time
 from PyQt6.QtCore import pyqtSignal
@@ -33,6 +32,7 @@ class SerialReadWrite:
         #self._serial_port = None  # Variável privada
         
         # Controle de execução
+        self.running_write_terminal = False
         self.running = False
         
         # Threads
@@ -84,10 +84,14 @@ class SerialReadWrite:
         """Inicia as threads de leitura e escrita serial."""
         self.read_thread           = threading.Thread(target=self._read_serial, daemon=True)
         self.write_thread          = threading.Thread(target=self._write_serial, daemon=True)
-        self.write_terminal_thread = threading.Thread(target=self._write_terminal, daemon=True)
+        #self.write_terminal_thread = threading.Thread(target=self._write_terminal, daemon=True)
         if self.running:
             print("start: threads já em execução")
             return
+        if self.running_write_terminal:
+            print("start: thread write_terminal já em execução")
+            return
+                
         if not self.running and SerialReadWrite.serial_port:
             self.running = True
             print("start: starting read thread")
@@ -95,13 +99,20 @@ class SerialReadWrite:
             print("start: starting write thread")
             self.write_thread.start()
             print("start: starting write terminal thread")
-            self.write_terminal_thread.start()
-            print("start: Threads de leitura e escrita iniciadas")
         else:
             if not SerialReadWrite.serial_port:
                 print("start: porta não conectada")
                 return
             print("start: ERRO: desconhecido");    
+        #starting thread write_terminal
+        self.star_thread_write_to_terminal()
+        
+        #if not self.running_write_terminal:
+        #    self.running_write_terminal = True
+        #    self.write_terminal_thread.start()
+        #    print("start: Threads de leitura e escrita iniciadas")
+    
+    
     
     def stop(self):
         """Para threads e conexão serial sem recursão"""
@@ -110,7 +121,7 @@ class SerialReadWrite:
             try:
                 # 1. Sinaliza parada
                 self.running = False
-                
+                self.running_write_terminal = False
                 time.sleep(1)
                 
                 # 2. Desbloqueia threads (se necessário)
@@ -166,41 +177,71 @@ class SerialReadWrite:
                 self._reconnect()
                 continue
         print("Thread read serial encerrada...");
+
     def _write_serial(self):
         """Thread para escrita contínua na porta serial."""
-        current_port = SerialReadWrite.serial_port
-        while self.running: # and self.is_connected():
-            with SerialReadWrite.serial_lock:
-                try:
-                    try:
-                        #print(f"\n[DEBUG] Tamanho do buffer: {self.output_buffer.qsize()}")  
-                        #print(f"Lendo do buffer (ID: {id(SerialReadWrite.output_buffer)})")
-                        #if current_port and current_port.is_open:
-                        #    print("_write_serial: SerialReadWrite.serial_port conectada")
-                        #else:
-                        #    print("_write_serial: SerialReadWrite.serial_port Desconectada") 
-                        data = SerialReadWrite.output_buffer.get(timeout=0.1)
-                        if isinstance(data, str):
-                            data = data.encode('utf-8')
-                            print(f"_write_serial: Thread  data to send{data}")    
-                        else:
-                            print("_write_serial: Thread No data to send") 
-                            continue   
-                        current_port.write(data)
-                        current_port.flush()
-                    except queue.Empty:
-                        #print("DEBUG: Buffer vazio (comportamento esperado)")
-                        continue
-                    time.sleep(0.01)     
-                except serial.SerialException as e:
-                    print(f"Erro na escrita serial: {e}")
-                    self._reconnect()
-                    continue
-        print("Thread write serial encerrada...");
+        while self.running:
+            try:
+                # 1. Pega os dados SEM lock (operações rápidas)
+                data = SerialReadWrite.output_buffer.get(timeout=0.5)
+                
+                if isinstance(data, str):
+                    data = data.encode('utf-8')
+                    print(f"_write_serial: Enviando {data}")
+    
+                # 2. Aplica lock APENAS na operação serial (crítica)
+                with SerialReadWrite.serial_lock:
+                    if SerialReadWrite.serial_port and SerialReadWrite.serial_port.is_open:
+                        SerialReadWrite.serial_port.write(data)
+                        SerialReadWrite.serial_port.flush()
+                
+                time.sleep(0.01)  # Pequeno delay para evitar consumo excessivo de CPU
+    
+            except queue.Empty:
+                continue  # Comportamento normal para buffer vazio
+    
+            except serial.SerialException as e:
+                print(f"Erro serial: {e}")
+                self._reconnect()
+                time.sleep(1)  # Delay maior em caso de erro
+
+
+#DEPRECADO        
+#    def _write_serial(self):
+#        """Thread para escrita contínua na porta serial."""
+#        current_port = SerialReadWrite.serial_port
+#        while self.running: # and self.is_connected():
+#            with SerialReadWrite.serial_lock:
+#                try:
+#                    try:
+#                        #print(f"\n[DEBUG] Tamanho do buffer: {self.output_buffer.qsize()}")  
+#                        #print(f"Lendo do buffer (ID: {id(SerialReadWrite.output_buffer)})")
+#                        #if current_port and current_port.is_open:
+#                        #    print("_write_serial: SerialReadWrite.serial_port conectada")
+#                        #else:
+#                        #    print("_write_serial: SerialReadWrite.serial_port Desconectada") 
+#                        data = SerialReadWrite.output_buffer.get(timeout=0.5)
+#                        if isinstance(data, str):
+#                            data = data.encode('utf-8')
+#                            print(f"_write_serial: Thread  data to send{data}")    
+#                        else:
+#                            print("_write_serial: Thread No data to send") 
+#                            continue   
+#                        current_port.write(data)
+#                        current_port.flush()
+#                    except queue.Empty:
+#                        #print("DEBUG: Buffer vazio (comportamento esperado)")
+#                        continue
+#                    time.sleep(0.01)     
+#                except serial.SerialException as e:
+#                    print(f"Erro na escrita serial: {e}")
+#                    self._reconnect()
+#                    continue
+#        print("Thread write serial encerrada...");
 
     def _write_terminal(self):
         """Thread para escrita contínua no terminal."""
-        while self.running and self.is_connected():
+        while self.running_write_terminal and self.is_connected():
             try:
                 # Obtém dados do buffer de saída (com timeout para não bloquear indefinidamente)
                 try:
@@ -226,9 +267,10 @@ class SerialReadWrite:
             self.start()
     
     def write(self, data: Union[str, bytes]):
-        #print("Pondo dados no buffer de saida: output_buffer");
+        print("Pondo dados no buffer de saida: output_buffer");
         #print(f"Lendo do buffer (ID: {id(SerialReadWrite.output_buffer)})")
-        SerialReadWrite.output_buffer.put(data)
+        with SerialReadWrite.serial_lock:
+            SerialReadWrite.output_buffer.put(data)
         return True
     
     # Métodos de leitura (mantidos exatamente como estavam)
@@ -288,4 +330,42 @@ class SerialReadWrite:
     def reset_input_buffer(self):
         SerialReadWrite.serial_port.reset_input_buffer()
 
- 
+    def stop_thread_write_to_terminal(self):
+         if not hasattr(self, '_stopping'):
+            self._stopping = True  # Flag para evitar recursão
+            try:
+                # 1. Sinaliza parada
+                self.running_write_terminal = False
+                time.sleep(1)
+                                
+                # 3. Para threads com timeout
+                threads = []
+                if hasattr(self, 'write_terminal_thread'):
+                    threads.append(self.write_terminal_thread)
+                
+                # 5. Limpa referências
+                self.write_terminal_thread = None
+                
+            finally:
+                del self._stopping  # Remove o flag após conclusão
+
+    def star_thread_write_to_terminal(self):
+        self.write_terminal_thread = threading.Thread(target=self._write_terminal, daemon=True)
+        if self.running_write_terminal:
+            print("star_thread_write_to_terminal: thread write_terminal já em execução")
+            return
+                
+        if not self.running_write_terminal:
+            self.running_write_terminal = True
+            self.write_terminal_thread.start()
+            print("start: Threads de leitura e escrita iniciadas")
+
+    def read_input_buffer(self):
+        try:
+            if self.has_data('leitor1'):
+                data = self.read_data('leitor1')
+                if data:
+                    return data                    
+        except queue.Empty:
+            print("read_input_buffer: is empty...")
+            return None
