@@ -1,6 +1,6 @@
-;vasmm68k_mot -Fbin -o pisca.bin pisca.s
+;vasmm68k_mot -Fbin -L npisca.lst  -o npisca.bin nov_pisca.s
     ORG     $00081530          ; Endereço de carga do código
-
+    ALIGN 4
 NOVO_PISCA:
         MOVE.L  #$0010,D1
 .LOOP_PISCA:

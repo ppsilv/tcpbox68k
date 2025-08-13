@@ -26,10 +26,8 @@ TARGET_HIGH := $(TARGET)_high.bin
 LAYOUT_FILE := layout.ld
 
 # Tamanhos (ajuste conforme sua memória)
-#FLASH_SIZE := 8192  # 8KB (tamanho da 28C64A)
-#ROM_SIZE := 8192     # 8KB usados
-FLASH_SIZE := 16384  # 8KB (tamanho da 28C64A)
-ROM_SIZE := 16384     # 8KB usados
+FLASH_SIZE := 8192  # 8KB (tamanho da 28C64A)
+ROM_SIZE := 8192     # 8KB usados
 
 #.PHONY: all compile compile_compact split fill program clean
 .PHONY: all compile split fill program clean
@@ -63,7 +61,6 @@ compile_linker:
 	@echo "Objcopy..."
 	#m68k-elf-objcopy -O binary test_ram2.elf test_ram2.bin
 	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
-	#@$(FILLER) $(TARGET_BIN) $(FLASH_SIZE)
 	@$(CHECKSUMER)
 	@echo "╔══════════════════════════╗"
 	@echo "║  COMPILACAO TERMINADA!   ║"
@@ -76,7 +73,6 @@ test:
 	@$(LINKER) -T $(LAYOUT_FILE) --print-memory-usage -Map=$(TARGET).map $(TARGET_OBJ) -o $(TARGET_ELF)
 	@echo "Objcopy..."
 	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
-	@$(FILLER) $(TARGET_BIN) $(FLASH_SIZE)
 	@$(CHECKSUMER)
 	@echo "╔═════════════════════════════════════╗"
 	@echo "║  COMPILACAO TTEESSTTEE TERMINADA!   ║"
@@ -90,8 +86,8 @@ split: compile_linker
 
 fill: split
 	@echo "Preenchendo arquivos para $(FLASH_SIZE) bytes..."
-	#@$(FILLER) $(TARGET_LOW) $(FLASH_SIZE)
-	#@$(FILLER) $(TARGET_HIGH) $(FLASH_SIZE)
+	@$(FILLER) $(TARGET_LOW) $(FLASH_SIZE)
+	@$(FILLER) $(TARGET_HIGH) $(FLASH_SIZE)
 	@echo "Preenchimento completo."
 
 programL: fill

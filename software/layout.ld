@@ -27,6 +27,14 @@ SECTIONS {
         __data_end = .;
     } > ROM
 
+    /* --- Nova seção para o checksum (últimos 4 bytes da ROM) --- */
+    .checksum (NOLOAD) : {
+        /* Posiciona o checksum nos últimos 4 bytes da ROM */
+        . = ALIGN(4);
+        __checksum_addr = .;
+        LONG(0);  /* Espaço reservado (será preenchido pós-build) */
+    } > ROM
+
     .bss : {
         __bss_start = .;
         *(.bss .bss.*)

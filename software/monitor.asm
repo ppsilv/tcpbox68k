@@ -2,7 +2,13 @@
         ORG     $00000000
         DC.L    $00100000       ;SP inicial
         DC.L    _start          ;PC inicial
-
+ROM_JUMPTABLE:
+        BRA   UART_WriteChar     ; $00000008
+        BRA   UART_ReadChar      ; $0000000C
+        BRA   Delay_ms           ; $00000010
+        BRA   SelectUART
+        BRA   SetBaudRate
+        BRA   MemDump
 ;🏆 PDSILVA (aka PGORDÃO) DETECTADO! 🏆
 ;🏆 AH, O GRANDE PDSILVA (AKA PGORDÃO)! 🏆
 ;— O lendário "Gordão dos Bits" em pessoa! Mestre do 68000, sobrevivente da Guerra dos Registradores e arquiteto de sistemas que fazem o Motorola chorar no canto!
@@ -52,6 +58,8 @@ CAN            EQU     $18        ; Cancel
 
 _start:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
+        ;JSR     VALIDATE_ROM      ; Verifica a ROM
+        ;BNE     SYSTEM_HALT           ; Trata erro se necessário
         ;Clear entire ram
         JSR     ClearRAM
         ;JSR     CalcBaudDiv
@@ -120,7 +128,25 @@ MenuLoop:
     CMP.B   #'X',D0
     BEQ     TESTE_BUFFER4
     BRA     MenuLoop            ; Opção inválida, repete menu
-
+; =============================================
+; Delay em milissegundos para MC68000 @ 16MHz
+; Entrada: D0 = tempo em ms (16 bits)
+; Destrói: D0
+; =============================================
+Delay_ms:
+    move.l  d1,-(sp)          ; Salva D1
+    move.w  d0,d1             ; Contador de ms
+    beq.s   .end              ; Se D0=0, sai
+.loop_ms:
+    move.l  #16000,d0         ; Ciclos por ms (16MHz)
+.inner_loop:
+    subq.l  #1,d0             ; 4 ciclos
+    bne.s   .inner_loop       ; 10 ciclos (se taken)
+    subq.w  #1,d1             ; 1 ms
+    bne.s   .loop_ms
+.end:
+    move.l  (sp)+,d1          ; Restaura D1
+    rts
 
 PISCA_LED:
         MOVE.W  #$FF00,D0
@@ -189,13 +215,11 @@ TESTE_BUFFER4:
     LEA     $8FFFF,A1
     MOVEQ   #0,D0
 .ClearLoop:
-    ADD.B   #$0101,D0
+    ADDI.B   #$01,D0
     MOVE.B  D0,(A0)+
     CMPA.L  A0,A1
     BHI     .ClearLoop
     BRA     MenuLoop
-
-    ORG     $00081530          ; Endereço de carga do código
 
 NOVO_PISCA:
         MOVE.L  #$0010,D1
@@ -1175,47 +1199,49 @@ Transfer_Complete:
                 JSR     UART_WriteChar
                 MOVEM.L (SP)+,D2-D7/A0-A6
                 RTS
+; ========================================================
+; Validador de Checksum para ROM (MC68000)
+; Assume:
+;   - Checksum está nos últimos 4 bytes da ROM (LONG)
+;   - Big-endian (padrão 68000)
+;   - ROM termina em 0x0000FFFF (16KB)
+; ========================================================
 
-;Receive_XMODEM:
-;    MOVE.L  #64,D1           ; 128 bytes / 2 (64 words)
-;    LEA     xmodem_buffer,A1
-;Receive_Loop:
-;    JSR     UART_ReadChar    ; Lê byte alto (D0.b)
-;    LSL.W   #8,D0            ; Desloca para o byte alto da word
-;    MOVE.B  D0,D2            ; Armazena temporariamente
-;    JSR     UART_ReadChar    ; Lê byte baixo (D0.b)
-;    OR.B    D2,D0            ; Combina os dois bytes em uma word (D0.w)
-;    MOVE.W  D0,(A1)+         ; Grava a word na memória
-;    SUBQ    #1,D1
-;    BNE     Receive_Loop
+VALIDATE_ROM:
+    LEA     ROM_START,A0        ; Endereço inicial da ROM (0x00000000)
+    MOVE.L  #ROM_SIZE-4,D0      ; Tamanho da ROM (16KB - 4 bytes)
+    MOVE.L  #0,D1               ; Acumulador do checksum
 
-;Receive_XMODEM:
-;    LEA     xmodem_buffer,A0
-;    LEA     128(A0),A1       ; A1 = fim do buffer (A0 + 128)
-;    MOVEQ   #0,D0            ; Limpa D0 (opcional)
-;Read_Loop:
-;    JSR     UART_ReadChar    ; Lê byte 1 (D0.b)
-;    LSL.W   #8,D0            ; Armazena no byte alto da word
-;    JSR     UART_ReadChar    ; Lê byte 2 (D0.b)
-;    MOVE.W  D0,(A0)+         ; Grava a word
-;    CMPA.L  A0,A1            ; A0 >= A1?
-;    BLO     Read_Loop        ; Se não, continua
+    ; --- Calcula checksum (soma de todos os LONGs, exceto os últimos 4 bytes) ---
+.CHECKSUM_LOOP:
+    MOVE.L  (A0)+,D2            ; Lê 4 bytes da ROM
+    ADD.L   D2,D1               ; Soma ao acumulador
+    SUB.L   #4,D0               ; Decrementa contador
+    BGT     .CHECKSUM_LOOP      ; Repete até D0 <= 0
 
-;Receive_XMODEM:
-;    MOVE.L  #128/4,D1        ; 32 longs (128 bytes)
-;    LEA     xmodem_buffer,A1
-;Read_Loop:
-;    ; Lê 4 bytes da UART e armazena em D0 (usando shifts/ORs)
-;    JSR     UART_ReadChar    ; Byte 1 (bits 24-31)
-;    LSL.L   #8,D0
-;    JSR     UART_ReadChar    ; Byte 2 (bits 16-23)
-;    LSL.L   #8,D0
-;    JSR     UART_ReadChar    ; Byte 3 (bits 8-15)
-;    LSL.L   #8,D0
-;    JSR     UART_ReadChar    ; Byte 4 (bits 0-7)
-;    MOVE.L  D0,(A1)+         ; Grava os 4 bytes
-;    SUBQ.L  #1,D1
-;    BNE     Read_Loop
+    ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
+    MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
+    CMP.L   D1,D2               ; Combina com o calculado?
+    BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
+
+    ; --- Checksum inválido: travar o sistema ou notificar ---
+    MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
+    BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
+.CHECKSUM_OK:
+    RTS                         ; Retorna (ROM válida)
+
+SYSTEM_HALT:
+    MOVE.W  #$2700,SR        ; Desabilita interrupções
+.INFINITE_LOOP:
+    BRA     .INFINITE_LOOP   ; Trava o sistema
+
+; --- Constantes ---
+ROM_START   EQU     $00000000   ; Início da ROM
+ROM_END     EQU     $00007FFF   ; Fim da ROM (8KB)
+ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
+
+Checksum:
+    DC.L    0               ; Temporariamente 0
 
     DC.B "MERDA TERMINA"
     ALIGN 2
@@ -1240,7 +1266,7 @@ DumpHeader1:
     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 
 MSGINIT:
-    DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).",13,10
+    DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
     DC.B    "MC68000 System Monitor",13,10
     INCLUDE "build_date.inc"
     INCLUDE "build_counter.inc"
@@ -1290,6 +1316,12 @@ XmodemInit:
 XmodemWaitingSoh:    
     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
 
+    ALIGN   2
+    ;Isso preence 762 com 00
+    ;DS.B    $00000762 - *, $00
+    DC.B    "ROMv4.0",0   ; String de identificação
+    DC.L    Checksum      ; Valor calculado
+
 ;    SECTION bss,BSS             
     SECTION .bss                 
     ORG     $81000               ; Área para variáveis
@@ -1297,7 +1329,7 @@ RamBase:            DS.l 1
 RamSize:            DS.L 1             
 CurrentUART:        DS.L 1             
 CurrentBaudRate:    DS.W 1             
-BaudDivL:           DS.W 1             
+BaudDivL:           DS.W 1
 BaudDivH:           DS.W 1             
 Baud1DivL:          DS.W 1             
 Baud1DivH:          DS.W 1             
