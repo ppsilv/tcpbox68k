@@ -89,11 +89,19 @@ fill: split
 	@$(FILLER) $(TARGET_HIGH) $(FLASH_SIZE)
 	@echo "Preenchimento completo."
 
+programl:
+	@echo "Gravando parte LOW na Flash..."
+	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
+	@echo "Gravação concluída LOW! BOA SORTE"
 programL: fill
 	@echo "Gravando parte LOW na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
 	@echo "Gravação concluída LOW! BOA SORTE"
 
+programh:
+	@echo "Gravando parte HIGH na Flash..."
+	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
+	@echo "Gravação concluída HIGH! GRAVE A MEMORIA LOW"
 programH: fill
 	@echo "Gravando parte HIGH na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
