@@ -72,6 +72,7 @@ compile_linker:
 
 test:
 	@echo "Compiler..."
+	@build_date.sh
 	@$(ASSEMBLER) $(ELF_FLAGS) -L $(TARGET).lst -o $(TARGET_OBJ) $(SOURCE)
 	@echo "Linker..."
 	@$(LINKER) -T $(LAYOUT_FILE) --print-memory-usage -Map=$(TARGET).map $(TARGET_OBJ) -o $(TARGET_ELF)
@@ -95,12 +96,12 @@ fill: split
 	#@$(FILLER) $(TARGET_HIGH) $(FLASH_SIZE)
 	@echo "Preenchimento completo."
 
-programL: fill
+programL:
 	@echo "Gravando parte LOW na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
 	@echo "Gravação concluída LOW! BOA SORTE"
 
-programH: fill
+programH: split
 	@echo "Gravando parte HIGH na Flash..."
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
 	@echo "Gravação concluída HIGH! GRAVE A MEMORIA LOW"

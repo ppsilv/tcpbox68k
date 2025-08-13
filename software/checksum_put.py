@@ -1,18 +1,31 @@
 import binascii
 
-# Lê o binário temporário
 with open("monitor.bin", "rb") as f:
     data = bytearray(f.read())
 
-f.close
-# Calcula CRC32 (excluindo os últimos 4 bytes)
-checksum = binascii.crc32(data[:-4]) & 0xFFFFFFFF
+size=len(data)
+print(f"Tamanho do arquivo{size} ")
 
-# Insere o checksum nos últimos 4 bytes
-data[-4:] = checksum.to_bytes(4, byteorder='big')  # Big-endian para 68000
+checksum = 0
+for i in range(0, len(data)-4, 4):
+    word = int.from_bytes(data[i:i+4], 'big')
+    checksum_antes = checksum
+    checksum = (checksum + word) & 0xFFFFFFFF
+    #print(f"+{word:08X} (pos {i:04X}) → {checksum:08X}")
 
-# Salva o binário final
+#checksum -= 0x400
+
+# Escreve em BIG-ENDIAN (igual ao 68000)
+data[-4:] = [
+    (checksum >> 24) & 0xFF,
+    (checksum >> 16) & 0xFF,
+    (checksum >> 8) & 0xFF,
+    checksum & 0xFF
+]
+
 with open("monitor.bin", "wb") as f:
     f.write(data)
+
+print(f"Checksum: 0x{checksum:08X}")
 
 print(f"Checksum calculado: 0x{checksum:08X}")

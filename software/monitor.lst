@@ -1,7 +1,7 @@
 Sections:
-00: ".text" (0-900)
+00: ".text" (0-918)
 01: ".rodata" (0-0)
-02: ".data" (0-480)
+02: ".data" (0-478)
 03: ".bss" (0-934)
 
 
@@ -101,7 +101,7 @@ Source: "monitor.asm"
                             	    90: ; Loop principal do menu
                             	    91: MenuLoop:
 00:00000088 4EB8031C        	    92:     JSR     new_line
-00:0000008C 41F900000168    	    93:     LEA     MenuText,A0
+00:0000008C 41F90000015F    	    93:     LEA     MenuText,A0
 00:00000092 4EB8027C        	    94:     JSR     UART_WriteString
                             	    95: 
                             	    96:     ; Lê seleção do usuário
@@ -628,7 +628,7 @@ Source: "monitor.asm"
 00:00000490 6300FF76        	   617:     BLS     DumpLoop
                             	   618: 
 00:00000494 2F08            	   619:     MOVE.L  A0,-(SP)          ; Salva endereço atual
-00:00000496 41F9000003FA    	   620:     LEA     HitAnyKey,A0
+00:00000496 41F9000003F1    	   620:     LEA     HitAnyKey,A0
 00:0000049C 4EB8027C        	   621:     JSR     UART_WriteString
 00:000004A0 4EB80246        	   622:     JSR     UART_ReadChar
 00:000004A4 B03C001B        	   623:     CMP.B   #$1B,D0
@@ -733,7 +733,7 @@ Source: "monitor.asm"
                             	   722: 
                             	   723: ; 1. Seleciona UART
                             	   724: SelectUART:
-00:0000052A 41F900000369    	   725:     LEA     PromptNotImplemented,A0
+00:0000052A 41F900000360    	   725:     LEA     PromptNotImplemented,A0
 00:00000530 4EB8027C        	   726:     JSR     UART_WriteString
                             	   727:     ;LEA     UARTPrompt,A0
                             	   728:     ;JSR     UART_WriteString
@@ -744,7 +744,7 @@ Source: "monitor.asm"
                             	   733: 
                             	   734: ; 2. Configura Baud Rate
                             	   735: SetBaudRate:
-00:00000538 41F900000369    	   736:     LEA     PromptNotImplemented,A0
+00:00000538 41F900000360    	   736:     LEA     PromptNotImplemented,A0
 00:0000053E 4EB8027C        	   737:     JSR     UART_WriteString
                             	   738:     ;LEA     BaudPrompt,A0
                             	   739:     ;JSR     UART_WriteString
@@ -762,12 +762,12 @@ Source: "monitor.asm"
                             	   751: 
                             	   752: ; 4. Grava programa manualmente (hex)
                             	   753: WriteProgram:
-00:0000055A 41F900000318    	   754:     LEA     WritePrompt,A0
+00:0000055A 41F90000030F    	   754:     LEA     WritePrompt,A0
 00:00000560 4EB8027C        	   755:     JSR     UART_WriteString
 00:00000564 4EB805F6        	   756:     JSR     UART_ReadHex        ; Lê endereço
 00:00000568 2240            	   757:     MOVE.L  D0,A1               ; A1 = ponteiro
                             	   758: 
-00:0000056A 41F900000328    	   759:     LEA     WriteSizePrompt,A0
+00:0000056A 41F90000031F    	   759:     LEA     WriteSizePrompt,A0
 00:00000570 4EB8027C        	   760:     JSR     UART_WriteString
 00:00000574 4EB805F6        	   761:     JSR     UART_ReadHex        ; Lê quantidade de bytes
 00:00000578 2200            	   762:     MOVE.L  D0,D1               ; D1 = contador
@@ -778,13 +778,13 @@ Source: "monitor.asm"
 00:00000580 5381            	   767:     SUBQ.L  #1,D1
 00:00000582 66F6            	   768:     BNE     .WriteLoop
                             	   769: 
-00:00000584 41F90000033A    	   770:     LEA     WriteDoneMsg,A0
+00:00000584 41F900000331    	   770:     LEA     WriteDoneMsg,A0
 00:0000058A 4EB8027C        	   771:     JSR     UART_WriteString
 00:0000058E 6000FAF8        	   772:     BRA     MenuLoop
                             	   773: 
                             	   774: ; 5. Executa programa na RAM
                             	   775: RunProgram:
-00:00000592 41F900000354    	   776:     LEA     RunPrompt,A0
+00:00000592 41F90000034B    	   776:     LEA     RunPrompt,A0
 00:00000598 4EB8027C        	   777:     JSR     UART_WriteString
 00:0000059C 41F900081016    	   778:     LEA     $81016,A0   ; A0 aponta para o endereço $81016 (onde está 0x00081000)
 00:000005A2 2050            	   779:     MOVE.L  (A0),A0     ; A0 agora contém o valor 0x00081000
@@ -809,7 +809,7 @@ Source: "monitor.asm"
 00:000005AA 2F01            	   798:         MOVE.L  D1,-(SP)
 00:000005AC 2F02            	   799:         MOVE.L  D2,-(SP)
                             	   800: 
-00:000005AE 41F900000318    	   801:         LEA     WritePrompt,A0
+00:000005AE 41F90000030F    	   801:         LEA     WritePrompt,A0
 00:000005B4 4EB8027C        	   802:         JSR     UART_WriteString
                             	   803: 
 00:000005B8 4EB8031C        	   804:         JSR     new_line
@@ -901,7 +901,7 @@ Source: "monitor.asm"
 00:00000670 4E75            	   890:     RTS
                             	   891: 
                             	   892: TEST_READ_IN_HEXA:
-00:00000672 41F900000392    	   893:     LEA     TestHexInput,A0
+00:00000672 41F900000389    	   893:     LEA     TestHexInput,A0
 00:00000678 4EB8027C        	   894:     JSR     UART_WriteString
 00:0000067C 4EB805F6        	   895:     JSR     UART_ReadHex
 00:00000680 6000FA06        	   896:     bra     MenuLoop
@@ -1013,7 +1013,7 @@ Source: "monitor.asm"
                             	  1002: 
                             	  1003: FBufferEmpty:
 00:00000734 4EB8031C        	  1004:         JSR     new_line
-00:00000738 41F90000037C    	  1005:         LEA     BufferEmpty,A0
+00:00000738 41F900000373    	  1005:         LEA     BufferEmpty,A0
 00:0000073E 4EB8027C        	  1006:         JSR     UART_WriteString
 00:00000742 4EB8031C        	  1007:         JSR     new_line
 00:00000746 4E75            	  1008:         RTS
@@ -1236,61 +1236,88 @@ Source: "monitor.asm"
                             	  1222: 
 00:000008C4 41F900081930    	  1223:     LEA     checksum_rom,A0
 00:000008CA 20C1            	  1224:     MOVE.L  D1,(A0)+
-00:000008CC 203CA5A5A5A5    	  1225:     MOVE.L  #$A5A5A5A5,D0
-00:000008D2 20C0            	  1226:     MOVE.L  D0,(A0)+
-00:000008D4 4E75            	  1227:     RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
-                            	  1228: 
-                            	  1229:     ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
-00:000008D6 24383FFB        	  1230:     MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
-00:000008DA B481            	  1231:     CMP.L   D1,D2               ; Combina com o calculado?
-00:000008DC 6706            	  1232:     BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
-                            	  1233: 
-                            	  1234:     ; --- Checksum inválido: travar o sistema ou notificar ---
-00:000008DE 363CDEAD        	  1235:     MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
-00:000008E2 6002            	  1236:     BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
-                            	  1237: .CHECKSUM_OK:
-00:000008E4 4E75            	  1238:     RTS                         ; Retorna (ROM válida)
-                            	  1239: 
-                            	  1240: SYSTEM_HALT:
-00:000008E6 46FC0700        	  1241:     MOVE.W  #$0700,SR        ; Desabilita interrupções
-                            	  1242: .INFINITE_LOOP:
-00:000008EA 60FE            	  1243:     BRA     .INFINITE_LOOP   ; Trava o sistema
-                            	  1244: 
-                            	  1245: ; --- Constantes ---
-                            	  1246: ROM_START   EQU     $00000000   ; Início da ROM
-                            	  1247: ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
-                            	  1248: ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
-                            	  1249: 
-                            	  1250: Checksum:
-00:000008EC 00000000        	  1251:     DC.L    0               ; Temporariamente 0
+                            	  1225:     ;RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
+                            	  1226: 
+                            	  1227:     ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
+00:000008CC 24383FFC        	  1228:     MOVE.L  ROM_END-4+1,D2        ; Lê o checksum gravado (0x0000FFFC)
+00:000008D0 B481            	  1229:     CMP.L   D1,D2               ; Combina com o calculado?
+00:000008D2 6706            	  1230:     BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
+                            	  1231: 
+                            	  1232:     ; --- Checksum inválido: travar o sistema ou notificar ---
+00:000008D4 363CDEAD        	  1233:     MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
+00:000008D8 6002            	  1234:     BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
+                            	  1235: .CHECKSUM_OK:
+00:000008DA 4E75            	  1236:     RTS                         ; Retorna (ROM válida)
+                            	  1237: 
+                            	  1238: SYSTEM_HALT:
+00:000008DC 46FC0700        	  1239:     MOVE.W  #$0700,SR        ; Desabilita interrupções
+                            	  1240: .INFINITE_LOOP:
+00:000008E0 60FE            	  1241:     BRA     .INFINITE_LOOP   ; Trava o sistema
+                            	  1242: 
+                            	  1243: ; Implementação simplificada de CRC32 (precisa da tabela de polinômios)
+                            	  1244: VALIDATE_ROM_CRC32:
+00:000008E2 91C8            	  1245:     LEA     ROM_START,A0        ; Endereço inicial
+00:000008E4 203C00003FFC    	  1246:     MOVE.L  #ROM_SIZE-4,D0      ; Tamanho total - 4 bytes
+00:000008EA 72FF            	  1247:     MOVE.L  #$FFFFFFFF,D1      ; CRC32 initial value
+                            	  1248: 
+                            	  1249: CRC_LOOP:
+00:000008EC 1418            	  1250:     MOVE.B  (A0)+,D2            ; Lê 1 byte
+00:000008EE B501            	  1251:     EOR.B   D2,D1               ; XOR com byte atual
                             	  1252: 
-00:000008F0 4D45524441205445	  1253:     DC.B "MERDA TERMINA"
-00:000008F8 524D494E41
-                            	  1254:     ALIGN 2
-                            	  1255: ; =====================================================================
-                            	  1256: ; XMODEM RECEIVER ROUTINE
-                            	  1257: ; =====================================================================
+                            	  1253:     ; Aqui viria o loop de 8 iterações com shifts e XORs
+                            	  1254:     ; usando a tabela de polinômios do CRC32 (omitido por brevidade)
+                            	  1255: 
+00:000008F0 5380            	  1256:     SUBQ.L  #1,D0
+00:000008F2 6EF8            	  1257:     BGT     CRC_LOOP
                             	  1258: 
-                            	  1259: ; ----------------------------------------------------------------------
-                            	  1260: ; SECTION data
-                            	  1261: ;-----------------------------------------------------------------------
-                            	  1262:     SECTION .rodata
-                            	  1263:     SECTION .data
-02:00000000 56616C6F726573  	  1264:     DC.B "Valores",0
+00:000008F4 4681            	  1259:     NOT.L   D1                  ; Inverte os bits no final
+                            	  1260: 
+                            	  1261:     ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
+00:000008F6 24383FFB        	  1262:     MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
+00:000008FA B481            	  1263:     CMP.L   D1,D2               ; Combina com o calculado?
+00:000008FC 6706            	  1264:     BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
+                            	  1265: 
+                            	  1266:     ; --- Checksum inválido: travar o sistema ou notificar ---
+00:000008FE 363CDEAD        	  1267:     MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
+00:00000902 60D8            	  1268:     BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
+                            	  1269: .CHECKSUM_OK:
+00:00000904 4E75            	  1270:     RTS
+                            	  1271: 
+                            	  1272: ; --- Constantes ---
+                            	  1273: ROM_START   EQU     $00000000   ; Início da ROM
+                            	  1274: ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
+                            	  1275: ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
+                            	  1276: 
+                            	  1277: Checksum:
+00:00000906 00000000        	  1278:     DC.L    0               ; Temporariamente 0
+                            	  1279: 
+00:0000090A 4D45524441205445	  1280:     DC.B "MERDA TERMINA"
+00:00000912 524D494E41
+                            	  1281:     ALIGN 2
+                            	  1282: ; =====================================================================
+                            	  1283: ; XMODEM RECEIVER ROUTINE
+                            	  1284: ; =====================================================================
+                            	  1285: 
+                            	  1286: ; ----------------------------------------------------------------------
+                            	  1287: ; SECTION data
+                            	  1288: ;-----------------------------------------------------------------------
+                            	  1289:     SECTION .rodata
+                            	  1290:     SECTION .data
+02:00000000 56616C6F726573  	  1291:     DC.B "Valores",0
 02:00000007 00
-02:00000008 1B              	  1265: cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
+02:00000008 1B              	  1292: cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
 02:00000009 5B324A
 02:0000000C 00
-                            	  1266: ; ----------------------------------------------------------------------
-                            	  1267: ; Strings do Sistema
-                            	  1268: ; ----------------------------------------------------------------------
-                            	  1269: DumpHeader:
-02:0000000D 4D656D6F72792044	  1270:     DC.B    "Memory Dump from :",0
+                            	  1293: ; ----------------------------------------------------------------------
+                            	  1294: ; Strings do Sistema
+                            	  1295: ; ----------------------------------------------------------------------
+                            	  1296: DumpHeader:
+02:0000000D 4D656D6F72792044	  1297:     DC.B    "Memory Dump from :",0
 02:00000015 756D702066726F6D
 02:0000001D 203A
 02:0000001F 00
-                            	  1271: DumpHeader1:
-02:00000020 4164647265737320	  1272:     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
+                            	  1298: DumpHeader1:
+02:00000020 4164647265737320	  1299:     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
 02:00000028 2020303020303120
 02:00000030 3032203033203034
 02:00000038 2030352030362030
@@ -1300,7 +1327,7 @@ Source: "monitor.asm"
 02:00000058 4620204153434949
 02:00000060 0D
 02:00000061 0A
-02:00000062 2D2D2D2D2D2D2D2D	  1273:     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
+02:00000062 2D2D2D2D2D2D2D2D	  1300:     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 02:0000006A 20202D2D2D2D2D2D
 02:00000072 2D2D2D2D2D2D2D2D
 02:0000007A 2D2D2D2D2D2D2D2D
@@ -1313,9 +1340,9 @@ Source: "monitor.asm"
 02:000000AD 0D
 02:000000AE 0A
 02:000000AF 00
-                            	  1274: 
-                            	  1275: MSGINIT:
-02:000000B0 546370626F783638	  1276:     DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
+                            	  1301: 
+                            	  1302: MSGINIT:
+02:000000B0 546370626F783638	  1303:     DC.B    "Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
 02:000000B8 6B202D20636F7079
 02:000000C0 7269676874202843
 02:000000C8 2920706473696C76
@@ -1323,264 +1350,263 @@ Source: "monitor.asm"
 02:000000D8 6F292E56312E30
 02:000000DF 0D
 02:000000E0 0A
-02:000000E1 4D43363830303020	  1277:     DC.B    "MC68000 System Monitor",13,10
+02:000000E1 4D43363830303020	  1304:     DC.B    "MC68000 System Monitor",13,10
 02:000000E9 53797374656D204D
 02:000000F1 6F6E69746F72
 02:000000F7 0D
 02:000000F8 0A
-                            	  1278:     INCLUDE "build_date.inc"
+                            	  1305:     INCLUDE "build_date.inc"
 
 Source: "build_date.inc"
                             	     1: ;From here it is generated and pushed by update_build.sh
                             	     2: BUILD_DATE:
-02:000000F9 4275696C642E3A20	     3:       DC.B "Build.: 2025-08-13 02:01:07",13,10
+02:000000F9 4275696C642E3A20	     3:       DC.B "Build.: 2025-08-13",13,10
 02:00000101 323032352D30382D
-02:00000109 31332030323A3031
-02:00000111 3A3037
-02:00000114 0D
-02:00000115 0A
-02:00000116 53657269616C3A20	     4:       DC.B "Serial: 132056",13,10,0
-02:0000011E 313332303536
-02:00000124 0D
-02:00000125 0A
-02:00000126 00
+02:00000109 3133
+02:0000010B 0D
+02:0000010C 0A
+02:0000010D 53657269616C3A20	     4:       DC.B "Serial: 132046",13,10,0
+02:00000115 313332303436
+02:0000011B 0D
+02:0000011C 0A
+02:0000011D 00
                             	     5: ;End generated code
                             	     6: 
 
 Source: "monitor.asm"
-                            	  1279:     INCLUDE "build_counter.inc"
+                            	  1306:     INCLUDE "build_counter.inc"
 
 Source: "build_counter.inc"
-02:00000127 436F6D70696C6174	     1:       DC.B "Compilation: #78",0
-02:0000012F 696F6E3A20233738
-02:00000137 00
+02:0000011E 436F6D70696C6174	     1:       DC.B "Compilation: #33",0
+02:00000126 696F6E3A20233333
+02:0000012E 00
                             	     2: 
 
 Source: "monitor.asm"
-02:00000138 2D2D2D2D2D2D2D2D	  1280:     DC.B    "-------------------------------------------",13,10,13,10,0
-02:00000140 2D2D2D2D2D2D2D2D
-02:00000148 2D2D2D2D2D2D2D2D
-02:00000150 2D2D2D2D2D2D2D2D
-02:00000158 2D2D2D2D2D2D2D2D
-02:00000160 2D2D2D
-02:00000163 0D
-02:00000164 0A
-02:00000165 0D
-02:00000166 0A
-02:00000167 00
-                            	  1281: 
-                            	  1282: MenuText:
-02:00000168 312E2053656C6563	  1283:     DC.B    "1. Select UART",13,10
-02:00000170 742055415254
-02:00000176 0D
-02:00000177 0A
-02:00000178 322E205365742042	  1284:     DC.B    "2. Set Baud Rate",13,10
-02:00000180 6175642052617465
-02:00000188 0D
-02:00000189 0A
-02:0000018A 332E204C6F616420	  1285:     DC.B    "3. Load Program (PC)",13,10
-02:00000192 50726F6772616D20
-02:0000019A 28504329
-02:0000019E 0D
-02:0000019F 0A
-02:000001A0 342E205772697465	  1286:     DC.B    "4. Write Program (Hex)",13,10
-02:000001A8 2050726F6772616D
-02:000001B0 202848657829
-02:000001B6 0D
-02:000001B7 0A
-02:000001B8 352E2052756E2050	  1287:     DC.B    "5. Run Program",13,10
-02:000001C0 726F6772616D
-02:000001C6 0D
-02:000001C7 0A
-02:000001C8 362E204163656E64	  1288:     DC.B    "6. Acendendo os LEDs",13,10
-02:000001D0 656E646F206F7320
-02:000001D8 4C454473
-02:000001DC 0D
-02:000001DD 0A
-02:000001DE 372E204D656D6F72	  1289:     DC.B    "7. Memory dump from address buffer",13,10
-02:000001E6 792064756D702066
-02:000001EE 726F6D2061646472
-02:000001F6 6573732062756666
-02:000001FE 6572
-02:00000200 0D
-02:00000201 0A
-02:00000202 382E205265616420	  1290:     DC.B    "8. Read hexa value and put in address buffer",13,10
-02:0000020A 686578612076616C
-02:00000212 756520616E642070
-02:0000021A 757420696E206164
-02:00000222 6472657373206275
-02:0000022A 66666572
-02:0000022E 0D
-02:0000022F 0A
-02:00000230 392E2046726F6D20	  1291:     DC.B    "9. From screen to buffer E from buffer to screen",13,10
-02:00000238 73637265656E2074
-02:00000240 6F20627566666572
-02:00000248 20452066726F6D20
-02:00000250 6275666665722074
-02:00000258 6F2073637265656E
-02:00000260 0D
-02:00000261 0A
-02:00000262 302E20446F206261	  1292:     DC.B    "0. Do baud divisor calculation",13,10
-02:0000026A 7564206469766973
-02:00000272 6F722063616C6375
-02:0000027A 6C6174696F6E
-02:00000280 0D
-02:00000281 0A
-02:00000282 3E20            	  1293:     DC.B    "> ",0
-02:00000284 00
-                            	  1294: UARTPrompt:
-02:00000285 5541525420416464	  1295:     DC.B    "UART Address (2000/2100/2200/2300): ",0
-02:0000028D 7265737320283230
-02:00000295 30302F323130302F
-02:0000029D 323230302F323330
-02:000002A5 30293A20
-02:000002A9 00
-                            	  1296: BaudPrompt:
-02:000002AA 4261756420526174	  1297:     DC.B    "Baud Rate Value: ",0
-02:000002B2 652056616C75653A
-02:000002BA 20
-02:000002BB 00
-                            	  1298: LoadPrompt:
-02:000002BC 416775617264616E	  1299:     DC.B    "Aguardando 68ksender to initiate: ",0
-02:000002C4 646F2036386B7365
-02:000002CC 6E64657220746F20
-02:000002D4 696E697469617465
-02:000002DC 3A20
-02:000002DE 00
-                            	  1300: LoadPromptReady:
-02:000002DF 526561647920746F	  1301:     DC.B    "Ready to receive from PC!",0
-02:000002E7 2072656365697665
-02:000002EF 2066726F6D205043
-02:000002F7 21
-02:000002F8 00
-                            	  1302: LoadDoneMsg:
-02:000002F9 50726F6772616D20	  1303:     DC.B    "Program loaded successfully!",13,10,0
-02:00000301 6C6F616465642073
-02:00000309 7563636573736675
-02:00000311 6C6C7921
-02:00000315 0D
-02:00000316 0A
-02:00000317 00
-                            	  1304: WritePrompt:
-02:00000318 5772697465204164	  1305:     DC.B    "Write Address: ",0
-02:00000320 64726573733A20
-02:00000327 00
-                            	  1306: WriteSizePrompt:
-02:00000328 4E756D626572206F	  1307:     DC.B    "Number of bytes: ",0
-02:00000330 662062797465733A
-02:00000338 20
-02:00000339 00
-                            	  1308: WriteDoneMsg:
-02:0000033A 4461746120777269	  1309:     DC.B    "Data written to memory!",13,10,0
-02:00000342 7474656E20746F20
-02:0000034A 6D656D6F727921
-02:00000351 0D
-02:00000352 0A
-02:00000353 00
-                            	  1310: RunPrompt:
-02:00000354 52756E6E696E6720	  1311:     DC.B    "Running at Address: ",0
-02:0000035C 6174204164647265
-02:00000364 73733A20
-02:00000368 00
-                            	  1312: PromptNotImplemented:
-02:00000369 4E6F7420496D706C	  1313:     DC.B    "Not Implemented!",13,10,0
-02:00000371 656D656E74656421
-02:00000379 0D
-02:0000037A 0A
-02:0000037B 00
-                            	  1314: BufferEmpty:
-02:0000037C 4F6F6F7073204275	  1315:     DC.B    "Ooops Buffer Empty!",13,10,0
-02:00000384 6666657220456D70
-02:0000038C 747921
-02:0000038F 0D
-02:00000390 0A
-02:00000391 00
-                            	  1316: TestHexInput:
-02:00000392 0D              	  1317:     DC.B    13,10,"Digite um endereco de no maximo 4bytes 8 caracteres!",13,10
-02:00000393 0A
-02:00000394 4469676974652075
-02:0000039C 6D20656E64657265
-02:000003A4 636F206465206E6F
-02:000003AC 206D6178696D6F20
-02:000003B4 3462797465732038
-02:000003BC 2063617261637465
-02:000003C4 72657321
-02:000003C8 0D
-02:000003C9 0A
-02:000003CA 6D61697320717565	  1318:     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
-02:000003D2 206973736F207365
-02:000003DA 7261206465736361
-02:000003E2 7461646F206F7320
-02:000003EA 6578636564656E74
-02:000003F2 65732E2E2E
-02:000003F7 0D
-02:000003F8 0A
-02:000003F9 00
-                            	  1319: HitAnyKey:
-02:000003FA 0D              	  1320:     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
-02:000003FB 0A
-02:000003FC 48697420616E7920
-02:00000404 3C454E5445523E20
-02:0000040C 746F20636F6E7469
-02:00000414 6E7565203C455343
-02:0000041C 3E20746F20746572
-02:00000424 6D696E6174653A20
-02:0000042C 00
-                            	  1321: XmodemInit:
-02:0000042D 584D4F44454D2052	  1322:     DC.B    "XMODEM Receiver Initialized",13,10,0
-02:00000435 6563656976657220
-02:0000043D 496E697469616C69
-02:00000445 7A6564
-02:00000448 0D
-02:00000449 0A
-02:0000044A 00
-                            	  1323: XmodemWaitingSoh:    
-02:0000044B 57616974696E6720	  1324:     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
-02:00000453 666F7220534F4820
-02:0000045B 285374617274206F
-02:00000463 6620486561646572
-02:0000046B 292E2E2E
-02:0000046F 0D
-02:00000470 0A
-02:00000471 00
-                            	  1325: 
-                            	  1326:     ALIGN   2
-                            	  1327:     ;Isso preence 762 com 00
-                            	  1328:     ;DS.B    $00000762 - *, $00
-02:00000474 524F4D76342E30  	  1329:     DC.B    "ROMv4.0",0   ; String de identificação
-02:0000047B 00
-02:0000047C 000008EC        	  1330:     DC.L    Checksum      ; Valor calculado
-                            	  1331: 
-                            	  1332: ;    SECTION bss,BSS             
-                            	  1333:     SECTION .bss                 
-                            	  1334:     ORG     $81000               ; Área para variáveis
-03:00081000 00000000        	  1335: RamBase:            DS.l 1             
-03:00081004 00000000        	  1336: RamSize:            DS.L 1             
-03:00081008 00000000        	  1337: CurrentUART:        DS.L 1             
-03:0008100C 0000            	  1338: CurrentBaudRate:    DS.W 1             
-03:0008100E 0000            	  1339: BaudDivL:           DS.W 1
-03:00081010 0000            	  1340: BaudDivH:           DS.W 1             
-03:00081012 0000            	  1341: Baud1DivL:          DS.W 1             
-03:00081014 0000            	  1342: Baud1DivH:          DS.W 1             
-                            	  1343: ; === BUFFER CIRCULAR (256 bytes) ===             
-03:00081016 00000000        	  1344: addressInHex:       DS.L 1     ; ENDEREÇO LIDO    
-03:0008101A 00000000        	  1345: BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
-03:0008101E 00000000        	  1346: BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)   
-03:00081022 0000            	  1347: BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer                
-03:00081024 00              	  1348: BUFFER:         DS.B 256   ; Buffer de recepção                         
+02:0000012F 2D2D2D2D2D2D2D2D	  1307:     DC.B    "-------------------------------------------",13,10,13,10,0
+02:00000137 2D2D2D2D2D2D2D2D
+02:0000013F 2D2D2D2D2D2D2D2D
+02:00000147 2D2D2D2D2D2D2D2D
+02:0000014F 2D2D2D2D2D2D2D2D
+02:00000157 2D2D2D
+02:0000015A 0D
+02:0000015B 0A
+02:0000015C 0D
+02:0000015D 0A
+02:0000015E 00
+                            	  1308: 
+                            	  1309: MenuText:
+02:0000015F 312E2053656C6563	  1310:     DC.B    "1. Select UART",13,10
+02:00000167 742055415254
+02:0000016D 0D
+02:0000016E 0A
+02:0000016F 322E205365742042	  1311:     DC.B    "2. Set Baud Rate",13,10
+02:00000177 6175642052617465
+02:0000017F 0D
+02:00000180 0A
+02:00000181 332E204C6F616420	  1312:     DC.B    "3. Load Program (PC)",13,10
+02:00000189 50726F6772616D20
+02:00000191 28504329
+02:00000195 0D
+02:00000196 0A
+02:00000197 342E205772697465	  1313:     DC.B    "4. Write Program (Hex)",13,10
+02:0000019F 2050726F6772616D
+02:000001A7 202848657829
+02:000001AD 0D
+02:000001AE 0A
+02:000001AF 352E2052756E2050	  1314:     DC.B    "5. Run Program",13,10
+02:000001B7 726F6772616D
+02:000001BD 0D
+02:000001BE 0A
+02:000001BF 362E204163656E64	  1315:     DC.B    "6. Acendendo os LEDs",13,10
+02:000001C7 656E646F206F7320
+02:000001CF 4C454473
+02:000001D3 0D
+02:000001D4 0A
+02:000001D5 372E204D656D6F72	  1316:     DC.B    "7. Memory dump from address buffer",13,10
+02:000001DD 792064756D702066
+02:000001E5 726F6D2061646472
+02:000001ED 6573732062756666
+02:000001F5 6572
+02:000001F7 0D
+02:000001F8 0A
+02:000001F9 382E205265616420	  1317:     DC.B    "8. Read hexa value and put in address buffer",13,10
+02:00000201 686578612076616C
+02:00000209 756520616E642070
+02:00000211 757420696E206164
+02:00000219 6472657373206275
+02:00000221 66666572
+02:00000225 0D
+02:00000226 0A
+02:00000227 392E2046726F6D20	  1318:     DC.B    "9. From screen to buffer E from buffer to screen",13,10
+02:0000022F 73637265656E2074
+02:00000237 6F20627566666572
+02:0000023F 20452066726F6D20
+02:00000247 6275666665722074
+02:0000024F 6F2073637265656E
+02:00000257 0D
+02:00000258 0A
+02:00000259 302E20446F206261	  1319:     DC.B    "0. Do baud divisor calculation",13,10
+02:00000261 7564206469766973
+02:00000269 6F722063616C6375
+02:00000271 6C6174696F6E
+02:00000277 0D
+02:00000278 0A
+02:00000279 3E20            	  1320:     DC.B    "> ",0
+02:0000027B 00
+                            	  1321: UARTPrompt:
+02:0000027C 5541525420416464	  1322:     DC.B    "UART Address (2000/2100/2200/2300): ",0
+02:00000284 7265737320283230
+02:0000028C 30302F323130302F
+02:00000294 323230302F323330
+02:0000029C 30293A20
+02:000002A0 00
+                            	  1323: BaudPrompt:
+02:000002A1 4261756420526174	  1324:     DC.B    "Baud Rate Value: ",0
+02:000002A9 652056616C75653A
+02:000002B1 20
+02:000002B2 00
+                            	  1325: LoadPrompt:
+02:000002B3 416775617264616E	  1326:     DC.B    "Aguardando 68ksender to initiate: ",0
+02:000002BB 646F2036386B7365
+02:000002C3 6E64657220746F20
+02:000002CB 696E697469617465
+02:000002D3 3A20
+02:000002D5 00
+                            	  1327: LoadPromptReady:
+02:000002D6 526561647920746F	  1328:     DC.B    "Ready to receive from PC!",0
+02:000002DE 2072656365697665
+02:000002E6 2066726F6D205043
+02:000002EE 21
+02:000002EF 00
+                            	  1329: LoadDoneMsg:
+02:000002F0 50726F6772616D20	  1330:     DC.B    "Program loaded successfully!",13,10,0
+02:000002F8 6C6F616465642073
+02:00000300 7563636573736675
+02:00000308 6C6C7921
+02:0000030C 0D
+02:0000030D 0A
+02:0000030E 00
+                            	  1331: WritePrompt:
+02:0000030F 5772697465204164	  1332:     DC.B    "Write Address: ",0
+02:00000317 64726573733A20
+02:0000031E 00
+                            	  1333: WriteSizePrompt:
+02:0000031F 4E756D626572206F	  1334:     DC.B    "Number of bytes: ",0
+02:00000327 662062797465733A
+02:0000032F 20
+02:00000330 00
+                            	  1335: WriteDoneMsg:
+02:00000331 4461746120777269	  1336:     DC.B    "Data written to memory!",13,10,0
+02:00000339 7474656E20746F20
+02:00000341 6D656D6F727921
+02:00000348 0D
+02:00000349 0A
+02:0000034A 00
+                            	  1337: RunPrompt:
+02:0000034B 52756E6E696E6720	  1338:     DC.B    "Running at Address: ",0
+02:00000353 6174204164647265
+02:0000035B 73733A20
+02:0000035F 00
+                            	  1339: PromptNotImplemented:
+02:00000360 4E6F7420496D706C	  1340:     DC.B    "Not Implemented!",13,10,0
+02:00000368 656D656E74656421
+02:00000370 0D
+02:00000371 0A
+02:00000372 00
+                            	  1341: BufferEmpty:
+02:00000373 4F6F6F7073204275	  1342:     DC.B    "Ooops Buffer Empty!",13,10,0
+02:0000037B 6666657220456D70
+02:00000383 747921
+02:00000386 0D
+02:00000387 0A
+02:00000388 00
+                            	  1343: TestHexInput:
+02:00000389 0D              	  1344:     DC.B    13,10,"Digite um endereco de no maximo 4bytes 8 caracteres!",13,10
+02:0000038A 0A
+02:0000038B 4469676974652075
+02:00000393 6D20656E64657265
+02:0000039B 636F206465206E6F
+02:000003A3 206D6178696D6F20
+02:000003AB 3462797465732038
+02:000003B3 2063617261637465
+02:000003BB 72657321
+02:000003BF 0D
+02:000003C0 0A
+02:000003C1 6D61697320717565	  1345:     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
+02:000003C9 206973736F207365
+02:000003D1 7261206465736361
+02:000003D9 7461646F206F7320
+02:000003E1 6578636564656E74
+02:000003E9 65732E2E2E
+02:000003EE 0D
+02:000003EF 0A
+02:000003F0 00
+                            	  1346: HitAnyKey:
+02:000003F1 0D              	  1347:     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
+02:000003F2 0A
+02:000003F3 48697420616E7920
+02:000003FB 3C454E5445523E20
+02:00000403 746F20636F6E7469
+02:0000040B 6E7565203C455343
+02:00000413 3E20746F20746572
+02:0000041B 6D696E6174653A20
+02:00000423 00
+                            	  1348: XmodemInit:
+02:00000424 584D4F44454D2052	  1349:     DC.B    "XMODEM Receiver Initialized",13,10,0
+02:0000042C 6563656976657220
+02:00000434 496E697469616C69
+02:0000043C 7A6564
+02:0000043F 0D
+02:00000440 0A
+02:00000441 00
+                            	  1350: XmodemWaitingSoh:    
+02:00000442 57616974696E6720	  1351:     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
+02:0000044A 666F7220534F4820
+02:00000452 285374617274206F
+02:0000045A 6620486561646572
+02:00000462 292E2E2E
+02:00000466 0D
+02:00000467 0A
+02:00000468 00
+                            	  1352: 
+                            	  1353:     ALIGN   2
+                            	  1354:     ;Isso preence 762 com 00
+                            	  1355:     ;DS.B    $00000762 - *, $00
+02:0000046C 524F4D76342E30  	  1356:     DC.B    "ROMv4.0",0   ; String de identificação
+02:00000473 00
+02:00000474 00000906        	  1357:     DC.L    Checksum      ; Valor calculado
+                            	  1358: 
+                            	  1359: ;    SECTION bss,BSS             
+                            	  1360:     SECTION .bss                 
+                            	  1361:     ORG     $81000               ; Área para variáveis
+03:00081000 00000000        	  1362: RamBase:            DS.l 1             
+03:00081004 00000000        	  1363: RamSize:            DS.L 1             
+03:00081008 00000000        	  1364: CurrentUART:        DS.L 1             
+03:0008100C 0000            	  1365: CurrentBaudRate:    DS.W 1             
+03:0008100E 0000            	  1366: BaudDivL:           DS.W 1
+03:00081010 0000            	  1367: BaudDivH:           DS.W 1             
+03:00081012 0000            	  1368: Baud1DivL:          DS.W 1             
+03:00081014 0000            	  1369: Baud1DivH:          DS.W 1             
+                            	  1370: ; === BUFFER CIRCULAR (256 bytes) ===             
+03:00081016 00000000        	  1371: addressInHex:       DS.L 1     ; ENDEREÇO LIDO    
+03:0008101A 00000000        	  1372: BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
+03:0008101E 00000000        	  1373: BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)   
+03:00081022 0000            	  1374: BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer                
+03:00081024 00              	  1375: BUFFER:         DS.B 256   ; Buffer de recepção                         
 03:00081025 *
-                            	  1349: ;=== Uart receiver
-03:00081124 00              	  1350: xmodem_buffer  DS.B    512        ; Buffer de dados
+                            	  1376: ;=== Uart receiver
+03:00081124 00              	  1377: xmodem_buffer  DS.B    512        ; Buffer de dados
 03:00081125 *
-03:00081324 00              	  1351: block_number   DS.B    1           ; Número do bloco atual
-03:00081325 00              	  1352: expected_block DS.B    1           ; Próximo bloco esperado
-03:00081326 00              	  1353: user_buffer_ptr DS.B   512
+03:00081324 00              	  1378: block_number   DS.B    1           ; Número do bloco atual
+03:00081325 00              	  1379: expected_block DS.B    1           ; Próximo bloco esperado
+03:00081326 00              	  1380: user_buffer_ptr DS.B   512
 03:00081327 *
-                            	  1354:     ALIGN 4
-03:00081530 00              	  1355: DEST_BUFFER     DS.B   1024
+                            	  1381:     ALIGN 4
+03:00081530 00              	  1382: DEST_BUFFER     DS.B   1024
 03:00081531 *
-03:00081930 00000000        	  1356: checksum_rom    DS.L   1
-                            	  1357: 
+03:00081930 00000000        	  1383: checksum_rom    DS.L   1
+                            	  1384: 
 
 
 Symbols by name:
@@ -1599,13 +1625,14 @@ Baud1DivH                        A:00081014
 Baud1DivL                        A:00081012
 BaudDivH                         A:00081010
 BaudDivL                         A:0008100E
-BaudPrompt                      02:000002AA
-BufferEmpty                     02:0000037C
+BaudPrompt                      02:000002A1
+BufferEmpty                     02:00000373
 BufferGet                        A:000006F8
 BufferPut                        A:000006C0
+CRC_LOOP                         A:000008EC
 CalcBaudDiv                      A:00000290
 Calc_Checksum                    A:0000084C
-Checksum                         A:000008EC
+Checksum                         A:00000906
 ClearBufferPointers              A:00000748
 ClearRAM                         A:000004E0
 ClearRAM1                        A:000004F6
@@ -1627,20 +1654,20 @@ EOT                              E:00000004
 FBufferEmpty                     A:00000734
 FCR                              E:00000004
 F_CPU                            E:00F42400
-HitAnyKey                       02:000003FA
+HitAnyKey                       02:000003F1
 ISR                              E:00000004
 LCR                              E:00000006
 LED_ADDRESS                      E:00004400
 LED_INIT                         A:0000014C
 LSR                              E:0000000A
-LoadDoneMsg                     02:000002F9
+LoadDoneMsg                     02:000002F0
 LoadProgram                      A:00000546
-LoadPrompt                      02:000002BC
-LoadPromptReady                 02:000002DF
+LoadPrompt                      02:000002B3
+LoadPromptReady                 02:000002D6
 MSGINIT                         02:000000B0
 MemDump                          A:000003D4
 MenuLoop                         A:00000088
-MenuText                        02:00000168
+MenuText                        02:0000015F
 MontaAddress                     A:00000766
 NAK                              E:00000015
 NOVO_PISCA                       A:000001D6
@@ -1655,7 +1682,7 @@ PrintHexFast                     A:0000034A
 PrintHexPRECISA_DE_REVISAO       A:00000374
 PrintNibble                      A:000004D0
 PrintWordHex                     A:000004BC
-PromptNotImplemented            02:00000369
+PromptNotImplemented            02:00000360
 RHR                              E:00000000
 ROM_END                          E:00003FFF
 ROM_JUMPTABLE                    A:00000008
@@ -1666,11 +1693,11 @@ RamSize                          A:00081004
 Read_Loop                        A:00000822
 Receive_Loop                     A:000007EA
 RunProgram                       A:00000592
-RunPrompt                       02:00000354
+RunPrompt                       02:0000034B
 SCR                              E:0000000E
 SOH                              E:00000001
 SPR                              E:0000000E
-SYSTEM_HALT                      A:000008E6
+SYSTEM_HALT                      A:000008DC
 SelectUART                       A:0000052A
 Send_ACK                         A:00000884
 Send_NAK                         A:00000898
@@ -1682,9 +1709,9 @@ TESTE_BUFFER3                    A:0000019E
 TESTE_BUFFER4                    A:000001BC
 TEST_READ_IN_HEXA                A:00000672
 THR                              E:00000000
-TestHexInput                    02:00000392
+TestHexInput                    02:00000389
 Transfer_Complete                A:000008A4
-UARTPrompt                      02:00000285
+UARTPrompt                      02:0000027C
 UART_BASE                        E:00004000
 UART_Init                        A:00000204
 UART_ReadByte                    A:00000696
@@ -1697,14 +1724,15 @@ UART_ReadLong                    A:00000684
 UART_WriteChar                   A:0000022C
 UART_WriteString                 A:0000027C
 VALIDATE_ROM                     A:000008B2
+VALIDATE_ROM_CRC32               A:000008E2
 WRITE_LEDS                       A:0000016C
-WriteDoneMsg                    02:0000033A
+WriteDoneMsg                    02:00000331
 WriteProgram                     A:0000055A
-WritePrompt                     02:00000318
-WriteSizePrompt                 02:00000328
+WritePrompt                     02:0000030F
+WriteSizePrompt                 02:0000031F
 XMODEM_Receive                   A:000007C4
-XmodemInit                      02:0000042D
-XmodemWaitingSoh                02:0000044B
+XmodemInit                      02:00000424
+XmodemWaitingSoh                02:00000442
 _start                           A:00000020
 addressInHex                     A:00081016
 block_number                     A:00081324
@@ -1746,7 +1774,7 @@ Symbols by value:
 00000116 Delay_ms
 0000012E PISCA_LED
 0000014C LED_INIT
-00000168 MenuText
+0000015F MenuText
 0000016C WRITE_LEDS
 00000172 TESTE_BUFFER
 0000018A TESTE_BUFFER2
@@ -1757,33 +1785,33 @@ Symbols by value:
 0000022C UART_WriteChar
 00000246 UART_ReadChar
 00000266 UART_ReadCharNonEcho
+0000027C UARTPrompt
 0000027C UART_WriteString
-00000285 UARTPrompt
 00000290 CalcBaudDiv
-000002AA BaudPrompt
-000002BC LoadPrompt
-000002DF LoadPromptReady
-000002F9 LoadDoneMsg
-00000318 WritePrompt
+000002A1 BaudPrompt
+000002B3 LoadPrompt
+000002D6 LoadPromptReady
+000002F0 LoadDoneMsg
+0000030F WritePrompt
 0000031C new_line
-00000328 WriteSizePrompt
+0000031F WriteSizePrompt
+00000331 WriteDoneMsg
 00000332 Div32x16
 00000336 DivLoop
-0000033A WriteDoneMsg
 0000034A PrintHexFast
-00000354 RunPrompt
-00000369 PromptNotImplemented
+0000034B RunPrompt
+00000360 PromptNotImplemented
+00000373 BufferEmpty
 00000374 PrintHexPRECISA_DE_REVISAO
-0000037C BufferEmpty
-00000392 TestHexInput
+00000389 TestHexInput
 000003BA SetupDivisor
 000003D4 MemDump
-000003FA HitAnyKey
+000003F1 HitAnyKey
 000003FE DUMPLOOPMASTER
 00000408 DumpLoop
+00000424 XmodemInit
 00000428 NoNewLine
-0000042D XmodemInit
-0000044B XmodemWaitingSoh
+00000442 XmodemWaitingSoh
 00000456 AsciiLoop
 0000046A NonPrintable
 00000472 NextAscii
@@ -1819,8 +1847,10 @@ Symbols by value:
 00000898 Send_NAK
 000008A4 Transfer_Complete
 000008B2 VALIDATE_ROM
-000008E6 SYSTEM_HALT
-000008EC Checksum
+000008DC SYSTEM_HALT
+000008E2 VALIDATE_ROM_CRC32
+000008EC CRC_LOOP
+00000906 Checksum
 00002580 BAUD_RATE
 00003FFF ROM_END
 00004000 ROM_SIZE

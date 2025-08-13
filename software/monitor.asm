@@ -1222,12 +1222,10 @@ VALIDATE_ROM:
 
     LEA     checksum_rom,A0
     MOVE.L  D1,(A0)+
-    MOVE.L  #$A5A5A5A5,D0
-    MOVE.L  D0,(A0)+
-    RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
+    ;RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
 
     ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
-    MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
+    MOVE.L  ROM_END-4+1,D2        ; Lê o checksum gravado (0x0000FFFC)
     CMP.L   D1,D2               ; Combina com o calculado?
     BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
 
@@ -1241,6 +1239,35 @@ SYSTEM_HALT:
     MOVE.W  #$0700,SR        ; Desabilita interrupções
 .INFINITE_LOOP:
     BRA     .INFINITE_LOOP   ; Trava o sistema
+
+; Implementação simplificada de CRC32 (precisa da tabela de polinômios)
+VALIDATE_ROM_CRC32:
+    LEA     ROM_START,A0        ; Endereço inicial
+    MOVE.L  #ROM_SIZE-4,D0      ; Tamanho total - 4 bytes
+    MOVE.L  #$FFFFFFFF,D1      ; CRC32 initial value
+
+CRC_LOOP:
+    MOVE.B  (A0)+,D2            ; Lê 1 byte
+    EOR.B   D2,D1               ; XOR com byte atual
+
+    ; Aqui viria o loop de 8 iterações com shifts e XORs
+    ; usando a tabela de polinômios do CRC32 (omitido por brevidade)
+
+    SUBQ.L  #1,D0
+    BGT     CRC_LOOP
+
+    NOT.L   D1                  ; Inverte os bits no final
+
+    ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
+    MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
+    CMP.L   D1,D2               ; Combina com o calculado?
+    BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
+
+    ; --- Checksum inválido: travar o sistema ou notificar ---
+    MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
+    BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
+.CHECKSUM_OK:
+    RTS
 
 ; --- Constantes ---
 ROM_START   EQU     $00000000   ; Início da ROM
