@@ -43,7 +43,8 @@ RBR             equ RHR ; receive buffer register
 IIR             equ ISR ; interrupt identification register
 SCR             equ SPR ; scratch register
 
-UART_BASE       equ $2000
+LED_ADDRESS     equ $4400
+UART_BASE       equ $4000
 BAUD_RATE       equ 9600
 BAUD_DIV        equ     (((F_CPU*10)/(16*BAUD_RATE))+5)/10 ; compute one extra decimal place and round
 BAUD_DIV_L      equ     (BAUD_DIV&$FF)
@@ -150,31 +151,31 @@ Delay_ms:
 
 PISCA_LED:
         MOVE.W  #$FF00,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         move.l  #500000,D3
 .DELAY1:
         subq.l  #1,D3
         bne     .DELAY1
         MOVE.W  #$0000,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         BRA     MenuLoop
 
 
 LED_INIT:
         MOVE.L  D0,-(SP)        ; Preserva D0
         MOVE.W  #$AA00,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         move.l  #250000,D3
 .DELAY1:
         subq.l  #1,D3
         bne     .DELAY1
         MOVE.W  #$0000,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         MOVE.L  (SP)+,D0        ;Restaura D0
         RTS
 
 WRITE_LEDS:
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         RTS
 ;Esse loop funciona
 TESTE_BUFFER:
@@ -225,11 +226,11 @@ NOVO_PISCA:
         MOVE.L  #$0010,D1
 .LOOP_PISCA:
         MOVE.W  #$FF00,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         JSR     .NEW_DELAY
 
         MOVE.W  #$0000,D0
-        MOVE.W  D0,$2400
+        MOVE.W  D0,LED_ADDRESS
         JSR     .NEW_DELAY
         SUB.B   #$01,D1
         BNE     .LOOP_PISCA
