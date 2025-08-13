@@ -1,6 +1,7 @@
 # Makefile para desenvolvimento MC68000
 # Versão otimizada para gerar binários compactos
-
+# VERSÃO: 1.1
+# - Acrescentado @$(FILLER) $(TARGET_BIN) $(FLASH_SIZE)
 # Configurações
 ASM := vasmm68k_mot
 ASSEMBLER := vasmm68k_mot
@@ -63,7 +64,7 @@ compile_linker:
 	@echo "Objcopy..."
 	#m68k-elf-objcopy -O binary test_ram2.elf test_ram2.bin
 	@$(OBJCOPY) -O binary $(TARGET_ELF) $(TARGET_BIN)
-	#@$(FILLER) $(TARGET_BIN) $(FLASH_SIZE)
+	@$(FILLER) $(TARGET_BIN) $(FLASH_SIZE)
 	@$(CHECKSUMER)
 	@echo "╔══════════════════════════╗"
 	@echo "║  COMPILACAO TERMINADA!   ║"
