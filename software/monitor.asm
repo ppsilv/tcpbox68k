@@ -10,6 +10,26 @@ ROM_JUMPTABLE:
             BRA     SETBAUDRATE
             BRA     MEMDUMP
 
+FL_ESC      EQU     0   ;ESC flag de tecla ESC recebida pela serial
+
+; --- Macro para Setar Flag ---
+SET_FLAG   MACRO
+    BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro para Setar Flag ---
+CLR_FLAG   MACRO
+    BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro TEST_FLAG corrigida ---
+TEST_FLAG  MACRO
+    BTST    #\1,minhas_flags
+    ENDM
+; --- Macro para testar flag (com salto se setado) ---
+TST_FLAG_SET MACRO
+    BTST    #\1,minhas_flags  ; Testa o bit \1
+    BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
+    ENDM
+
 ;Clock frequency in Hz
 F_CPU       equ 16000000
 ;Uart register offsets
@@ -610,18 +630,16 @@ WRITEPROGRAM:
         LEA     WritePrompt,A0
         JSR     UART_WriteString
         JSR     UART_ReadHex        ; Lê endereço
-        MOVE.L  D0,A1               ; A1 = ponteiro
+        MOVE.L  (addressInHex),A1               ; A1 = ponteiro
 
         LEA     WriteSizePrompt,A0
         JSR     UART_WriteString
-
+        MOVE.L  #$00000000,D0
 .WriteLoop:
         JSR     UART_ReadByte       ; Lê byte
-        CMP.B   #'.',D0
-        BEQ     .fim
-        MOVE.B  D0,(A1)+            ; Armazena
-        SUBQ.L  #1,D1
-        BNE     .WriteLoop
+        TST_FLAG_SET FL_ESC,.fim    ; Testa o bit 0 (ESC=0 se setado)
+        MOVE.W  D0,(A1)+            ; Armazena
+        BRA     .WriteLoop
 
 .fim:
         LEA     WriteDoneMsg,A0
@@ -765,24 +783,34 @@ UART_ReadLong:
 
 ; Lê byte hexadecimal (2 caracteres ASCII)
 UART_ReadByte:
-        MOVE.L  D0,-(SP)        ; Preserva D0
+        CLR_FLAG    FL_ESC
+        MOVE #0,CCR
+        ;MOVE.L  D0,-(SP)            ; Preserva D0
         JSR     UART_ReadHexNibble
+        TST_FLAG_SET FL_ESC,.Fim            ; Testa o bit 0 (Z=0 se setado)
         LSL.B   #4,D0
         MOVE.B  D0,D1
         JSR     UART_ReadHexNibble
+        TST_FLAG_SET FL_ESC,.Fim            ; Testa o bit 0 (Z=0 se setado)
         OR.B    D1,D0
-        MOVE.L  (SP)+,D0        ; Recupera D0
+.Fim:
+        ;MOVE.L  (SP)+,D0        ; Recupera D0
         RTS
 
 ; Lê meio-byte hexadecimal
 UART_ReadHexNibble:
         JSR     UART_ReadChar
+        CMP.B   #$1B,D0
+        BEQ     .Fim
         CMP.B   #'A',D0
         BLT     .Digit
         SUB.B   #7,D0            ; Ajuste para A-F
 .Digit:
         SUB.B   #'0',D0
         AND.B   #$0F,D0
+        RTS
+.Fim:
+        SET_FLAG FL_ESC
         RTS
 
 ;--------------------------------------------------
@@ -1139,6 +1167,7 @@ ROM_START   EQU     $00000000   ; Início da ROM
 ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
 ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
 
+
 Checksum:
     DC.L    0               ; Temporariamente 0
     ALIGN 2
@@ -1192,9 +1221,9 @@ LoadDoneMsg:
 WritePrompt:
     DC.B    "Write Address: ",0
 WriteSizePrompt:
-    DC.B    "Write your program or . to finish ",0
+    DC.B    "Write your program or . to finish ",13,10,0
 WriteDoneMsg:
-    DC.B    "Data written to memory!",13,10,0
+    DC.B    13,10,"Data written to memory!",13,10,0
 RunPrompt:
     DC.B    13,10,"Running program...",13,10,0
 NO_PROGRAM_TO_RUN:
@@ -1247,4 +1276,4 @@ usr_buffer_addr DS.B   512
 pgm_buffer      DS.B   1024
 checksum_rom    DS.L   1
 flag_pgm_loaded DS.B   1
-
+minhas_flags    DS.L   1
