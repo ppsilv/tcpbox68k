@@ -68,8 +68,10 @@ _start:
         ORI     #$0700,SR           ; Desabilita interrupções (M68K)
         JSR     CLEARRAM            ;Clear entire ram
         JSR     VALIDATE_ROM        ; Verifica a ROM
+        MOVE.L  #$00000000,RomBase
+        MOVE.L  #$00004000,RomSize
         MOVE.L  #$00080000,RamBase
-        MOVE.L  #$00000100,RamSize
+        MOVE.L  #$00100000,RamSize
         MOVE.L  #UART_BASE,CurrentUART
         MOVE.W  #BAUD_RATE,CurrentBaudRate
         MOVE.W  #BAUD_DIV_L,BaudDivL
@@ -584,7 +586,7 @@ PrintNibble:
 
 CLEARRAM:
         LEA     $80000,A0
-        LEA     $8FFFF,A1
+        LEA     $9FFFF,A1
         MOVEQ   #0,D0
 .ClearLoop:
         MOVE.L  D0,(A0)+
@@ -1191,7 +1193,7 @@ DumpHeader1:
     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 MSGINIT:
-    DC.B    13,10"Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
+    DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
     DC.B    "MC68000 System Monitor",13,10
     INCLUDE "build_date.inc"
     INCLUDE "build_counter.inc"
@@ -1253,7 +1255,9 @@ XmodemWaitingSoh:
 ;-----------------------------------------------------------------------
     SECTION .bss
     ORG     $81000               ; Área para variáveis
-RamBase:            DS.l 1
+RomBase:            DS.L 1
+RomSize:            DS.L 1
+RamBase:            DS.L 1
 RamSize:            DS.L 1
 CurrentUART:        DS.L 1
 CurrentBaudRate:    DS.W 1
@@ -1262,18 +1266,18 @@ BaudDivH:           DS.W 1
 Baud1DivL:          DS.W 1
 Baud1DivH:          DS.W 1
 ; === Buffer circular for uart (256 bytes) ===
-addressInHex:   DS.L 1     ; ENDEREÇO LIDO
-BUFFER_HEAD:    DS.L 1     ; Ponteiro de escrita (próxima posição livre)
-BUFFER_TAIL:    DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
-BUFFER_COUNT:   DS.W 1     ; Contador de bytes no buffer
-BUFFER:         DS.B 256   ; Buffer de recepção
+addressInHex:       DS.L 1     ; ENDEREÇO LIDO
+BUFFER_HEAD:        DS.L 1     ; Ponteiro de escrita (próxima posição livre)
+BUFFER_TAIL:        DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
+BUFFER_COUNT:       DS.W 1     ; Contador de bytes no buffer
+BUFFER:             DS.B 256   ; Buffer de recepção
 ;=== System variables
-xmodem_buffer   DS.B   512        ; Buffer de dados
-block_number    DS.B   1           ; Número do bloco atual
-expected_block  DS.B   1           ; Próximo bloco esperado
-usr_buffer_addr DS.B   512
+xmodem_buffer       DS.B   512        ; Buffer de dados
+block_number        DS.B   1           ; Número do bloco atual
+expected_block      DS.B   1           ; Próximo bloco esperado
+usr_buffer_addr     DS.B   512
     ALIGN 4
-pgm_buffer      DS.B   1024
-checksum_rom    DS.L   1
-flag_pgm_loaded DS.B   1
-minhas_flags    DS.L   1
+pgm_buffer          DS.B   1024
+checksum_rom        DS.L   1
+flag_pgm_loaded     DS.B   1
+minhas_flags        DS.L   1
