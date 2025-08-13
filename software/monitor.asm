@@ -59,10 +59,10 @@ CAN            EQU     $18        ; Cancel
 
 _start:
         ORI     #$0700,SR      ; Desabilita interrupções (M68K)
-        ;JSR     VALIDATE_ROM      ; Verifica a ROM
         ;BNE     SYSTEM_HALT           ; Trata erro se necessário
         ;Clear entire ram
         JSR     ClearRAM
+        JSR     VALIDATE_ROM      ; Verifica a ROM
         ;JSR     CalcBaudDiv
         MOVE.L  #$00080000,RamBase
         MOVE.L  #$00000100,RamSize
@@ -1220,6 +1220,12 @@ VALIDATE_ROM:
     SUB.L   #4,D0               ; Decrementa contador
     BGT     .CHECKSUM_LOOP      ; Repete até D0 <= 0
 
+    LEA     checksum_rom,A0
+    MOVE.L  D1,(A0)+
+    MOVE.L  #$A5A5A5A5,D0
+    MOVE.L  D0,(A0)+
+    RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
+
     ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
     MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
     CMP.L   D1,D2               ; Combina com o calculado?
@@ -1232,13 +1238,13 @@ VALIDATE_ROM:
     RTS                         ; Retorna (ROM válida)
 
 SYSTEM_HALT:
-    MOVE.W  #$2700,SR        ; Desabilita interrupções
+    MOVE.W  #$0700,SR        ; Desabilita interrupções
 .INFINITE_LOOP:
     BRA     .INFINITE_LOOP   ; Trava o sistema
 
 ; --- Constantes ---
 ROM_START   EQU     $00000000   ; Início da ROM
-ROM_END     EQU     $00007FFF   ; Fim da ROM (8KB)
+ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
 ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
 
 Checksum:
@@ -1347,3 +1353,4 @@ expected_block DS.B    1           ; Próximo bloco esperado
 user_buffer_ptr DS.B   512
     ALIGN 4
 DEST_BUFFER     DS.B   1024
+checksum_rom    DS.L   1
