@@ -640,7 +640,7 @@ WRITEPROGRAM:
 .WriteLoop:
         JSR     UART_ReadByte       ; Lê byte
         TST_FLAG_SET FL_ESC,.fim    ; Testa o bit 0 (ESC=0 se setado)
-        MOVE.W  D0,(A1)+            ; Armazena
+        MOVE.B  D0,(A1)+            ; Armazena
         BRA     .WriteLoop
 
 .fim:

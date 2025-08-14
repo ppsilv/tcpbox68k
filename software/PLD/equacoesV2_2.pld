@@ -1,0 +1,62 @@
+GAL20V8
+;VERSAO: 2.1
+;           Foi retirado !A13 da equação da ROMCS
+;VERSAO: 2.2
+;           Incluido UDS e LDS para gerar 2 ram selects
+;           RAM1CS_H E RAM1CS_L
+
+; 1   2   3   4   5   6   7   8   9  10  11   12
+A13 A14 A15 A16 A17 A18 A19 A20  AS  A9 A10   GND
+
+;13   14     15     16    17     18      19      20   21   22     23   24
+ A11  LDS    DTACK  LEDS  NC  RAM1CSL RAM1CSH  NC  IOCS ROMCS  UDS   VCC
+
+; EQUAÇÕES
+!ROMCS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14         ; 0x0000-0x1FFF (8 KB)
+!IOCS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 &  A14 & !A13  ; 0x4000-0x4FFF (8 KB)
+
+!RAM1CSL = !LDS & !AS & !A20 &  ROMCS & IOCS ; 0x080000-0x0FFFFF (21=0 e A20=0)
+!RAM1CSH = !UDS & !AS & !A20 &  ROMCS & IOCS ; 0x080000-0x0FFFFF (21=0 e A20=0)
+
+;!RAM2CS = !AS &  A20 & !A19 & ROMCS ; 0x100000-0x17FFFF (21=0 e A20=1)
+;!RAM3CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (21=1 e A20=0)
+;!RAM4CS = !AS &  A20 &  A19 & ROMCS ; 0x180000-0x1FFFFF (21=1 e A20=1)
+
+LEDS   = !IOCS & !A11 & A10 & !A9
+!DTACK =  !AS & !ROMCS # !AS
+
+
+
+
+DESCRIPTION
+Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
+
+Síntese
+galasm equacoesV2_2.pld
+
+Gravação
+minipro -p GAL20V8B -w equacoesV2_2.jed
+
+
+ A21 A20 |A19 A18 A17 A16 |A15 A14 A13 A12 |A11 A10 A9 A8 |A7 A6 A5 A4 |A3 A2 A1 A0
+   0   0 |  0   0   0   0 |  0   0   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  ROM   - 0x00000 até 0x03FFF
+   0   0 |  0   0   0   0 |  0   0   1   1 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  ROM   - 0x03FFF END
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  IO    - 0x04000 até 0x04FFF Saidas em 74HC138 placa Uart control
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  UART1 - 0x04000 até 0x040FF
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   0  0  1 | 0  0  0  0 | 0  0  0  0  UART2 - 0x04100 até 0x041FF
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   0  1  0 | 0  0  0  0 | 0  0  0  0  UART3 - 0x04200 até 0x042FF
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   0  1  1 | 0  0  0  0 | 0  0  0  0  UART4 - 0x04300 até 0x043FF
+   0   0 |  0   0   0   0 |  0   1   0   0 |  0   1  0  0 | 0  0  0  0 | 0  0  0  0  LEDs  - 0x04400 até 0x044FF Saidas em 74HC138 placa Uart control
+   0   0 |  0   0   0   0 |  0   1   0   0 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  IO    - 0x04FFF
+   0   0 |  0   0   0   0 |  0   1   0   1 |  0   1  0  0 | 0  0  0  0 | 0  0  0  0  FREE  - 0x05000
+   0   0 |  0   1   1   1 |  1   1   1   1 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  FREE  - 0x7FFFF
+   0   1 |  0   0   0   0 |  0   0   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  RAM0  - 0x080000 até 0x0FFFFF
+   0   1 |  1   1   1   1 |  1   1   1   1 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  RAM0  - 0x0FFFFF
+   0   1 |  1   0   0   0 |  0   0   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  RAM1  - 0x100000
+   0   1 |  1   1   1   1 |  1   1   1   1 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  RAM1  - 0x1FFFFF
+   1   0 |  1   0   0   0 |  0   0   0   0 |  0   0  0  0 | 0  0  0  0 | 0  0  0  0  RAM2  - 0x200000
+   1   0 |  1   1   1   1 |  1   1   1   1 |  1   1  1  1 | 1  1  1  1 | 1  1  1  1  RAM2  - 0x2FFFFF
+
+
+ A20 |A19 A18 A17 A16 | A15 A14 A13 A12 | A11 A10 A9 A8 |  A7  A6  A5  A4 |  A3  A2  A1  A0
+  0  | 1   0   0   0  |  0   0   0   0  |  0   0   0   0|  0   0   0   0  |  0   0   0   0   = 0x80000
