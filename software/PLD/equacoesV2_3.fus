@@ -31,8 +31,8 @@ Pin 20 = NC           XOR = 0   AC1 = 0
  23  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
 Pin 19 = RAM1CSH      XOR = 0   AC1 = 0
- 24  ---- ---x --x- --x- ---- x--- ---- -x-- ---- ----
- 25  ---- ---- ---- ---- ---- ---- x--- ---- ---- ----
+ 24  ---- ---x --x- --x- ---- ---- -x-- -x-- ---- ----
+ 25  ---- ---x --x- --x- ---- ---- x--- -x-- ---- ----
  26  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  27  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  28  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
@@ -41,8 +41,8 @@ Pin 19 = RAM1CSH      XOR = 0   AC1 = 0
  31  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
 
 Pin 18 = RAM1CSL      XOR = 0   AC1 = 0
- 32  ---- ---- --x- --x- ---- x--- ---- -x-- ---x ----
- 33  ---- ---- ---- ---- ---- ---- x--- ---- ---- ----
+ 32  ---- ---- --x- --x- ---- ---- -x-- -x-- ---x ----
+ 33  ---- ---- --x- --x- ---- ---- x--- -x-- ---x ----
  34  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  35  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx
  36  xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx xxxx

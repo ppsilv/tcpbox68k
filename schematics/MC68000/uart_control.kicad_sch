@@ -2133,8 +2133,8 @@
     (uuid ffb75fd6-adfa-40e5-8ae8-d7b84678e514)
   )
 
-  (text "UART1 - 0x2000 até 0x20FF = UART_CS1                  \nUART2 - 0x2100 até 0x21FF = UART_CS2                                                   \nUART3 - 0x2200 até 0x22FF = UART_CS3                                                   \nUART4 - 0x2300 até 0x23FF = UART_CS4\n"
-    (at 22.86 24.13 0)
+  (text "UART1 - 0x4000 até 0x20FF = UART_CS1                  \nUART2 - 0x4100 até 0x21FF = UART_CS2                                                   \nUART3 - 0x4200 até 0x22FF = UART_CS3                                                   \nUART4 - 0x4300 até 0x23FF = UART_CS4\nkey   - 0x4400 até 0x44ff = key_cs   na leitura\nLed   - 0x4400 até 0x44ff = LED_CS   na escrita"
+    (at 19.05 30.48 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 17295675-686f-42aa-b731-e24961f3b2f3)
   )

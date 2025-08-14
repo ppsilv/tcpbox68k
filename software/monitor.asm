@@ -91,6 +91,12 @@ DELAY_INIT:
         LEA     MSGINIT,A0
         JSR     UART_WriteString
 
+        LEA     Msg_Cs,A0
+        JSR     UART_WriteString
+        LEA     Checksum,A0
+        MOVE.L  (A0),D0
+        JSR     PrintHexAddress
+
 
 ; Loop principal do menu
 MenuLoop:
@@ -586,7 +592,8 @@ PrintNibble:
 
 CLEARRAM:
         LEA     $80000,A0
-        LEA     $9FFFF,A1
+        LEA     $8FFFF,A1
+        ;LEA     $BFFFF,A1
         MOVEQ   #0,D0
 .ClearLoop:
         MOVE.L  D0,(A0)+
@@ -948,7 +955,7 @@ MontaAddress:
         MOVEM.L (SP)+,D2-D5/A0    ; Restaura registradores
         RTS
 
-        DC.B "MERDA INCIA"
+        DC.B "pdsilva AKA pgordao"
         ALIGN 2
 ; =====================================================================
 ; XMODEM RECEIVER ROUTINE
@@ -1170,8 +1177,6 @@ ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
 ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
 
 
-Checksum:
-    DC.L    0               ; Temporariamente 0
     ALIGN 2
 ; =====================================================================
 ; END XMODEM RECEIVER ROUTINE
@@ -1243,12 +1248,17 @@ XmodemInit:
     DC.B    "XMODEM Receiver Initialized",13,10,0
 XmodemWaitingSoh:
     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
+Msg_Cs:
+    DC.B    "Checksum.: ",0
 
     ALIGN   2
     ;Isso preenche 762 com 00
     ;DS.B    $00000762 - *, $00
     DC.B    "ROMv4.0",0   ; String de identificação
-    DC.L    Checksum      ; Valor calculado
+    ;DS.B    $00002968 - *, $00
+    ORG     $3FFC
+Checksum:
+    DC.L    0     ; Valor calculado
 
 ; ----------------------------------------------------------------------
 ; SECTION bss
