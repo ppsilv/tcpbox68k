@@ -20,16 +20,7 @@ FLAG_ERRO  EQU  0
 FLAG_ATIVO EQU  1
 FLAG_DADO  EQU  2
 
-; --- Macro para Setar Flag ---
-SET_FLAG   MACRO \flag
-    BSET    #\flag,MEU_FLAGS
-    ENDM
 
-; --- Macro para Testar Flag ---
-TEST_FLAG  MACRO \flag,\rotulo
-    BTST    #\flag,MEU_FLAGS
-    BNE     \rotulo
-    ENDM
 
 ; --- Uso no Código ---
     SET_FLAG FLAG_ATIVO      ; Substitui por BSET #1,MEU_FLAGS
@@ -68,13 +59,7 @@ FIFO_FLAGS EQU  $1000
 FIFO_CHEIO EQU  0
 FIFO_VAZIO EQU  1
 
-; --- Macro para Enfileirar ---
-ENQUEUE MACRO \valor
-    TST.B   (FIFO_PONTEIRO_ENTRADA)+
-    BNE     FIFO_CHEIA          ; Se bit 0=1 (cheio)
-    MOVE.B  \valor,(A0)+        ; Adiciona dado
-    BCLR    #FIFO_VAZIO,FIFO_FLAGS  ; Já não está vazio
-    ENDM
+
 
 
 📌 Dica de Ouro
@@ -90,19 +75,45 @@ TABELA_ESTADOS:
     DC.L    ESTADO_0,ESTADO_1,ESTADO_2  ; Ponteiros para rotinas
 
 
-🔧 Faça Você Mesmo
-Que tal uma macro WAIT_FLAG que espera um flag com timeout?
+
+
+MACROS NO PADRAO NO vasmm68k_mot
 
 asm
-WAIT_FLAG MACRO \flag,\timeout,\timeout_rotulo
-    MOVE.W  #\timeout,D7
-.LOOP:
-    BTST    #\flag,MEU_FLAGS
-    BNE     .SAI
-    DBRA    D7,.LOOP
-    BRA     \timeout_rotulo     ; Timeout atingido
-.SAI:
+; --- Definição das Flags ---
+FL_ESC      EQU     0       ; Bit 0 = Flag ESC
+minhas_flags DC.B   0       ; Byte para flags
+
+; --- Macro SET_FLAG corrigida ---
+SET_FLAG   MACRO
+    BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
     ENDM
 
+; --- Macro TEST_FLAG corrigida ---
+TEST_FLAG  MACRO
+    BTST    #\1,minhas_flags
+    ENDM
+
+Uso (agora com sintaxe correta):
+asm
+    SET_FLAG FL_ESC          ; Seta o bit 0 (FL_ESC=1)
+    TEST_FLAG FL_ESC         ; Testa o bit 0 (Z=0 se setado)
+    BNE     ESC_PRESSED      ; Se FL_ESC=1, pula
 
 
+    Aqui está a versão corrigida da macro ENQUEUE para o vasmm68k_mot, seguindo as regras do assembler:
+
+asm
+; --- Definições ---
+FIFO_FLAGS          EQU     $1000       ; Endereço dos flags da FIFO
+FIFO_PONTEIRO_ENTRADA EQU   $1004       ; Endereço do ponteiro de entrada
+FIFO_CHEIA          EQU     0           ; Bit 0 = FIFO cheia
+FIFO_VAZIO          EQU     1           ; Bit 1 = FIFO vazia
+
+; --- Macro ENQUEUE corrigida ---
+ENQUEUE MACRO
+    TST.B   (FIFO_PONTEIRO_ENTRADA)+    ; Testa e incrementa ponteiro
+    BNE     FIFO_CHEIA                  ; Se FIFO cheia, pula para tratamento
+    MOVE.B  \1,(A0)+                   ; Adiciona o valor (passado como \1)
+    BCLR    #FIFO_VAZIO,FIFO_FLAGS      ; Marca FIFO como não-vazia
+    ENDM

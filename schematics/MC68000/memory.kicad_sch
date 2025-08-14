@@ -4071,11 +4071,6 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 192aaeba-e9c4-4dcd-85e4-969b61b6d6b3)
   )
-  (text "; PINOS DE ENTRADA\nA13  PIN 1  ; Barramento de endereço\nA14  PIN 2\nA15  PIN 3\nA16  PIN 4\nA17  PIN 5\nA18  PIN 6\nA19  PIN 7\nA20  PIN 8\n!AS  PIN 9  ; Address Strobe\n\n; PINOS DE SAÍDA\n!ROM_CS  PIN 19  ; ROM (0x00000-0x01FFF)\n!IO_CS   PIN 18  ; I/O (0x02000-0x03FFF)\n!RAM4_CS PIN 17  ; RAM1 (0x004000-0x07FFFF)\n!RAM1_CS PIN 16  ; RAM2 (0x080000-0x0FFFFF)\n!RAM2_CS PIN 16  ; RAM2 (0x100000-0x17FFFF)\n!RAM3_CS PIN 16  ; RAM2 (0x180000-0x1FFFFF)\n; EQUAÇÕES\n!ROM_CS  = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 & !A13  ; 0x0000-0x1FFF (8 KB)\n!IO_CS   = !AS & !A20 & !A19 & !A18 & !A17 & !A16 & !A15 & !A14 &  A13  ; 0x2000-0x3FFF (8 KB)\n!RAM4_CS = !AS & !A20 & !A19  ; 0x004000-0x07FFFF (20=0 e A19=0, exceto ROM e I/O)\n!RAM1_CS = !AS & !A20 &  A19  ; 0x080000-0x0FFFFF (20=0 e A19=1)\n!RAM2_CS = !AS &  A20 & !A19  ; 0x100000-0x17FFFF (20=1 e A19=0)\n!RAM3_CS = !AS &  A20 &  A19  ; 0x180000-0x1FFFFF (20=1 e A19=1)"
-    (at 15.24 105.41 0)
-    (effects (font (size 1.27 1.27) (thickness 0.254) bold) (justify left bottom))
-    (uuid 27f87139-c9da-495c-9b5c-83497a19325b)
-  )
   (text "MEMORY CARD\n16KB ROM\n1MB  RAM" (at 177.8 179.07 0)
     (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
     (uuid 3352eab5-3047-4d56-a4b8-50efb2050946)
@@ -4083,11 +4078,6 @@
   (text "B" (at 392.43 280.67 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 5baffbfa-3ca2-4bb9-a0ff-3f4dbc63590d)
-  )
-  (text "gravar gal\nligar  LDS e UDS\nretirar as ligações de /OE e ligar /OE ao GND\nligar /RAM1CS_L e /RAM1CS_H"
-    (at 69.85 165.1 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid beafd82f-f295-41a6-91e7-d8f632defa30)
   )
 
   (label "bD10" (at 222.25 31.75 0) (fields_autoplaced)

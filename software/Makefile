@@ -106,6 +106,16 @@ programH: split
 	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
 	@echo "Gravação concluída HIGH! GRAVE A MEMORIA LOW"
 
+pgmL:
+	@echo "Gravando parte LOW na Flash..."
+	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_LOW) -s
+	@echo "Gravação concluída LOW! BOA SORTE"
+
+pgmH:
+	@echo "Gravando parte HIGH na Flash..."
+	@$(PROGRAMMER) -p $(CHIP_TYPE) -w $(TARGET_HIGH) -s
+	@echo "Gravação concluída HIGH! GRAVE A MEMORIA LOW"
+
 program: programL programH
 
 clean:
@@ -122,5 +132,7 @@ help:
 	@echo "  make program        - Executa todo o fluxo e grava nas Flash ROMs"
 	@echo "  make programL       - Grava apenas a parte LOW não compila o binario"
 	@echo "  make programH       - Grava apenas a parte HIGH compila o binario"
+	@echo "  make pgmL           - Grava apenas a parte LOW não compila o binario"
+	@echo "  make pgmH           - Grava apenas a parte HIGH não compila o binario"
 	@echo "  make clean          - Remove arquivos gerados"
 	@echo "  make help           - Mostra esta ajuda"
