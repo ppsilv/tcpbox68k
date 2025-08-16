@@ -63,7 +63,7 @@ EOT         EQU     $04        ; End Of Transmission
 ACK         EQU     $06        ; Acknowledge
 NAK         EQU     $15        ; Negative Acknowledge
 CAN         EQU     $18        ; Cancel
-
+        ALIGN 2
 _start:
         ORI     #$0700,SR           ; Desabilita interrupções (M68K)
         JSR     CLEARRAM            ;Clear entire ram
@@ -93,7 +93,13 @@ DELAY_INIT:
 
         LEA     Msg_Cs,A0
         JSR     UART_WriteString
-        LEA     Checksum,A0
+        LEA     checksum_rom,A0
+        MOVE.L  (A0),D0
+        JSR     PrintHexAddress
+
+        LEA     Msg_Cscalc,A0
+        JSR     UART_WriteString
+        LEA     checksum_calc,A0
         MOVE.L  (A0),D0
         JSR     PrintHexAddress
 
@@ -1122,7 +1128,7 @@ VALIDATE_ROM:
         SUB.L   #4,D0               ; Decrementa contador
         BGT     .CHECKSUM_LOOP      ; Repete até D0 <= 0
 
-        LEA     checksum_rom,A0
+        LEA     checksum_calc,A0
         MOVE.L  D1,(A0)+
         ;RTS     ;NESSE MOMENTO NÃO FAZ NADA COM O RESULTADO
 
@@ -1249,7 +1255,9 @@ XmodemInit:
 XmodemWaitingSoh:
     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
 Msg_Cs:
-    DC.B    "Checksum.: ",0
+    DC.B    "Checksum ROM.: ",0
+Msg_Cscalc:
+    DC.B    " - Checksum CAL.: ",0
 
     ALIGN   2
     ;Isso preenche 762 com 00
@@ -1257,7 +1265,7 @@ Msg_Cs:
     DC.B    "ROMv4.0",0   ; String de identificação
     ;DS.B    $00002968 - *, $00
     ORG     $3FFC
-Checksum:
+checksum_rom:
     DC.L    0     ; Valor calculado
 
 ; ----------------------------------------------------------------------
@@ -1288,6 +1296,6 @@ expected_block      DS.B   1           ; Próximo bloco esperado
 usr_buffer_addr     DS.B   512
     ALIGN 4
 pgm_buffer          DS.B   1024
-checksum_rom        DS.L   1
+checksum_calc       DS.L   1
 flag_pgm_loaded     DS.B   1
 minhas_flags        DS.L   1

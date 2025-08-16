@@ -32,10 +32,10 @@ DESCRIPTION
 Decodificador de endereços para 68000 com ROM, I/O, RAM1, RAM2, RAM3 e RAM4.
 
 Síntese
-galasm equacoesV2_2.pld
+galasm equacoesV2_3.pld
 
 Gravação
-minipro -p GAL20V8B -w equacoesV2_2.jed
+minipro -p GAL20V8B -w equacoesV2_3.jed
 
 
   A21 A20 |A19 A18 A17 A16 |A15 A14 A13 A12 |A11 A10 A9 A8 |A7 A6 A5 A4 |A3 A2 A1 A0
