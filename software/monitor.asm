@@ -110,8 +110,8 @@ _start:
 
 ;        JSR     CLEARRAM            ;Clear entire ram
 CLEARRAM:
-        LEA     $80000,A0
-        LEA     $A0000,A1
+        LEA     $080000,A0
+        LEA     $180000,A1
         MOVEQ   #0,D0
 .ClearLoop:
         MOVE.L  D0,(A0)+
@@ -1390,46 +1390,6 @@ illegal_msg:    DC.B "Illegal Instruction!",0
 trap_msg:       DC.B "TRAP Instruction!",0
 unknown_msg:    DC.B "Unknown Exception!",0
 
-INT21_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$2100,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT22_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$2200,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT23_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$2300,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT24_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$2400,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT25_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$2500,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
 
 
 

@@ -1,6 +1,6 @@
 Sections:
 00: ".vectors" (0-80)
-01: ".text" (0-C14)
+01: ".text" (0-BB8)
 02: ".rodata" (0-0)
 03: ".data" (0-4EC)
 04: ".bss" (0-939)
@@ -13,16 +13,16 @@ Source: "monitor.asm"
                             	     4:             ; --- Vetores de Exceção do 68000 ---
 00:00000000 000A0000        	     5:             DC.L    $000A0000       ; SP inicial
 00:00000004 00001000        	     6:             DC.L    _start          ; PC inicial
-00:00000008 00001B5C        	     7:             DC.L    service_bus_err ; Bus Error
-00:0000000C 00001B64        	     8:             DC.L    service_addr_err; Address Error
-00:00000010 00001B6C        	     9:             DC.L    service_illegal ; Illegal Instruction
-00:00000014 00001BCA        	    10:             DC.L    service_div0    ; Division by Zero
-00:00000018 00001BD2        	    11:             DC.L    service_check   ; CHK Instruction
-00:0000001C 00001BDA        	    12:             DC.L    service_trapv   ; TRAPV Instruction
-00:00000020 00001BE2        	    13:             DC.L    service_priv    ; Privilege Violation
-00:00000024 00001BEA        	    14:             DC.L    service_trace   ; Trace
-00:00000028 00001BF2        	    15:             DC.L    service_line_a  ; Line A Emulator
-00:0000002C 00001BFA        	    16:             DC.L    service_line_f  ; Line F Emulator
+00:00000008 00001B02        	     7:             DC.L    service_bus_err ; Bus Error
+00:0000000C 00001B0A        	     8:             DC.L    service_addr_err; Address Error
+00:00000010 00001B12        	     9:             DC.L    service_illegal ; Illegal Instruction
+00:00000014 00001B70        	    10:             DC.L    service_div0    ; Division by Zero
+00:00000018 00001B78        	    11:             DC.L    service_check   ; CHK Instruction
+00:0000001C 00001B80        	    12:             DC.L    service_trapv   ; TRAPV Instruction
+00:00000020 00001B88        	    13:             DC.L    service_priv    ; Privilege Violation
+00:00000024 00001B90        	    14:             DC.L    service_trace   ; Trace
+00:00000028 00001B98        	    15:             DC.L    service_line_a  ; Line A Emulator
+00:0000002C 00001BA0        	    16:             DC.L    service_line_f  ; Line F Emulator
                             	    17: 
                             	    18:             ; --- Preencha o resto com handlers padrão ---
                             	    19:             ;REPT 45
@@ -41,13 +41,13 @@ Source: "monitor.asm"
 00:00000058 0000192A        	    32:             DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
 00:0000005C 0000192A        	    33:             DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
 00:00000060 00001922        	    34:             DC.L    SPURIOUS_HANDLER    ; $60: Spurious Interrupt
-00:00000064 00001ADE        	    35:             DC.L    INT1_HANDLER     ; $70: Level 4 Interrupt
-00:00000068 00001AF0        	    36:             DC.L    INT2_HANDLER     ; $74: Level 5 Interrupt
-00:0000006C 00001B02        	    37:             DC.L    INT3_HANDLER        ; $78: Level 6 Interrupt  ✅
-00:00000070 00001B14        	    38:             DC.L    INT4_HANDLER     ; $7C: Level 7 Interrupt
-00:00000074 00001B26        	    39:             DC.L    INT5_HANDLER     ; $64: Level 1 Interrupt
-00:00000078 00001B38        	    40:             DC.L    INT6_HANDLER        ; $78: Level 6 Interrupt  ✅
-00:0000007C 00001B4A        	    41:             DC.L    INT7_HANDLER     ; $7C: Level 7 Interrupt
+00:00000064 00001A83        	    35:             DC.L    INT1_HANDLER     ; $70: Level 4 Interrupt
+00:00000068 00001A96        	    36:             DC.L    INT2_HANDLER     ; $74: Level 5 Interrupt
+00:0000006C 00001AA8        	    37:             DC.L    INT3_HANDLER        ; $78: Level 6 Interrupt  ✅
+00:00000070 00001ABA        	    38:             DC.L    INT4_HANDLER     ; $7C: Level 7 Interrupt
+00:00000074 00001ACC        	    39:             DC.L    INT5_HANDLER     ; $64: Level 1 Interrupt
+00:00000078 00001ADE        	    40:             DC.L    INT6_HANDLER        ; $78: Level 6 Interrupt  ✅
+00:0000007C 00001AF0        	    41:             DC.L    INT7_HANDLER     ; $7C: Level 7 Interrupt
                             	    42: 
                             	    43:             ; --- Preencha o resto (até $FF) ---
                             	    44:             ;REPT 128
@@ -119,8 +119,8 @@ Source: "monitor.asm"
                             	   110: 
                             	   111: ;        JSR     CLEARRAM            ;Clear entire ram
                             	   112: CLEARRAM:
-01:00001004 41F900080000    	   113:         LEA     $80000,A0
-01:0000100A 43F9000A0000    	   114:         LEA     $A0000,A1
+01:00001004 41F900080000    	   113:         LEA     $080000,A0
+01:0000100A 43F900180000    	   114:         LEA     $180000,A1
 01:00001010 7000            	   115:         MOVEQ   #0,D0
                             	   116: .ClearLoop:
 01:00001012 20C0            	   117:         MOVE.L  D0,(A0)+
@@ -1441,219 +1441,179 @@ Source: "monitor.asm"
 01:00001A80 6E21
 01:00001A82 00
                             	  1392: 
-                            	  1393: INT21_HANDLER:
-01:00001A84 48E7FFFE        	  1394:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1395:         ; Seu código de tratamento aqui
-01:00001A88 303C2100        	  1396:         MOVE.W  #$2100,D0
-01:00001A8C 31C04400        	  1397:         MOVE.W  D0,LED_ADDRESS
-                            	  1398: 
-01:00001A90 4CDF7FFF        	  1399:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001A94 4E73            	  1400:         RTE
-                            	  1401: INT22_HANDLER:
-01:00001A96 48E7FFFE        	  1402:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1403:         ; Seu código de tratamento aqui
-01:00001A9A 303C2200        	  1404:         MOVE.W  #$2200,D0
-01:00001A9E 31C04400        	  1405:         MOVE.W  D0,LED_ADDRESS
-                            	  1406: 
-01:00001AA2 4CDF7FFF        	  1407:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001AA6 4E73            	  1408:         RTE
-                            	  1409: INT23_HANDLER:
-01:00001AA8 48E7FFFE        	  1410:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1411:         ; Seu código de tratamento aqui
-01:00001AAC 303C2300        	  1412:         MOVE.W  #$2300,D0
-01:00001AB0 31C04400        	  1413:         MOVE.W  D0,LED_ADDRESS
-                            	  1414: 
-01:00001AB4 4CDF7FFF        	  1415:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001AB8 4E73            	  1416:         RTE
-                            	  1417: INT24_HANDLER:
-01:00001ABA 48E7FFFE        	  1418:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1419:         ; Seu código de tratamento aqui
-01:00001ABE 303C2400        	  1420:         MOVE.W  #$2400,D0
-01:00001AC2 31C04400        	  1421:         MOVE.W  D0,LED_ADDRESS
-                            	  1422: 
-01:00001AC6 4CDF7FFF        	  1423:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001ACA 4E73            	  1424:         RTE
-                            	  1425: INT25_HANDLER:
-01:00001ACC 48E7FFFE        	  1426:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1427:         ; Seu código de tratamento aqui
-01:00001AD0 303C2500        	  1428:         MOVE.W  #$2500,D0
-01:00001AD4 31C04400        	  1429:         MOVE.W  D0,LED_ADDRESS
-                            	  1430: 
-01:00001AD8 4CDF7FFF        	  1431:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001ADC 4E73            	  1432:         RTE
+                            	  1393: 
+                            	  1394: 
+                            	  1395: 
+                            	  1396: INT1_HANDLER:
+01:00001A84 48E7FFFE        	  1397:         MOVEM.L D0-D7/A0-A6,-(A7)
+                            	  1398:         ; Seu código de tratamento aqui
+01:00001A88 303CD100        	  1399:         MOVE.W  #$D100,D0
+01:00001A8C 31C04400        	  1400:         MOVE.W  D0,LED_ADDRESS
+                            	  1401: 
+01:00001A90 4CDF7FFF        	  1402:         MOVEM.L (A7)+,D0-D7/A0-A6
+01:00001A94 4E73            	  1403:         RTE
+                            	  1404: INT2_HANDLER:
+01:00001A96 48E7FFFE        	  1405:         MOVEM.L D0-D7/A0-A6,-(A7)
+                            	  1406:         ; Seu código de tratamento aqui
+01:00001A9A 303CD200        	  1407:         MOVE.W  #$D200,D0
+01:00001A9E 31C04400        	  1408:         MOVE.W  D0,LED_ADDRESS
+                            	  1409: 
+01:00001AA2 4CDF7FFF        	  1410:         MOVEM.L (A7)+,D0-D7/A0-A6
+01:00001AA6 4E73            	  1411:         RTE
+                            	  1412: INT3_HANDLER:
+01:00001AA8 48E7FFFE        	  1413:         MOVEM.L D0-D7/A0-A6,-(A7)
+                            	  1414:         ; Seu código de tratamento aqui
+01:00001AAC 303CD300        	  1415:         MOVE.W  #$D300,D0
+01:00001AB0 31C04400        	  1416:         MOVE.W  D0,LED_ADDRESS
+                            	  1417: 
+01:00001AB4 4CDF7FFF        	  1418:         MOVEM.L (A7)+,D0-D7/A0-A6
+01:00001AB8 4E73            	  1419:         RTE
+                            	  1420: INT4_HANDLER:
+01:00001ABA 48E7FFFE        	  1421:         MOVEM.L D0-D7/A0-A6,-(A7)
+                            	  1422:         ; Seu código de tratamento aqui
+01:00001ABE 303CD400        	  1423:         MOVE.W  #$D400,D0
+01:00001AC2 31C04400        	  1424:         MOVE.W  D0,LED_ADDRESS
+                            	  1425: 
+01:00001AC6 4CDF7FFF        	  1426:         MOVEM.L (A7)+,D0-D7/A0-A6
+01:00001ACA 4E73            	  1427:         RTE
+                            	  1428: INT5_HANDLER:
+01:00001ACC 48E7FFFE        	  1429:         MOVEM.L D0-D7/A0-A6,-(A7)
+                            	  1430:         ; Seu código de tratamento aqui
+01:00001AD0 303CD500        	  1431:         MOVE.W  #$D500,D0
+01:00001AD4 31C04400        	  1432:         MOVE.W  D0,LED_ADDRESS
                             	  1433: 
-                            	  1434: 
-                            	  1435: 
-                            	  1436: INT1_HANDLER:
+01:00001AD8 4CDF7FFF        	  1434:         MOVEM.L (A7)+,D0-D7/A0-A6
+01:00001ADC 4E73            	  1435:         RTE
+                            	  1436: INT6_HANDLER:
 01:00001ADE 48E7FFFE        	  1437:         MOVEM.L D0-D7/A0-A6,-(A7)
                             	  1438:         ; Seu código de tratamento aqui
-01:00001AE2 303CD100        	  1439:         MOVE.W  #$D100,D0
+01:00001AE2 303CD600        	  1439:         MOVE.W  #$D600,D0
 01:00001AE6 31C04400        	  1440:         MOVE.W  D0,LED_ADDRESS
                             	  1441: 
 01:00001AEA 4CDF7FFF        	  1442:         MOVEM.L (A7)+,D0-D7/A0-A6
 01:00001AEE 4E73            	  1443:         RTE
-                            	  1444: INT2_HANDLER:
+                            	  1444: INT7_HANDLER:
 01:00001AF0 48E7FFFE        	  1445:         MOVEM.L D0-D7/A0-A6,-(A7)
                             	  1446:         ; Seu código de tratamento aqui
-01:00001AF4 303CD200        	  1447:         MOVE.W  #$D200,D0
+01:00001AF4 303CD700        	  1447:         MOVE.W  #$D700,D0
 01:00001AF8 31C04400        	  1448:         MOVE.W  D0,LED_ADDRESS
                             	  1449: 
 01:00001AFC 4CDF7FFF        	  1450:         MOVEM.L (A7)+,D0-D7/A0-A6
 01:00001B00 4E73            	  1451:         RTE
-                            	  1452: INT3_HANDLER:
-01:00001B02 48E7FFFE        	  1453:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1454:         ; Seu código de tratamento aqui
-01:00001B06 303CD300        	  1455:         MOVE.W  #$D300,D0
-01:00001B0A 31C04400        	  1456:         MOVE.W  D0,LED_ADDRESS
-                            	  1457: 
-01:00001B0E 4CDF7FFF        	  1458:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001B12 4E73            	  1459:         RTE
-                            	  1460: INT4_HANDLER:
-01:00001B14 48E7FFFE        	  1461:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1462:         ; Seu código de tratamento aqui
-01:00001B18 303CD400        	  1463:         MOVE.W  #$D400,D0
-01:00001B1C 31C04400        	  1464:         MOVE.W  D0,LED_ADDRESS
-                            	  1465: 
-01:00001B20 4CDF7FFF        	  1466:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001B24 4E73            	  1467:         RTE
-                            	  1468: INT5_HANDLER:
-01:00001B26 48E7FFFE        	  1469:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1470:         ; Seu código de tratamento aqui
-01:00001B2A 303CD500        	  1471:         MOVE.W  #$D500,D0
-01:00001B2E 31C04400        	  1472:         MOVE.W  D0,LED_ADDRESS
-                            	  1473: 
-01:00001B32 4CDF7FFF        	  1474:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001B36 4E73            	  1475:         RTE
-                            	  1476: INT6_HANDLER:
-01:00001B38 48E7FFFE        	  1477:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1478:         ; Seu código de tratamento aqui
-01:00001B3C 303CD600        	  1479:         MOVE.W  #$D600,D0
-01:00001B40 31C04400        	  1480:         MOVE.W  D0,LED_ADDRESS
-                            	  1481: 
-01:00001B44 4CDF7FFF        	  1482:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001B48 4E73            	  1483:         RTE
-                            	  1484: INT7_HANDLER:
-01:00001B4A 48E7FFFE        	  1485:         MOVEM.L D0-D7/A0-A6,-(A7)
-                            	  1486:         ; Seu código de tratamento aqui
-01:00001B4E 303CD700        	  1487:         MOVE.W  #$D700,D0
-01:00001B52 31C04400        	  1488:         MOVE.W  D0,LED_ADDRESS
+                            	  1452: 
+                            	  1453: service_bus_err:
+01:00001B02 31FCC1004400    	  1454:         MOVE.W  #$C100,LED_ADDRESS
+01:00001B08 4E73            	  1455:         RTE
+                            	  1456: service_addr_err:
+01:00001B0A 31FCC2004400    	  1457:         MOVE.W  #$C200,LED_ADDRESS
+01:00001B10 4E73            	  1458:         RTE
+                            	  1459: service_illegal:
+01:00001B12 202F0002        	  1460:         MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
+01:00001B16 322F0006        	  1461:         MOVE.W  6(SP),D1        ; SR na época
+01:00001B1A 342F0008        	  1462:         MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
+                            	  1463: 
+01:00001B1E 4EB8148A        	  1464:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
+01:00001B22 4EB8130C        	  1465:         JSR     new_line
+01:00001B26 7000            	  1466:         CLR.L   D0
+01:00001B28 3001            	  1467:         MOVE.W  D1,D0
+01:00001B2A 4EB8148A        	  1468:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
+01:00001B2E 4EB8130C        	  1469:         JSR     new_line
+                            	  1470: 
+01:00001B32 7000            	  1471:         CLR.L   D0
+01:00001B34 3002            	  1472:         MOVE.W  D2,D0
+01:00001B36 4EB8148A        	  1473:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
+01:00001B3A 4EB8130C        	  1474:         JSR     new_line
+                            	  1475: 
+01:00001B3E 41F819E9        	  1476:         LEA     sr_msg,A0
+01:00001B42 4EB8126C        	  1477:         JSR     UART_WriteString
+01:00001B46 7000            	  1478:         CLR.L   D0
+01:00001B48 40C0            	  1479:         MOVE.W  SR,D0
+01:00001B4A 4EB8148A        	  1480:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
+01:00001B4E 4EB8130C        	  1481:         JSR     new_line
+                            	  1482: 
+01:00001B52 41F819F6        	  1483:         LEA     sp_msg,A0
+01:00001B56 4EB8126C        	  1484:         JSR     UART_WriteString
+01:00001B5A 200F            	  1485:         MOVE.L  SP,D0
+01:00001B5C 4EB8148A        	  1486:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
+01:00001B60 4EB8130C        	  1487:         JSR     new_line
+01:00001B64 31FCC3004400    	  1488:         MOVE.W  #$C300,LED_ADDRESS
                             	  1489: 
-01:00001B56 4CDF7FFF        	  1490:         MOVEM.L (A7)+,D0-D7/A0-A6
-01:00001B5A 4E73            	  1491:         RTE
+01:00001B6A 4EF810B4        	  1490:         JMP MenuLoop
+01:00001B6E 4E73            	  1491:         RTE
                             	  1492: 
-                            	  1493: service_bus_err:
-01:00001B5C 31FCC1004400    	  1494:         MOVE.W  #$C100,LED_ADDRESS
-01:00001B62 4E73            	  1495:         RTE
-                            	  1496: service_addr_err:
-01:00001B64 31FCC2004400    	  1497:         MOVE.W  #$C200,LED_ADDRESS
-01:00001B6A 4E73            	  1498:         RTE
-                            	  1499: service_illegal:
-01:00001B6C 202F0002        	  1500:         MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
-01:00001B70 322F0006        	  1501:         MOVE.W  6(SP),D1        ; SR na época
-01:00001B74 342F0008        	  1502:         MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
-                            	  1503: 
-01:00001B78 4EB8148A        	  1504:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-01:00001B7C 4EB8130C        	  1505:         JSR     new_line
-01:00001B80 7000            	  1506:         CLR.L   D0
-01:00001B82 3001            	  1507:         MOVE.W  D1,D0
-01:00001B84 4EB8148A        	  1508:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-01:00001B88 4EB8130C        	  1509:         JSR     new_line
-                            	  1510: 
-01:00001B8C 7000            	  1511:         CLR.L   D0
-01:00001B8E 3002            	  1512:         MOVE.W  D2,D0
-01:00001B90 4EB8148A        	  1513:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-01:00001B94 4EB8130C        	  1514:         JSR     new_line
-                            	  1515: 
-01:00001B98 41F819E9        	  1516:         LEA     sr_msg,A0
-01:00001B9C 4EB8126C        	  1517:         JSR     UART_WriteString
-01:00001BA0 7000            	  1518:         CLR.L   D0
-01:00001BA2 40C0            	  1519:         MOVE.W  SR,D0
-01:00001BA4 4EB8148A        	  1520:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-01:00001BA8 4EB8130C        	  1521:         JSR     new_line
-                            	  1522: 
-01:00001BAC 41F819F6        	  1523:         LEA     sp_msg,A0
-01:00001BB0 4EB8126C        	  1524:         JSR     UART_WriteString
-01:00001BB4 200F            	  1525:         MOVE.L  SP,D0
-01:00001BB6 4EB8148A        	  1526:         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-01:00001BBA 4EB8130C        	  1527:         JSR     new_line
-01:00001BBE 31FCC3004400    	  1528:         MOVE.W  #$C300,LED_ADDRESS
-                            	  1529: 
-01:00001BC4 4EF810B4        	  1530:         JMP MenuLoop
-01:00001BC8 4E73            	  1531:         RTE
-                            	  1532: 
-                            	  1533: service_div0:
-01:00001BCA 31FCC4004400    	  1534:         MOVE.W  #$C400,LED_ADDRESS
-01:00001BD0 4E73            	  1535:         RTE
-                            	  1536: service_check:
-01:00001BD2 31FCC5004400    	  1537:         MOVE.W  #$C500,LED_ADDRESS
-01:00001BD8 4E73            	  1538:         RTE
-                            	  1539: service_trapv:
-01:00001BDA 31FCC6004400    	  1540:         MOVE.W  #$C600,LED_ADDRESS
-01:00001BE0 4E73            	  1541:         RTE
-                            	  1542: service_priv:
-01:00001BE2 31FCC7004400    	  1543:         MOVE.W  #$C700,LED_ADDRESS
-01:00001BE8 4E73            	  1544:         RTE
-                            	  1545: service_trace:
-01:00001BEA 31FCC8004400    	  1546:         MOVE.W  #$C800,LED_ADDRESS
-01:00001BF0 4E73            	  1547:         RTE
-                            	  1548: service_line_a:
-01:00001BF2 31FCC9004400    	  1549:         MOVE.W  #$C900,LED_ADDRESS
-01:00001BF8 4E73            	  1550:         RTE
-                            	  1551: service_line_f:
-01:00001BFA 31FCCA004400    	  1552:         MOVE.W  #$CA00,LED_ADDRESS
-01:00001C00 4E73            	  1553:         RTE
-                            	  1554: 
-                            	  1555: ROM_JUMPTABLE:
-                            	  1556: ;            BRA     UART_Init          ; $00000008
-01:00001C02 6000F618        	  1557:             BRA     UART_WriteChar     ; $0000000C
-01:00001C06 6000F62E        	  1558:             BRA     UART_ReadChar      ; $00000010
-                            	  1559: ;            BRA     UART_Select
-                            	  1560: ;            BRA     UART_Setbaudreate
-01:00001C0A 6000F590        	  1561:             BRA     DELAY_MS           ;
-01:00001C0E 6000F79A        	  1562:             BRA     MEMDUMP
-                            	  1563: ; --- Macro para Setar Flag ---
-                            	  1564: SET_FLAG   MACRO
-                            	  1565:     BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
-                            	  1566:     ENDM
-                            	  1567: ; --- Macro para Setar Flag ---
-                            	  1568: CLR_FLAG   MACRO
-                            	  1569:     BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
-                            	  1570:     ENDM
-                            	  1571: ; --- Macro TEST_FLAG corrigida ---
-                            	  1572: TEST_FLAG  MACRO
-                            	  1573:     BTST    #\1,minhas_flags
-                            	  1574:     ENDM
-                            	  1575: ; --- Macro para testar flag (com salto se setado) ---
-                            	  1576: TST_FLAG_SET MACRO
-                            	  1577:     BTST    #\1,minhas_flags  ; Testa o bit \1
-                            	  1578:     BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
-                            	  1579:     ENDM
-                            	  1580: 
-                            	  1581:     ALIGN 2
-                            	  1582: ; =====================================================================
-                            	  1583: ; END XMODEM RECEIVER ROUTINE
-                            	  1584: ; =====================================================================
-                            	  1585: 
-                            	  1586: ; ----------------------------------------------------------------------
-                            	  1587: ; SECTION data
-                            	  1588: ;-----------------------------------------------------------------------
-                            	  1589:     SECTION .rodata
-                            	  1590:     SECTION .data
-03:00000000 56616C6F726573  	  1591:     DC.B "Valores",0
+                            	  1493: service_div0:
+01:00001B70 31FCC4004400    	  1494:         MOVE.W  #$C400,LED_ADDRESS
+01:00001B76 4E73            	  1495:         RTE
+                            	  1496: service_check:
+01:00001B78 31FCC5004400    	  1497:         MOVE.W  #$C500,LED_ADDRESS
+01:00001B7E 4E73            	  1498:         RTE
+                            	  1499: service_trapv:
+01:00001B80 31FCC6004400    	  1500:         MOVE.W  #$C600,LED_ADDRESS
+01:00001B86 4E73            	  1501:         RTE
+                            	  1502: service_priv:
+01:00001B88 31FCC7004400    	  1503:         MOVE.W  #$C700,LED_ADDRESS
+01:00001B8E 4E73            	  1504:         RTE
+                            	  1505: service_trace:
+01:00001B90 31FCC8004400    	  1506:         MOVE.W  #$C800,LED_ADDRESS
+01:00001B96 4E73            	  1507:         RTE
+                            	  1508: service_line_a:
+01:00001B98 31FCC9004400    	  1509:         MOVE.W  #$C900,LED_ADDRESS
+01:00001B9E 4E73            	  1510:         RTE
+                            	  1511: service_line_f:
+01:00001BA0 31FCCA004400    	  1512:         MOVE.W  #$CA00,LED_ADDRESS
+01:00001BA6 4E73            	  1513:         RTE
+                            	  1514: 
+                            	  1515: ROM_JUMPTABLE:
+                            	  1516: ;            BRA     UART_Init          ; $00000008
+01:00001BA8 6000F672        	  1517:             BRA     UART_WriteChar     ; $0000000C
+01:00001BAC 6000F688        	  1518:             BRA     UART_ReadChar      ; $00000010
+                            	  1519: ;            BRA     UART_Select
+                            	  1520: ;            BRA     UART_Setbaudreate
+01:00001BB0 6000F5EA        	  1521:             BRA     DELAY_MS           ;
+01:00001BB4 6000F7F4        	  1522:             BRA     MEMDUMP
+                            	  1523: ; --- Macro para Setar Flag ---
+                            	  1524: SET_FLAG   MACRO
+                            	  1525:     BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+                            	  1526:     ENDM
+                            	  1527: ; --- Macro para Setar Flag ---
+                            	  1528: CLR_FLAG   MACRO
+                            	  1529:     BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+                            	  1530:     ENDM
+                            	  1531: ; --- Macro TEST_FLAG corrigida ---
+                            	  1532: TEST_FLAG  MACRO
+                            	  1533:     BTST    #\1,minhas_flags
+                            	  1534:     ENDM
+                            	  1535: ; --- Macro para testar flag (com salto se setado) ---
+                            	  1536: TST_FLAG_SET MACRO
+                            	  1537:     BTST    #\1,minhas_flags  ; Testa o bit \1
+                            	  1538:     BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
+                            	  1539:     ENDM
+                            	  1540: 
+                            	  1541:     ALIGN 2
+                            	  1542: ; =====================================================================
+                            	  1543: ; END XMODEM RECEIVER ROUTINE
+                            	  1544: ; =====================================================================
+                            	  1545: 
+                            	  1546: ; ----------------------------------------------------------------------
+                            	  1547: ; SECTION data
+                            	  1548: ;-----------------------------------------------------------------------
+                            	  1549:     SECTION .rodata
+                            	  1550:     SECTION .data
+03:00000000 56616C6F726573  	  1551:     DC.B "Valores",0
 03:00000007 00
-03:00000008 1B              	  1592: cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
+03:00000008 1B              	  1552: cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
 03:00000009 5B324A
 03:0000000C 00
-                            	  1593: ; ----------------------------------------------------------------------
-                            	  1594: ; Strings do Sistema
-                            	  1595: ; ----------------------------------------------------------------------
-                            	  1596: DumpHeader:
-03:0000000D 4D656D6F72792044	  1597:     DC.B    "Memory Dump from :",0
+                            	  1553: ; ----------------------------------------------------------------------
+                            	  1554: ; Strings do Sistema
+                            	  1555: ; ----------------------------------------------------------------------
+                            	  1556: DumpHeader:
+03:0000000D 4D656D6F72792044	  1557:     DC.B    "Memory Dump from :",0
 03:00000015 756D702066726F6D
 03:0000001D 203A
 03:0000001F 00
-                            	  1598: DumpHeader1:
-03:00000020 4164647265737320	  1599:     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
+                            	  1558: DumpHeader1:
+03:00000020 4164647265737320	  1559:     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
 03:00000028 2020303020303120
 03:00000030 3032203033203034
 03:00000038 2030352030362030
@@ -1663,7 +1623,7 @@ Source: "monitor.asm"
 03:00000058 4620204153434949
 03:00000060 0D
 03:00000061 0A
-03:00000062 2D2D2D2D2D2D2D2D	  1600:     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
+03:00000062 2D2D2D2D2D2D2D2D	  1560:     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 03:0000006A 20202D2D2D2D2D2D
 03:00000072 2D2D2D2D2D2D2D2D
 03:0000007A 2D2D2D2D2D2D2D2D
@@ -1676,8 +1636,8 @@ Source: "monitor.asm"
 03:000000AD 0D
 03:000000AE 0A
 03:000000AF 00
-                            	  1601: MSGINIT:
-03:000000B0 0D              	  1602:     DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
+                            	  1561: MSGINIT:
+03:000000B0 0D              	  1562:     DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
 03:000000B1 0A
 03:000000B2 546370626F783638
 03:000000BA 6B202D20636F7079
@@ -1687,12 +1647,12 @@ Source: "monitor.asm"
 03:000000DA 6F292E56312E30
 03:000000E1 0D
 03:000000E2 0A
-03:000000E3 4D43363830303020	  1603:     DC.B    "MC68000 System Monitor",13,10
+03:000000E3 4D43363830303020	  1563:     DC.B    "MC68000 System Monitor",13,10
 03:000000EB 53797374656D204D
 03:000000F3 6F6E69746F72
 03:000000F9 0D
 03:000000FA 0A
-                            	  1604:     INCLUDE "build_date.inc"
+                            	  1564:     INCLUDE "build_date.inc"
 
 Source: "build_date.inc"
                             	     1: ;From here it is generated and pushed by update_build.sh
@@ -1711,7 +1671,7 @@ Source: "build_date.inc"
                             	     6: 
 
 Source: "monitor.asm"
-                            	  1605:     INCLUDE "build_counter.inc"
+                            	  1565:     INCLUDE "build_counter.inc"
 
 Source: "build_counter.inc"
 03:00000120 436F6D70696C6174	     1:       DC.B "Compilation: #33",0
@@ -1720,7 +1680,7 @@ Source: "build_counter.inc"
                             	     2: 
 
 Source: "monitor.asm"
-03:00000131 2D2D2D2D2D2D2D2D	  1606:     DC.B    "-------------------------------------------",13,10,13,10,0
+03:00000131 2D2D2D2D2D2D2D2D	  1566:     DC.B    "-------------------------------------------",13,10,13,10,0
 03:00000139 2D2D2D2D2D2D2D2D
 03:00000141 2D2D2D2D2D2D2D2D
 03:00000149 2D2D2D2D2D2D2D2D
@@ -1731,42 +1691,42 @@ Source: "monitor.asm"
 03:0000015E 0D
 03:0000015F 0A
 03:00000160 00
-                            	  1607: MenuText:
-03:00000161 312E2053656C6563	  1608:     DC.B    "1. Select UART",13,10
+                            	  1567: MenuText:
+03:00000161 312E2053656C6563	  1568:     DC.B    "1. Select UART",13,10
 03:00000169 742055415254
 03:0000016F 0D
 03:00000170 0A
-03:00000171 322E205365742042	  1609:     DC.B    "2. Set Baud Rate",13,10
+03:00000171 322E205365742042	  1569:     DC.B    "2. Set Baud Rate",13,10
 03:00000179 6175642052617465
 03:00000181 0D
 03:00000182 0A
-03:00000183 332E204C6F616420	  1610:     DC.B    "3. Load Program (PC)",13,10
+03:00000183 332E204C6F616420	  1570:     DC.B    "3. Load Program (PC)",13,10
 03:0000018B 50726F6772616D20
 03:00000193 28504329
 03:00000197 0D
 03:00000198 0A
-03:00000199 342E205772697465	  1611:     DC.B    "4. Write Program (Hex)",13,10
+03:00000199 342E205772697465	  1571:     DC.B    "4. Write Program (Hex)",13,10
 03:000001A1 2050726F6772616D
 03:000001A9 202848657829
 03:000001AF 0D
 03:000001B0 0A
-03:000001B1 352E2052756E2050	  1612:     DC.B    "5. Run Program",13,10
+03:000001B1 352E2052756E2050	  1572:     DC.B    "5. Run Program",13,10
 03:000001B9 726F6772616D
 03:000001BF 0D
 03:000001C0 0A
-03:000001C1 362E204163656E64	  1613:     DC.B    "6. Acendendo os LEDs",13,10
+03:000001C1 362E204163656E64	  1573:     DC.B    "6. Acendendo os LEDs",13,10
 03:000001C9 656E646F206F7320
 03:000001D1 4C454473
 03:000001D5 0D
 03:000001D6 0A
-03:000001D7 372E204D656D6F72	  1614:     DC.B    "7. Memory dump from address buffer",13,10
+03:000001D7 372E204D656D6F72	  1574:     DC.B    "7. Memory dump from address buffer",13,10
 03:000001DF 792064756D702066
 03:000001E7 726F6D2061646472
 03:000001EF 6573732062756666
 03:000001F7 6572
 03:000001F9 0D
 03:000001FA 0A
-03:000001FB 382E205265616420	  1615:     DC.B    "8. Read hexa value and put in address buffer",13,10
+03:000001FB 382E205265616420	  1575:     DC.B    "8. Read hexa value and put in address buffer",13,10
 03:00000203 686578612076616C
 03:0000020B 756520616E642070
 03:00000213 757420696E206164
@@ -1774,7 +1734,7 @@ Source: "monitor.asm"
 03:00000223 66666572
 03:00000227 0D
 03:00000228 0A
-03:00000229 392E2046726F6D20	  1616:     DC.B    "9. From screen to buffer E from buffer to screen",13,10
+03:00000229 392E2046726F6D20	  1576:     DC.B    "9. From screen to buffer E from buffer to screen",13,10
 03:00000231 73637265656E2074
 03:00000239 6F20627566666572
 03:00000241 20452066726F6D20
@@ -1782,53 +1742,53 @@ Source: "monitor.asm"
 03:00000251 6F2073637265656E
 03:00000259 0D
 03:0000025A 0A
-03:0000025B 302E20446F206261	  1617:     DC.B    "0. Do baud divisor calculation",13,10
+03:0000025B 302E20446F206261	  1577:     DC.B    "0. Do baud divisor calculation",13,10
 03:00000263 7564206469766973
 03:0000026B 6F722063616C6375
 03:00000273 6C6174696F6E
 03:00000279 0D
 03:0000027A 0A
-03:0000027B 3E20            	  1618:     DC.B    "> ",0
+03:0000027B 3E20            	  1578:     DC.B    "> ",0
 03:0000027D 00
-                            	  1619: UARTPrompt:
-03:0000027E 5541525420416464	  1620:     DC.B    "UART Address (2000/2100/2200/2300): ",0
+                            	  1579: UARTPrompt:
+03:0000027E 5541525420416464	  1580:     DC.B    "UART Address (2000/2100/2200/2300): ",0
 03:00000286 7265737320283230
 03:0000028E 30302F323130302F
 03:00000296 323230302F323330
 03:0000029E 30293A20
 03:000002A2 00
-                            	  1621: BaudPrompt:
-03:000002A3 4261756420526174	  1622:     DC.B    "Baud Rate Value: ",0
+                            	  1581: BaudPrompt:
+03:000002A3 4261756420526174	  1582:     DC.B    "Baud Rate Value: ",0
 03:000002AB 652056616C75653A
 03:000002B3 20
 03:000002B4 00
-                            	  1623: LoadPrompt:
-03:000002B5 416775617264616E	  1624:     DC.B    "Aguardando 68ksender to initiate: ",0
+                            	  1583: LoadPrompt:
+03:000002B5 416775617264616E	  1584:     DC.B    "Aguardando 68ksender to initiate: ",0
 03:000002BD 646F2036386B7365
 03:000002C5 6E64657220746F20
 03:000002CD 696E697469617465
 03:000002D5 3A20
 03:000002D7 00
-                            	  1625: LoadPromptReady:
-03:000002D8 526561647920746F	  1626:     DC.B    "Ready to receive from PC!",0
+                            	  1585: LoadPromptReady:
+03:000002D8 526561647920746F	  1586:     DC.B    "Ready to receive from PC!",0
 03:000002E0 2072656365697665
 03:000002E8 2066726F6D205043
 03:000002F0 21
 03:000002F1 00
-                            	  1627: LoadDoneMsg:
-03:000002F2 50726F6772616D20	  1628:     DC.B    "Program loaded successfully!",13,10,0
+                            	  1587: LoadDoneMsg:
+03:000002F2 50726F6772616D20	  1588:     DC.B    "Program loaded successfully!",13,10,0
 03:000002FA 6C6F616465642073
 03:00000302 7563636573736675
 03:0000030A 6C6C7921
 03:0000030E 0D
 03:0000030F 0A
 03:00000310 00
-                            	  1629: WritePrompt:
-03:00000311 5772697465204164	  1630:     DC.B    "Write Address: ",0
+                            	  1589: WritePrompt:
+03:00000311 5772697465204164	  1590:     DC.B    "Write Address: ",0
 03:00000319 64726573733A20
 03:00000320 00
-                            	  1631: WriteSizePrompt:
-03:00000321 577269746520796F	  1632:     DC.B    "Write your program or . to finish ",13,10,0
+                            	  1591: WriteSizePrompt:
+03:00000321 577269746520796F	  1592:     DC.B    "Write your program or . to finish ",13,10,0
 03:00000329 75722070726F6772
 03:00000331 616D206F72202E20
 03:00000339 746F2066696E6973
@@ -1836,8 +1796,8 @@ Source: "monitor.asm"
 03:00000343 0D
 03:00000344 0A
 03:00000345 00
-                            	  1633: WriteDoneMsg:
-03:00000346 0D              	  1634:     DC.B    13,10,"Data written to memory!",13,10,0
+                            	  1593: WriteDoneMsg:
+03:00000346 0D              	  1594:     DC.B    13,10,"Data written to memory!",13,10,0
 03:00000347 0A
 03:00000348 4461746120777269
 03:00000350 7474656E20746F20
@@ -1845,8 +1805,8 @@ Source: "monitor.asm"
 03:0000035F 0D
 03:00000360 0A
 03:00000361 00
-                            	  1635: RunPrompt:
-03:00000362 0D              	  1636:     DC.B    13,10,"Running program...",13,10,0
+                            	  1595: RunPrompt:
+03:00000362 0D              	  1596:     DC.B    13,10,"Running program...",13,10,0
 03:00000363 0A
 03:00000364 52756E6E696E6720
 03:0000036C 70726F6772616D2E
@@ -1854,28 +1814,28 @@ Source: "monitor.asm"
 03:00000376 0D
 03:00000377 0A
 03:00000378 00
-                            	  1637: NO_PROGRAM_TO_RUN:
-03:00000379 4E6F2070726F6772	  1638:     DC.B    "No program loaded to run",13,10,0
+                            	  1597: NO_PROGRAM_TO_RUN:
+03:00000379 4E6F2070726F6772	  1598:     DC.B    "No program loaded to run",13,10,0
 03:00000381 616D206C6F616465
 03:00000389 6420746F2072756E
 03:00000391 0D
 03:00000392 0A
 03:00000393 00
-                            	  1639: PromptNotImplemented:
-03:00000394 4E6F7420496D706C	  1640:     DC.B    "Not Implemented!",13,10,0
+                            	  1599: PromptNotImplemented:
+03:00000394 4E6F7420496D706C	  1600:     DC.B    "Not Implemented!",13,10,0
 03:0000039C 656D656E74656421
 03:000003A4 0D
 03:000003A5 0A
 03:000003A6 00
-                            	  1641: BufferEmpty:
-03:000003A7 4F6F6F7073204275	  1642:     DC.B    "Ooops Buffer Empty!",13,10,0
+                            	  1601: BufferEmpty:
+03:000003A7 4F6F6F7073204275	  1602:     DC.B    "Ooops Buffer Empty!",13,10,0
 03:000003AF 6666657220456D70
 03:000003B7 747921
 03:000003BA 0D
 03:000003BB 0A
 03:000003BC 00
-                            	  1643: TestHexInput:
-03:000003BD 0D              	  1644:     DC.B    13,10,"Digite um endereco de no maximo 4bytes 8 caracteres!",13,10
+                            	  1603: TestHexInput:
+03:000003BD 0D              	  1604:     DC.B    13,10,"Digite um endereco de no maximo 4bytes 8 caracteres!",13,10
 03:000003BE 0A
 03:000003BF 4469676974652075
 03:000003C7 6D20656E64657265
@@ -1886,7 +1846,7 @@ Source: "monitor.asm"
 03:000003EF 72657321
 03:000003F3 0D
 03:000003F4 0A
-03:000003F5 6D61697320717565	  1645:     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
+03:000003F5 6D61697320717565	  1605:     DC.B    "mais que isso sera descatado os excedentes...",13,10,0
 03:000003FD 206973736F207365
 03:00000405 7261206465736361
 03:0000040D 7461646F206F7320
@@ -1895,8 +1855,8 @@ Source: "monitor.asm"
 03:00000422 0D
 03:00000423 0A
 03:00000424 00
-                            	  1646: HitAnyKey:
-03:00000425 0D              	  1647:     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
+                            	  1606: HitAnyKey:
+03:00000425 0D              	  1607:     DC.B    13,10,"Hit any <ENTER> to continue <ESC> to terminate: ",0
 03:00000426 0A
 03:00000427 48697420616E7920
 03:0000042F 3C454E5445523E20
@@ -1905,16 +1865,16 @@ Source: "monitor.asm"
 03:00000447 3E20746F20746572
 03:0000044F 6D696E6174653A20
 03:00000457 00
-                            	  1648: XmodemInit:
-03:00000458 584D4F44454D2052	  1649:     DC.B    "XMODEM Receiver Initialized",13,10,0
+                            	  1608: XmodemInit:
+03:00000458 584D4F44454D2052	  1609:     DC.B    "XMODEM Receiver Initialized",13,10,0
 03:00000460 6563656976657220
 03:00000468 496E697469616C69
 03:00000470 7A6564
 03:00000473 0D
 03:00000474 0A
 03:00000475 00
-                            	  1650: XmodemWaitingSoh:
-03:00000476 57616974696E6720	  1651:     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
+                            	  1610: XmodemWaitingSoh:
+03:00000476 57616974696E6720	  1611:     DC.B    "Waiting for SOH (Start of Header)...",13,10,0
 03:0000047E 666F7220534F4820
 03:00000486 285374617274206F
 03:0000048E 6620486561646572
@@ -1922,81 +1882,81 @@ Source: "monitor.asm"
 03:0000049A 0D
 03:0000049B 0A
 03:0000049C 00
-                            	  1652: Msg_Cs:
-03:0000049D 436865636B73756D	  1653:     DC.B    "Checksum ROM.: ",0
+                            	  1612: Msg_Cs:
+03:0000049D 436865636B73756D	  1613:     DC.B    "Checksum ROM.: ",0
 03:000004A5 20524F4D2E3A20
 03:000004AC 00
-                            	  1654: Msg_Cscalc:
-03:000004AD 202D20436865636B	  1655:     DC.B    " - Checksum CAL.: ",0
+                            	  1614: Msg_Cscalc:
+03:000004AD 202D20436865636B	  1615:     DC.B    " - Checksum CAL.: ",0
 03:000004B5 73756D2043414C2E
 03:000004BD 3A20
 03:000004BF 00
-                            	  1656: Msg_default_handler:
-03:000004C0 2044656661756C74	  1657:     DC.B    " Default handler wrote UART ",13,10,0
+                            	  1616: Msg_default_handler:
+03:000004C0 2044656661756C74	  1617:     DC.B    " Default handler wrote UART ",13,10,0
 03:000004C8 2068616E646C6572
 03:000004D0 2077726F74652055
 03:000004D8 41525420
 03:000004DC 0D
 03:000004DD 0A
 03:000004DE 00
-                            	  1658: 
-                            	  1659:     ALIGN   2
-                            	  1660:     ;Isso preenche 762 com 00
-                            	  1661:     ;DS.B    $00000762 - *, $00
-03:000004E0 524F4D76342E30  	  1662:     DC.B    "ROMv4.0",0   ; String de identificação
+                            	  1618: 
+                            	  1619:     ALIGN   2
+                            	  1620:     ;Isso preenche 762 com 00
+                            	  1621:     ;DS.B    $00000762 - *, $00
+03:000004E0 524F4D76342E30  	  1622:     DC.B    "ROMv4.0",0   ; String de identificação
 03:000004E7 00
-                            	  1663:     ;DS.B    $00002968 - *, $00
-                            	  1664:     ORG     $3FFC
-                            	  1665: checksum_rom:
-03:00003FFC 00000000        	  1666:     DC.L    0     ; Valor calculado
-                            	  1667: 
-                            	  1668: ; ----------------------------------------------------------------------
-                            	  1669: ; SECTION bss
-                            	  1670: ;-----------------------------------------------------------------------
-                            	  1671:     SECTION .bss
-                            	  1672:     ORG     $81000               ; Área para variáveis
-04:00081000 00000000        	  1673: RomBase:            DS.L 1
-04:00081004 00000000        	  1674: RomSize:            DS.L 1
-04:00081008 00000000        	  1675: RamBase:            DS.L 1
-04:0008100C 00000000        	  1676: RamSize:            DS.L 1
-04:00081010 00000000        	  1677: CurrentUART:        DS.L 1
-04:00081014 0000            	  1678: CurrentBaudRate:    DS.W 1
-04:00081016 0000            	  1679: BaudDivL:           DS.W 1
-04:00081018 0000            	  1680: BaudDivH:           DS.W 1
-04:0008101A 0000            	  1681: Baud1DivL:          DS.W 1
-04:0008101C 0000            	  1682: Baud1DivH:          DS.W 1
-                            	  1683: ; === Buffer circular for uart (256 bytes) ===
-04:0008101E 00000000        	  1684: addressInHex:       DS.L 1     ; ENDEREÇO LIDO
-04:00081022 00000000        	  1685: BUFFER_HEAD:        DS.L 1     ; Ponteiro de escrita (próxima posição livre)
-04:00081026 00000000        	  1686: BUFFER_TAIL:        DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
-04:0008102A 0000            	  1687: BUFFER_COUNT:       DS.W 1     ; Contador de bytes no buffer
-04:0008102C 00              	  1688: BUFFER:             DS.B 256   ; Buffer de recepção
+                            	  1623:     ;DS.B    $00002968 - *, $00
+                            	  1624:     ORG     $3FFC
+                            	  1625: checksum_rom:
+03:00003FFC 00000000        	  1626:     DC.L    0     ; Valor calculado
+                            	  1627: 
+                            	  1628: ; ----------------------------------------------------------------------
+                            	  1629: ; SECTION bss
+                            	  1630: ;-----------------------------------------------------------------------
+                            	  1631:     SECTION .bss
+                            	  1632:     ORG     $81000               ; Área para variáveis
+04:00081000 00000000        	  1633: RomBase:            DS.L 1
+04:00081004 00000000        	  1634: RomSize:            DS.L 1
+04:00081008 00000000        	  1635: RamBase:            DS.L 1
+04:0008100C 00000000        	  1636: RamSize:            DS.L 1
+04:00081010 00000000        	  1637: CurrentUART:        DS.L 1
+04:00081014 0000            	  1638: CurrentBaudRate:    DS.W 1
+04:00081016 0000            	  1639: BaudDivL:           DS.W 1
+04:00081018 0000            	  1640: BaudDivH:           DS.W 1
+04:0008101A 0000            	  1641: Baud1DivL:          DS.W 1
+04:0008101C 0000            	  1642: Baud1DivH:          DS.W 1
+                            	  1643: ; === Buffer circular for uart (256 bytes) ===
+04:0008101E 00000000        	  1644: addressInHex:       DS.L 1     ; ENDEREÇO LIDO
+04:00081022 00000000        	  1645: BUFFER_HEAD:        DS.L 1     ; Ponteiro de escrita (próxima posição livre)
+04:00081026 00000000        	  1646: BUFFER_TAIL:        DS.L 1     ; Ponteiro de leitura (próximo dado a ler)
+04:0008102A 0000            	  1647: BUFFER_COUNT:       DS.W 1     ; Contador de bytes no buffer
+04:0008102C 00              	  1648: BUFFER:             DS.B 256   ; Buffer de recepção
 04:0008102D *
-                            	  1689: ;=== System variables
-04:0008112C 00              	  1690: xmodem_buffer       DS.B   512        ; Buffer de dados
+                            	  1649: ;=== System variables
+04:0008112C 00              	  1650: xmodem_buffer       DS.B   512        ; Buffer de dados
 04:0008112D *
-04:0008132C 00              	  1691: block_number        DS.B   1           ; Número do bloco atual
-04:0008132D 00              	  1692: expected_block      DS.B   1           ; Próximo bloco esperado
-04:0008132E 00              	  1693: usr_buffer_addr     DS.B   512
+04:0008132C 00              	  1651: block_number        DS.B   1           ; Número do bloco atual
+04:0008132D 00              	  1652: expected_block      DS.B   1           ; Próximo bloco esperado
+04:0008132E 00              	  1653: usr_buffer_addr     DS.B   512
 04:0008132F *
-                            	  1694:     ALIGN 2
-04:00081530 00              	  1695: pgm_buffer          DS.B   1024
+                            	  1654:     ALIGN 2
+04:00081530 00              	  1655: pgm_buffer          DS.B   1024
 04:00081531 *
-04:00081930 00000000        	  1696: checksum_calc       DS.L   1
-04:00081934 00              	  1697: flag_pgm_loaded     DS.B   1
-04:00081935 00000000        	  1698: minhas_flags        DS.L   1
-                            	  1699: 
-                            	  1700: 
-                            	  1701: ;My_NMI_Handler:
-                            	  1702: ;        MOVEM.L D0-D7/A0-A7, -(SP) ; Salva TUDO na pilha
-                            	  1703:         ; --- Faz o que precisa fazer durante a NMI ---
-                            	  1704:         ; (Ex: incrementar um contador, fazer um dump de memória,
-                            	  1705:         ;  trocar uma paleta de cores, etc.)
-                            	  1706:         ; --------------------------------------------
-                            	  1707: ;        MOVEM.L (SP)+, D0-D7/A0-A7 ; Restaura TUDO da pilha
-                            	  1708: ;        RTE
-                            	  1709: 
-                            	  1710: 
+04:00081930 00000000        	  1656: checksum_calc       DS.L   1
+04:00081934 00              	  1657: flag_pgm_loaded     DS.B   1
+04:00081935 00000000        	  1658: minhas_flags        DS.L   1
+                            	  1659: 
+                            	  1660: 
+                            	  1661: ;My_NMI_Handler:
+                            	  1662: ;        MOVEM.L D0-D7/A0-A7, -(SP) ; Salva TUDO na pilha
+                            	  1663:         ; --- Faz o que precisa fazer durante a NMI ---
+                            	  1664:         ; (Ex: incrementar um contador, fazer um dump de memória,
+                            	  1665:         ;  trocar uma paleta de cores, etc.)
+                            	  1666:         ; --------------------------------------------
+                            	  1667: ;        MOVEM.L (SP)+, D0-D7/A0-A7 ; Restaura TUDO da pilha
+                            	  1668: ;        RTE
+                            	  1669: 
+                            	  1670: 
 
 
 Symbols by name:
@@ -2045,18 +2005,13 @@ FCR                              E:00000004
 FL_ESC                           E:00000000
 F_CPU                            E:00F42400
 HitAnyKey                       03:00000425
-INT1_HANDLER                     A:00001ADE
-INT21_HANDLER                    A:00001A83
-INT22_HANDLER                    A:00001A96
-INT23_HANDLER                    A:00001AA8
-INT24_HANDLER                    A:00001ABA
-INT25_HANDLER                    A:00001ACC
-INT2_HANDLER                     A:00001AF0
-INT3_HANDLER                     A:00001B02
-INT4_HANDLER                     A:00001B14
-INT5_HANDLER                     A:00001B26
-INT6_HANDLER                     A:00001B38
-INT7_HANDLER                     A:00001B4A
+INT1_HANDLER                     A:00001A83
+INT2_HANDLER                     A:00001A96
+INT3_HANDLER                     A:00001AA8
+INT4_HANDLER                     A:00001ABA
+INT5_HANDLER                     A:00001ACC
+INT6_HANDLER                     A:00001ADE
+INT7_HANDLER                     A:00001AF0
 ISR                              E:00000004
 LCR                              E:00000006
 LED_ADDRESS                      E:00004400
@@ -2093,7 +2048,7 @@ PromptNotImplemented            03:00000394
 READ_IN_HEXA                     A:00001640
 RHR                              E:00000000
 ROM_END                          E:00003FFF
-ROM_JUMPTABLE                    A:00001C02
+ROM_JUMPTABLE                    A:00001BA8
 ROM_SIZE                         E:00004000
 ROM_START                        E:00000000
 RUNPROGRAM                       A:00001546
@@ -2154,16 +2109,16 @@ illegal_msg                      A:00001A49
 minhas_flags                     A:00081935
 new_line                         A:0000130C
 pgm_buffer                       A:00081530
-service_addr_err                 A:00001B64
-service_bus_err                  A:00001B5C
-service_check                    A:00001BD2
-service_div0                     A:00001BCA
-service_illegal                  A:00001B6C
-service_line_a                   A:00001BF2
-service_line_f                   A:00001BFA
-service_priv                     A:00001BE2
-service_trace                    A:00001BEA
-service_trapv                    A:00001BDA
+service_addr_err                 A:00001B0A
+service_bus_err                  A:00001B02
+service_check                    A:00001B78
+service_div0                     A:00001B70
+service_illegal                  A:00001B12
+service_line_a                   A:00001B98
+service_line_f                   A:00001BA0
+service_priv                     A:00001B88
+service_trace                    A:00001B90
+service_trapv                    A:00001B80
 sp_msg                           A:000019F6
 spu_msg                          A:00001A02
 sr_msg                           A:000019E9
@@ -2294,29 +2249,24 @@ Symbols by value:
 00001A49 illegal_msg
 00001A5E trap_msg
 00001A70 unknown_msg
-00001A83 INT21_HANDLER
-00001A96 INT22_HANDLER
-00001AA8 INT23_HANDLER
-00001ABA INT24_HANDLER
-00001ACC INT25_HANDLER
-00001ADE INT1_HANDLER
-00001AF0 INT2_HANDLER
-00001B02 INT3_HANDLER
-00001B14 INT4_HANDLER
-00001B26 INT5_HANDLER
-00001B38 INT6_HANDLER
-00001B4A INT7_HANDLER
-00001B5C service_bus_err
-00001B64 service_addr_err
-00001B6C service_illegal
-00001BCA service_div0
-00001BD2 service_check
-00001BDA service_trapv
-00001BE2 service_priv
-00001BEA service_trace
-00001BF2 service_line_a
-00001BFA service_line_f
-00001C02 ROM_JUMPTABLE
+00001A83 INT1_HANDLER
+00001A96 INT2_HANDLER
+00001AA8 INT3_HANDLER
+00001ABA INT4_HANDLER
+00001ACC INT5_HANDLER
+00001ADE INT6_HANDLER
+00001AF0 INT7_HANDLER
+00001B02 service_bus_err
+00001B0A service_addr_err
+00001B12 service_illegal
+00001B70 service_div0
+00001B78 service_check
+00001B80 service_trapv
+00001B88 service_priv
+00001B90 service_trace
+00001B98 service_line_a
+00001BA0 service_line_f
+00001BA8 ROM_JUMPTABLE
 00002580 BAUD_RATE
 00003FFC checksum_rom
 00003FFF ROM_END
