@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "MM58167")(type "KiCad")(uri "${KIPRJMOD}/lib/MM58167.kicad_sym")(options "")(descr ""))
+  (lib (name "OSLIB")(type "KiCad")(uri "${KIPRJMOD}/OSLIB.kicad_sym")(options "")(descr ""))
+)

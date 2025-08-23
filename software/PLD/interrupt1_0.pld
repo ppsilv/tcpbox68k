@@ -1,0 +1,46 @@
+GAL20V8
+
+
+
+; 1   2   3   4   5   6   7    8    9    10  11   12
+  A3  A2  A1 FC0 FC1 FC2 IRQ1 IRQ2 IRQ3 IRQ6 AS   GND
+
+;13     14     15    16    17    18   19     20  21   22   23    24
+ IPL0IN IPL1IN VPA IACK6 IACK3 IACK2 IACK1 IPL2 IPL1 IPL0 IPL2IN VCC
+
+
+IPL0 = IPL0IN
+IPL1 = IPL1IN
+IPL2 = IPL2IN
+
+!IACK6 =   A3 &  A2 & !A1 & FC0 & FC1 & FC1 & !AS
+!IACK3 =  !A3 &  A2 &  A1 & FC0 & FC1 & FC1 & !AS
+!IACK2 =  !A3 &  A2 & !A1 & FC0 & FC1 & FC1 & !AS
+!IACK1 =  !A3 & !A2 &  A1 & FC0 & FC1 & FC1 & !AS
+
+!VPA = !IACK6 # !IACK3 # !IACK2 # !IACK1
+
+
+DESCRIPTION
+
+Síntese
+galasm interrupt1_0.pld
+
+Gravação
+minipro -p GAL20V8B -w interrupt1_0.jed
+
+011
+!IPLO = *!IRQ6 & IRQ3 & IRQ2 & IRQ1
+!IPL1 = *IRQ6 & IRQ3 & !IRQ2 & IRQ1
+!IPL2 = *IRQ6 & !IRQ3 & IRQ2 & IRQ1
+
+010
+!IPLO = -IRQ6 & IRQ3 & !IRQ2 & IRQ1
+!IPL1 = -IRQ6 & IRQ3 & IRQ2 & !IRQ1
+!IPL2 = -IRQ6 & IRQ3 & !IRQ2 & IRQ1
+
+001
+!IPLO = *!IRQ6 & IRQ3 & IRQ2 & IRQ1
+!IPL1 = *IRQ6 & IRQ3 & IRQ2 & !IRQ1
+!IPL2 = *IRQ6 & IRQ3 & IRQ2 & !IRQ1
+

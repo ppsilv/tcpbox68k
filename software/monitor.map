@@ -5,45 +5,49 @@ Memory Configuration
 
 Name             Origin             Length             Attributes
 ROM              0x00000000         0x00004000         xr
-RAM              0x00080000         0x00020000         xrw
+RAM              0x00080000         0x00100000         xrw
 *default*        0x00000000         0xffffffff
 
 Linker script and memory map
 
 
-.text           0x00000000      0x8ac
-                0x00000000                        _start = .
+.vectors        0x00000000       0x80
+                0x00000000                        . = ALIGN (0x2)
  *(.vectors)
+ .vectors       0x00000000       0x80 monitor.o
+
+.text           0x00001000      0xc14
+                0x00001000                        _start = .
  *(.text .text.*)
- .text          0x00000000      0x8ac monitor.o
-                0x000008ac                        . = ALIGN (0x4)
-                0x000008ac                        _start_end = .
+ .text          0x00001000      0xc14 monitor.o
+                0x00001c14                        . = ALIGN (0x2)
+                0x00001c14                        _start_end = .
 
-.rodata         0x000008ac        0x0
+.rodata         0x00001c14        0x0
  *(.rodata .rodata.*)
-                0x000008ac                        . = ALIGN (0x4)
+                0x00001c14                        . = ALIGN (0x2)
 
-.data           0x000008ac      0x4cc
-                0x000008ac                        __data_load = LOADADDR (.data)
-                0x000008ac                        __data_start = .
+.data           0x00001c14      0x4ec
+                0x00001c14                        __data_load = LOADADDR (.data)
+                0x00001c14                        __data_start = .
  *(.data .data.*)
- .data          0x000008ac      0x4cc monitor.o
-                0x00000d78                        . = ALIGN (0x4)
-                0x00000d78                        __data_end = .
+ .data          0x00001c14      0x4ec monitor.o
+                0x00002100                        . = ALIGN (0x2)
+                0x00002100                        __data_end = .
 
-.checksum       0x00000d78        0x4
-                0x00000d78                        . = ALIGN (0x4)
-                0x00000d78                        __checksum_addr = .
-                0x00000d78        0x4 LONG 0x0
+.checksum       0x00002100        0x4
+                0x00002100                        . = ALIGN (0x2)
+                0x00002100                        __checksum_addr = .
+                0x00002100        0x4 LONG 0x0
 
-.bss            0x00000d80      0x93c
-                0x00000d80                        __bss_start = .
+.bss            0x00002104      0x93a
+                0x00002104                        __bss_start = .
  *(.bss .bss.*)
- .bss           0x00000d80      0x939 monitor.o
+ .bss           0x00002104      0x939 monitor.o
  *(COMMON)
-                0x000016bc                        . = ALIGN (0x4)
- *fill*         0x000016b9        0x3 
-                0x000016bc                        __bss_end = .
+                0x00002a3e                        . = ALIGN (0x2)
+ *fill*         0x00002a3d        0x1 
+                0x00002a3e                        __bss_end = .
 
 /DISCARD/
  *(.comment)

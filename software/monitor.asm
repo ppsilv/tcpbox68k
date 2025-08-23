@@ -1,35 +1,56 @@
-            SECTION .text
+            SECTION .vectors
             ORG     $00000000
-            DC.L    $00100000       ;SP inicial
-            DC.L    _start          ;PC inicial
-ROM_JUMPTABLE:
-            BRA     UART_WriteChar     ; $00000008
-            BRA     UART_ReadChar      ; $0000000C
-            BRA     DELAY_MS           ; $00000010
-            BRA     SELECTUART
-            BRA     SETBAUDRATE
-            BRA     MEMDUMP
+
+            ; --- Vetores de Exceção do 68000 ---
+            DC.L    $000A0000       ; SP inicial
+            DC.L    _start          ; PC inicial
+            DC.L    service_bus_err ; Bus Error
+            DC.L    service_addr_err; Address Error
+            DC.L    service_illegal ; Illegal Instruction
+            DC.L    service_div0    ; Division by Zero
+            DC.L    service_check   ; CHK Instruction
+            DC.L    service_trapv   ; TRAPV Instruction
+            DC.L    service_priv    ; Privilege Violation
+            DC.L    service_trace   ; Trace
+            DC.L    service_line_a  ; Line A Emulator
+            DC.L    service_line_f  ; Line F Emulator
+
+            ; --- Preencha o resto com handlers padrão ---
+            ;REPT 45
+            ;DC.L    DEFAULT_HANDLER
+            ;ENDR
+            DC.L    DEFAULT_HANDLER    ; $60: Spurious Interrupt
+            DC.L    DEFAULT_HANDLER     ; $64: Level 1 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $70: Level 4 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $74: Level 5 Interrupt
+            DC.L    DEFAULT_HANDLER        ; $78: Level 6 Interrupt  ✅
+            DC.L    DEFAULT_HANDLER     ; $7C: Level 7 Interrupt
+            DC.L    DEFAULT_HANDLER    ; $60: Spurious Interrupt
+            DC.L    DEFAULT_HANDLER     ; $64: Level 1 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
+            DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
+            DC.L    SPURIOUS_HANDLER    ; $60: Spurious Interrupt
+            DC.L    INT1_HANDLER     ; $70: Level 4 Interrupt
+            DC.L    INT2_HANDLER     ; $74: Level 5 Interrupt
+            DC.L    INT3_HANDLER        ; $78: Level 6 Interrupt  ✅
+            DC.L    INT4_HANDLER     ; $7C: Level 7 Interrupt
+            DC.L    INT5_HANDLER     ; $64: Level 1 Interrupt
+            DC.L    INT6_HANDLER        ; $78: Level 6 Interrupt  ✅
+            DC.L    INT7_HANDLER     ; $7C: Level 7 Interrupt
+
+            ; --- Preencha o resto (até $FF) ---
+            ;REPT 128
+            ;DC.L    DEFAULT_HANDLER
+            ;ENDR
+
+
+            SECTION .text
+            ORG $00001000
 
 FL_ESC      EQU     0   ;ESC flag de tecla ESC recebida pela serial
-
-; --- Macro para Setar Flag ---
-SET_FLAG   MACRO
-    BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
-    ENDM
-; --- Macro para Setar Flag ---
-CLR_FLAG   MACRO
-    BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
-    ENDM
-; --- Macro TEST_FLAG corrigida ---
-TEST_FLAG  MACRO
-    BTST    #\1,minhas_flags
-    ENDM
-; --- Macro para testar flag (com salto se setado) ---
-TST_FLAG_SET MACRO
-    BTST    #\1,minhas_flags  ; Testa o bit \1
-    BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
-    ENDM
-
+USER_SP     EQU     $0009F000
 ;Clock frequency in Hz
 F_CPU       equ 16000000
 ;Uart register offsets
@@ -63,25 +84,55 @@ EOT         EQU     $04        ; End Of Transmission
 ACK         EQU     $06        ; Acknowledge
 NAK         EQU     $15        ; Negative Acknowledge
 CAN         EQU     $18        ; Cancel
+
+; --- Macro para Setar Flag ---
+SET_FLAG   MACRO
+    BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro para Setar Flag ---
+CLR_FLAG   MACRO
+    BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro TEST_FLAG corrigida ---
+TEST_FLAG  MACRO
+    BTST    #\1,minhas_flags
+    ENDM
+; --- Macro para testar flag (com salto se setado) ---
+TST_FLAG_SET MACRO
+    BTST    #\1,minhas_flags  ; Testa o bit \1
+    BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
+    ENDM
+
         ALIGN 2
 _start:
-        ORI     #$0700,SR           ; Desabilita interrupções (M68K)
-        JSR     CLEARRAM            ;Clear entire ram
+        ;ORI     #$2700,SR           ; Desabilita interrupções (M68K)
+        MOVE.W #$2700,SR
+
+;        JSR     CLEARRAM            ;Clear entire ram
+CLEARRAM:
+        LEA     $80000,A0
+        LEA     $A0000,A1
+        MOVEQ   #0,D0
+.ClearLoop:
+        MOVE.L  D0,(A0)+
+        CMPA.L  A0,A1
+        BHI     .ClearLoop
+
         JSR     VALIDATE_ROM        ; Verifica a ROM
+
+        ; Configura USP (pilha de usuário)
+        LEA     USER_SP,A0
+        MOVE.L  A0,USP        ; 🔥 Define User Stack Pointe
+
+
         MOVE.L  #$00000000,RomBase
         MOVE.L  #$00004000,RomSize
-        MOVE.L  #$00080000,RamBase
+        MOVE.L  #$00080000,RamBase    ;Total ram 1572864 - 0x180000
         MOVE.L  #$00100000,RamSize
         MOVE.L  #UART_BASE,CurrentUART
         MOVE.W  #BAUD_RATE,CurrentBaudRate
         MOVE.W  #BAUD_DIV_L,BaudDivL
         MOVE.W  #BAUD_DIV_U,BaudDivH
-
-        ;Delay to wait for hardware to stabilize
-        MOVE.L  #500000,d3
-DELAY_INIT:
-        SUBQ.L  #1,d3
-        BNE     DELAY_INIT
 
         JSR     UART_INIT
         LEA     cls_str,A0
@@ -135,12 +186,61 @@ MenuLoop:
         BEQ     UART_ReadHex1
         CMP.B   #'0',D0
         BEQ     CALCBAUDDIV
+        CMP.B   #'A',D0
+        BEQ     LIGA_INT
+        CMP.B   #'B',D0
+        BEQ     DESLIGA_INT
+        CMP.B   #'C',D0
+        BEQ     PRINT_SR
+        CMP.B   #'D',D0
+        BEQ     CLEARRAM3
         BRA     MenuLoop            ; Opção inválida, repete menu
 ; =============================================
 ; Delay em milissegundos para MC68000 @ 16MHz
 ; Entrada: D0 = tempo em ms (16 bits)
 ; Destrói: D0
 ; =============================================
+LIGA_INT:
+
+        JSR     new_line
+        LEA     spu_msg,A0
+        JSR     UART_WriteString
+        MOVE.L  USP,A0       ; Lê USP atual
+        MOVE.L  A0,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  SR,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        MOVE.L  SP,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        MOVE    #$2000,SR
+
+
+        LEA     RunPrompt,A0
+        JSR     UART_WriteString
+
+        BRA     MenuLoop       ; Volta para menu
+
+DESLIGA_INT:
+        ;ORI    #$2700,SR
+        MOVE.W #$2700,SR
+        BRA     MenuLoop
+PRINT_SR:
+        MOVE.L #$00,D0
+        MOVE.W SR,D0
+        JSR    PrintHexAddress
+        BRA    MenuLoop
+
 DELAY_MS:
         MOVE.L  d1,-(sp)          ; Salva D1
         MOVE.W  d0,d1             ; Contador de ms
@@ -174,14 +274,14 @@ PISCA_LED:
 
 LED_INIT:
         MOVE.L  D0,-(SP)        ; Preserva D0
-        MOVE.W  #$AA00,D0
-        MOVE.W  D0,LED_ADDRESS
+        MOVE.W  #$AA00,LED_ADDRESS
+        ;MOVE.W  D0,LED_ADDRESS
         move.l  #250000,D3
 .DELAY1:
         SUBQ.L  #1,D3
         BNE     .DELAY1
-        MOVE.W  #$0000,D0
-        MOVE.W  D0,LED_ADDRESS
+        MOVE.W  #$0000,LED_ADDRESS
+        ;MOVE.W  D0,LED_ADDRESS
         MOVE.L  (SP)+,D0        ;Restaura D0
         RTS
 
@@ -596,16 +696,30 @@ PrintNibble:
         ADD.B   #'0',D0
         JMP     UART_WriteChar    ; Usa JMP para tail call optimization
 
-CLEARRAM:
-        LEA     $80000,A0
-        LEA     $8FFFF,A1
-        ;LEA     $BFFFF,A1
+;CLEARRAM:
+;        LEA     $80000,A0
+;        LEA     $9FFFF,A1
+;        ;LEA     $BFFFF,A1
+;        MOVEQ   #0,D0
+;.ClearLoop:
+;        MOVE.L  D0,(A0)+
+;        CMPA.L  A0,A1
+;        BHI     .ClearLoop
+;        RTS
+
+
+CLEARRAM3:
+        MOVE.L  (addressInHex),A0
+        MOVE.L  (addressInHex),D0
+        ADD.L   #$1000,D0
+        MOVE.L  D0,A1
         MOVEQ   #0,D0
 .ClearLoop:
         MOVE.L  D0,(A0)+
         CMPA.L  A0,A1
         BHI     .ClearLoop
-        RTS
+        BRA     MenuLoop
+
 
 ; ----------------------------------------------------------------------
 ; Subrotinas do Menu
@@ -1144,7 +1258,7 @@ VALIDATE_ROM:
         RTS                         ; Retorna (ROM válida)
 
 SYSTEM_HALT:
-        MOVE.W  #$0700,SR        ; Desabilita interrupções
+        MOVE.W  #$2700,SR        ; Desabilita interrupções
 .INFINITE_LOOP:
         BRA     .INFINITE_LOOP   ; Trava o sistema
 
@@ -1182,6 +1296,287 @@ ROM_START   EQU     $00000000   ; Início da ROM
 ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
 ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
 
+SPURIOUS_HANDLER:
+    MOVE.W  #$CB00,LED_ADDRESS  ; Indica spurious
+    RTE
+
+DEFAULT_HANDLER:
+    MOVEM.L D0-D7/A0-A6,-(SP)
+
+    ; --- IDENTIFICA O TIPO DE EXCEÇÃO ---
+    ; --- AGORA lê corretamente da pilha ---
+    MOVE.L  (14,SP),D0      ; ⭐⭐ PC (14 bytes abaixo por causa dos registradores salvos)
+    MOVE.W  (18,SP),D1      ; ⭐⭐ SR (18 bytes abaixo)
+    MOVE.W  (20,SP),D2      ; ⭐⭐ Vector Offset (20 bytes abaixo)
+
+
+    ; Mostra informações detalhadas
+    LEA     debug_msg,A0
+    JSR     UART_WriteString
+
+    MOVE.L  D0,D0           ; PC
+    JSR     PrintHexAddress
+    JSR     new_line
+
+    LEA     sr_msg,A0
+    JSR     UART_WriteString
+    MOVE.W  D1,D0           ; SR
+    JSR     PrintHexAddress
+    JSR     new_line
+
+    LEA     vector_msg,A0
+    JSR     UART_WriteString
+    MOVE.W  D2,D0           ; Vector offset
+    JSR     PrintHexAddress
+    JSR     new_line
+
+    ; --- ANALISA O VETOR ---
+    LSR.W   #2,D2           ; Divide por 4 para get vector number
+    ANDI.W  #$FF,D2         ; Vector number em D2
+
+    LEA     vector_num_msg,A0
+    JSR     UART_WriteString
+    MOVE.W  D2,D0
+    JSR     PrintHexAddress
+    JSR     new_line
+
+    ; --- MOSTRA QUAL EXCEÇÃO É ---
+    CMP.W   #8,D2
+    BNE     .not_bus_error
+    LEA     bus_error_msg,A0
+    BRA     .show_msg
+.not_bus_error:
+    CMP.W   #9,D2
+    BNE     .not_address_error
+    LEA     address_error_msg,A0
+    BRA     .show_msg
+.not_address_error:
+    CMP.W   #10,D2
+    BNE     .not_illegal
+    LEA     illegal_msg,A0
+    BRA     .show_msg
+.not_illegal:
+    CMP.W   #32,D2
+    BLO     .other_exception
+    LEA     trap_msg,A0
+    BRA     .show_msg
+.other_exception:
+    LEA     unknown_msg,A0
+
+.show_msg:
+    JSR     UART_WriteString
+    JSR     new_line
+
+    ; Pequeno delay para visualização
+    MOVE.L  #500000,D3
+.DELAY:
+    SUBQ.L  #1,D3
+    BNE     .DELAY
+
+    MOVEM.L (SP)+,D0-D7/A0-A6
+    RTE
+    JMP MenuLoop
+
+; --- MENSAGENS DE DEBUG ---
+debug_msg:      DC.B "Exception - PC: ",0
+sr_msg:         DC.B "Status Reg: ",0
+sp_msg:         DC.B "Stack Reg: ",0
+spu_msg:         DC.B "StackU Reg: ",0
+vector_msg:     DC.B "Vector offset: ",0
+vector_num_msg: DC.B "Vector number: ",0
+bus_error_msg:  DC.B "Bus Error!",0
+address_error_msg: DC.B "Address Error!",0
+illegal_msg:    DC.B "Illegal Instruction!",0
+trap_msg:       DC.B "TRAP Instruction!",0
+unknown_msg:    DC.B "Unknown Exception!",0
+
+INT21_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$2100,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT22_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$2200,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT23_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$2300,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT24_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$2400,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT25_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$2500,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+
+
+
+INT1_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D100,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT2_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D200,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT3_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D300,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT4_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D400,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT5_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D500,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT6_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D600,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT7_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D700,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+
+service_bus_err:
+        MOVE.W  #$C100,LED_ADDRESS
+        RTE
+service_addr_err:
+        MOVE.W  #$C200,LED_ADDRESS
+        RTE
+service_illegal:
+        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
+        MOVE.W  6(SP),D1        ; SR na época
+        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
+
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+        CLR.L   D0
+        MOVE.W  D1,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        CLR.L   D0
+        MOVE.W  D2,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  SR,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        MOVE.L  SP,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+        MOVE.W  #$C300,LED_ADDRESS
+
+        JMP MenuLoop
+        RTE
+
+service_div0:
+        MOVE.W  #$C400,LED_ADDRESS
+        RTE
+service_check:
+        MOVE.W  #$C500,LED_ADDRESS
+        RTE
+service_trapv:
+        MOVE.W  #$C600,LED_ADDRESS
+        RTE
+service_priv:
+        MOVE.W  #$C700,LED_ADDRESS
+        RTE
+service_trace:
+        MOVE.W  #$C800,LED_ADDRESS
+        RTE
+service_line_a:
+        MOVE.W  #$C900,LED_ADDRESS
+        RTE
+service_line_f:
+        MOVE.W  #$CA00,LED_ADDRESS
+        RTE
+
+ROM_JUMPTABLE:
+;            BRA     UART_Init          ; $00000008
+            BRA     UART_WriteChar     ; $0000000C
+            BRA     UART_ReadChar      ; $00000010
+;            BRA     UART_Select
+;            BRA     UART_Setbaudreate
+            BRA     DELAY_MS           ;
+            BRA     MEMDUMP
+; --- Macro para Setar Flag ---
+SET_FLAG   MACRO
+    BCLR    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro para Setar Flag ---
+CLR_FLAG   MACRO
+    BSET    #\1,minhas_flags  ; \1 = primeiro argumento (bit)
+    ENDM
+; --- Macro TEST_FLAG corrigida ---
+TEST_FLAG  MACRO
+    BTST    #\1,minhas_flags
+    ENDM
+; --- Macro para testar flag (com salto se setado) ---
+TST_FLAG_SET MACRO
+    BTST    #\1,minhas_flags  ; Testa o bit \1
+    BEQ     \2                ; Se bit = 0 (Z=1), pula para o rótulo \2
+    ENDM
 
     ALIGN 2
 ; =====================================================================
@@ -1258,6 +1653,8 @@ Msg_Cs:
     DC.B    "Checksum ROM.: ",0
 Msg_Cscalc:
     DC.B    " - Checksum CAL.: ",0
+Msg_default_handler:
+    DC.B    " Default handler wrote UART ",13,10,0
 
     ALIGN   2
     ;Isso preenche 762 com 00
@@ -1294,8 +1691,19 @@ xmodem_buffer       DS.B   512        ; Buffer de dados
 block_number        DS.B   1           ; Número do bloco atual
 expected_block      DS.B   1           ; Próximo bloco esperado
 usr_buffer_addr     DS.B   512
-    ALIGN 4
+    ALIGN 2
 pgm_buffer          DS.B   1024
 checksum_calc       DS.L   1
 flag_pgm_loaded     DS.B   1
 minhas_flags        DS.L   1
+
+
+;My_NMI_Handler:
+;        MOVEM.L D0-D7/A0-A7, -(SP) ; Salva TUDO na pilha
+        ; --- Faz o que precisa fazer durante a NMI ---
+        ; (Ex: incrementar um contador, fazer um dump de memória,
+        ;  trocar uma paleta de cores, etc.)
+        ; --------------------------------------------
+;        MOVEM.L (SP)+, D0-D7/A0-A7 ; Restaura TUDO da pilha
+;        RTE
+
