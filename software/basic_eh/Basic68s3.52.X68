@@ -66,10 +66,10 @@ nobrk		EQU	0				* null response to INPUT causes a break
 
 	OPT	CRE
 
-	INCLUDE	"Basic68k3.41.inc"
+	INCLUDE	"Basic68k3.41.asm"
 							* RAM offset definitions
 
-	ORG		$000400			* past the vectors in a real system
+	ORG		$082400			* past the vectors in a real system
 
 *************************************************************************************
 *
@@ -80,8 +80,8 @@ nobrk		EQU	0				* null response to INPUT causes a break
 VEC_OUT
 	MOVEM.l	d0-d1,-(sp)			* save d0, d1
 	MOVE.b	d0,d1				* copy character
-	MOVEQ		#6,d0				* character out
-	TRAP		#15				* do I/O function
+	MOVEQ	#6,d0				* character out
+	TRAP	#15				* do I/O function
 	MOVEM.l	(sp)+,d0-d1			* restore d0, d1
 	RTS
 
@@ -93,7 +93,7 @@ VEC_OUT
 
 VEC_IN
 	MOVE.l	d1,-(sp)			* save d1
-	MOVEQ		#7,d0				* get the status
+	MOVEQ		#7,d0			* get the status
 	TRAP		#15				* do I/O function
 
 	MOVE.b	d1,d0				* copy the returned status
@@ -123,17 +123,12 @@ RETCHR
 VEC_LD
 	LEA		load_title(pc),a1		* set the LOAD request title string pointer
 	BSR		get_filename		* get the filename from the line or the request
-
 	BEQ		LAB_FCER			* if null do function call error then warm start
-
-	MOVE		#51,d0			* open existing file
-	TRAP		#15				* do I/O function
-
-	TST.w		d0				* test load result
-	BNE.s		LOAD_exit			* if error clear up and exit
-
+	MOVE	#51,d0				* open existing file
+	TRAP	#15					* do I/O function
+	TST.w	d0					* test load result
+	BNE.s	LOAD_exit			* if error clear up and exit
 	MOVE.l	d1,file_id(a3)		* save the file ID
-
 	LEA		LOAD_in(pc),a1		* get byte from file vector
 	MOVE.l	a1,V_INPTv(a3)		* set the input vector
 	BRA		LAB_127D			* now we just wait for Basic command, no "Ready"
@@ -141,7 +136,7 @@ VEC_LD
 LOAD_exit
 	BSR		LAB_147A			* go do "CLEAR"
 	BRA		LAB_1274			* BASIC warm start entry, go wait for Basic
-							* command
+								* command
 
 * input character to register d0 from file
 
@@ -158,17 +153,17 @@ LOAD_in
 
 	MOVE.b	(a1),d0			* get byte
 	MOVEM.l	(sp)+,d1-d2/a1		* restore d1, d2 & a1
-	ORI.b		#1,CCR			* set carry, flag we got a byte
+	ORI.b	#1,CCR			* set carry, flag we got a byte
 	RTS
 							* got an error on read so restore the input
 							* vector and tidy up
 LOAD_eof
-	MOVEQ		#50,d0			* close all files
-	TRAP		#15				* do I/O function
+	MOVEQ	#50,d0			* close all files
+	TRAP	#15				* do I/O function
 
 	LEA		VEC_IN(pc),a1		* get byte from input device vector
 	MOVE.l	a1,V_INPTv(a3)		* set input vector
-	MOVEQ		#0,d0				* clear byte
+	MOVEQ	#0,d0				* clear byte
 	MOVEM.l	(sp)+,d1-d2/a1		* restore d1, d2 & a1
 	BSR		LAB_147A			* do CLEAR, erase variables/functions and
 							* flush stacks

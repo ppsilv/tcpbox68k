@@ -4,16 +4,16 @@
             ; --- Vetores de Exceção do 68000 ---
             DC.L    $000A0000       ; SP inicial
             DC.L    _start          ; PC inicial
-            DC.L    service_bus_err ; Bus Error
-            DC.L    service_addr_err; Address Error
-            DC.L    service_illegal ; Illegal Instruction
-            DC.L    service_div0    ; Division by Zero
-            DC.L    service_check   ; CHK Instruction
-            DC.L    service_trapv   ; TRAPV Instruction
-            DC.L    service_priv    ; Privilege Violation
-            DC.L    service_trace   ; Trace
-            DC.L    service_line_a  ; Line A Emulator
-            DC.L    service_line_f  ; Line F Emulator
+            DC.L    SERVICE_BUS_ERR   ; Bus Error
+            DC.L    SERVICE_ADDR_ERR  ; Address Error
+            DC.L    SERVICE_ILLEGAL   ; Illegal Instruction
+            DC.L    SERVICE_DIV0      ; Division by Zero
+            DC.L    SERVICE_CHECK     ; CHK Instruction
+            DC.L    SERVICE_TRAPV     ; TRAPV Instruction
+            DC.L    SERVICE_PRIV      ; Privilege Violation
+            DC.L    SERVICE_TRACE     ; Trace
+            DC.L    SERVICE_LINE_A    ; Line A Emulator
+            DC.L    SERVICE_LINE_F    ; Line F Emulator
 
             ; --- Preencha o resto com handlers padrão ---
             ;REPT 45
@@ -32,19 +32,36 @@
             DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
             DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
             DC.L    SPURIOUS_HANDLER    ; $60: Spurious Interrupt
-            DC.L    INT1_HANDLER     ; $70: Level 4 Interrupt
-            DC.L    INT2_HANDLER     ; $74: Level 5 Interrupt
+            DC.L    INT1_HANDLER        ; $70: Level 4 Interrupt
+            DC.L    INT2_HANDLER        ; $74: Level 5 Interrupt
             DC.L    INT3_HANDLER        ; $78: Level 6 Interrupt  ✅
-            DC.L    INT4_HANDLER     ; $7C: Level 7 Interrupt
-            DC.L    INT5_HANDLER     ; $64: Level 1 Interrupt
+            DC.L    INT4_HANDLER        ; $7C: Level 7 Interrupt
+            DC.L    INT5_HANDLER        ; $64: Level 1 Interrupt
             DC.L    INT6_HANDLER        ; $78: Level 6 Interrupt  ✅
-            DC.L    INT7_HANDLER     ; $7C: Level 7 Interrupt
+            DC.L    INT7_HANDLER        ; $7C: Level 7 Interrupt
+            DC.L    TRAP0_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP1_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP2_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP3_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP4_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP5_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP6_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP7_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP8_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAP9_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPA_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPB_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPC_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPD_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPE_HANDLER       ; Aponta para nosso handler
+            DC.L    TRAPF_HANDLER       ; Aponta para nosso handler
 
             ; --- Preencha o resto (até $FF) ---
             ;REPT 128
             ;DC.L    DEFAULT_HANDLER
             ;ENDR
 
+            SECTION .jumptable
             ORG     $0400
 ROM_JUMPTABLE:
             BRA     UART_Init          ;
@@ -54,7 +71,10 @@ ROM_JUMPTABLE:
             BRA     UART_Setbaudrate   ;
             BRA     DELAY_MS           ;
             BRA     MEMDUMP            ;
-
+            BRA     UART_ReadCharNonEcho
+            BRA     _start
+            BRA     warm_start
+            BRA     MenuLoop
 
             SECTION .text
             ORG $00001000
@@ -171,7 +191,7 @@ CLEARRAM:
         MOVE.L  (A0),D0
         JSR     PrintHexAddress
 
-
+warm_start:
 ; Loop principal do menu
 MenuLoop:
         JSR     new_line
@@ -211,7 +231,33 @@ MenuLoop:
         BEQ     PRINT_SR
         CMP.B   #'D',D0
         BEQ     READ_8253
+        CMP.B   #'T',D0
+        BEQ     MsgViaTrap1
+        CMP.B   #'R',D0
+        BEQ     RdViaTrap1
+        CMP.B   #'S',D0
+        BEQ     StrViaTrap1
         BRA     MenuLoop            ; Opção inválida, repete menu
+RdViaTrap1:
+        MOVE.W  #1,D0              ; Função CCONOUT
+        TRAP    #1
+        JSR     UART_WriteChar
+        BRA     MenuLoop
+StrViaTrap1:
+        LEA     Msg_via_trap1,A0
+        MOVE.W  #3,D0              ; Função CCONOUT
+        TRAP    #1
+.imprimir_fim:
+        BRA     MenuLoop
+
+MsgViaTrap1:
+        LEA     Msg_via_trap1,A0
+        MOVE.B  (A0)+,D1           ; Pega próximo caractere
+        BEQ     .imprimir_fim      ; Se for zero, termina
+        MOVE.W  #2,D0              ; Função CCONOUT
+        TRAP    #1
+.imprimir_fim:
+        BRA     MenuLoop
 ; =============================================
 ; Delay em milissegundos para MC68000 @ 16MHz
 ; Entrada: D0 = tempo em ms (16 bits)
@@ -1172,6 +1218,9 @@ XMODEM_Receive:
        MOVE.W  #$0800,D0
        JSR     __write_leds
 
+       ;LEA   pgm_buffer,A2   ; Destino (garanta alinhamento em 4 bytes)
+       LEA   $00082000,A2   ; Destino (garanta alinhamento em 4 bytes)
+
        ; ---- 2. LOOP PRINCIPAL ----
 Receive_Loop:
        JSR     UART_ReadCharNonEcho
@@ -1226,16 +1275,16 @@ Read_Loop:
 ;******************************************************************************************
 
         ; Calcula checksum local
-        ;LEA     xmodem_buffer,A1
-        ;MOVE.W  #127,D1
-        ;CLR.B   D3
+        LEA     xmodem_buffer,A1
+        MOVE.W  #127,D1
+        CLR.L   D3
 
 Calc_Checksum:
-        ;ADD.B   (A1)+,D3
-        ;DBF     D1,Calc_Checksum;
+        ADD.B   (A1)+,D3
+        DBF     D1,Calc_Checksum;
 
-        ;CMP.B   D2,D3
-        ;BNE     Send_NAK            ; Erro no checksum
+        CMP.B   D2,D3
+        BNE     Send_NAK            ; Erro no checksum
 
         ;---- 6. VALIDA NÚMERO DO BLOCO ----
         ;MOVE.B  block_number,D0
@@ -1247,18 +1296,11 @@ Calc_Checksum:
         ; Exemplo: copiar do buffer para a RAM
         ; 1. Copia os 128 bytes do XMODEM para o buffer destino
         LEA     xmodem_buffer,A1     ; Origem (128 bytes)
-        MOVE.L  usr_buffer_addr,A2   ; Destino (garanta alinhamento em 4 bytes)
         MOVE.L  #32,D1              ; 32 longs = 128 bytes (contador exato)
 Copy_Data:
         MOVE.L  (A1)+,(A2)+         ; Copia 4 bytes por vez
         SUBQ.L  #1,D1               ; Decrementa contador
         BNE     Copy_Data            ; Repete até D1 = 0
-        ; 2. Atualiza usr_buffer_addr para o próximo bloco (+128 bytes)
-        MOVE.L  usr_buffer_addr,D0
-        ADDI.L  #128,D0
-        MOVE.L  D0,usr_buffer_addr
-
-
 
         ; ---- 8. CONFIMA RECEPÇÃO ----
         ADDQ.B  #1,expected_block   ; Próximo bloco
@@ -1324,39 +1366,13 @@ VALIDATE_ROM:
 .CHECKSUM_OK:
         RTS                         ; Retorna (ROM válida)
 
+
 SYSTEM_HALT:
         MOVE.W  #$2700,SR        ; Desabilita interrupções
 .INFINITE_LOOP:
         BRA     .INFINITE_LOOP   ; Trava o sistema
 
-; Implementação simplificada de CRC32 (precisa da tabela de polinômios)
-VALIDATE_ROM_CRC32:
-        LEA     ROM_START,A0        ; Endereço inicial
-        MOVE.L  #ROM_SIZE-4,D0      ; Tamanho total - 4 bytes
-        MOVE.L  #$FFFFFFFF,D1      ; CRC32 initial value
 
-CRC_LOOP:
-        MOVE.B  (A0)+,D2            ; Lê 1 byte
-        EOR.B   D2,D1               ; XOR com byte atual
-
-        ; Aqui viria o loop de 8 iterações com shifts e XORs
-        ; usando a tabela de polinômios do CRC32 (omitido por brevidade)
-
-        SUBQ.L  #1,D0
-        BGT     CRC_LOOP
-
-        NOT.L   D1                  ; Inverte os bits no final
-
-        ; --- Compara com o checksum armazenado (últimos 4 bytes da ROM) ---
-        MOVE.L  ROM_END-4,D2        ; Lê o checksum gravado (0x0000FFFC)
-        CMP.L   D1,D2               ; Combina com o calculado?
-        BEQ     .CHECKSUM_OK        ; Se sim, ROM válida
-
-        ; --- Checksum inválido: travar o sistema ou notificar ---
-        MOVE.W  #$DEAD,D3           ; Código de erro (opcional)
-        BRA     SYSTEM_HALT         ; Trava o sistema (ou reinicia)
-.CHECKSUM_OK:
-        RTS
 
 ; --- Constantes ---
 ROM_START   EQU     $00000000   ; Início da ROM
@@ -1375,7 +1391,6 @@ DEFAULT_HANDLER:
     MOVE.L  (14,SP),D0      ; ⭐⭐ PC (14 bytes abaixo por causa dos registradores salvos)
     MOVE.W  (18,SP),D1      ; ⭐⭐ SR (18 bytes abaixo)
     MOVE.W  (20,SP),D2      ; ⭐⭐ Vector Offset (20 bytes abaixo)
-
 
     ; Mostra informações detalhadas
     LEA     debug_msg,A0
@@ -1517,24 +1532,59 @@ INT7_HANDLER:
         MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 
-service_bus_err:
+SERVICE_BUS_ERR:
         MOVE.W  #$C100,LED_ADDRESS
         RTE
-service_addr_err:
-        MOVE.W  #$C200,LED_ADDRESS
-        RTE
-service_illegal:
+SERVICE_ADDR_ERR:
         MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
         MOVE.W  6(SP),D1        ; SR na época
         MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
 
+        MOVE.L  D0,-(SP)
+        LEA     debug_msg,A0
+        JSR     UART_WriteString
+
+        MOVE.L  (SP)+,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
         JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
         CLR.L   D0
         MOVE.W  D1,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
         JSR     new_line
 
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D2,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+        MOVE.W  #$C200,LED_ADDRESS
+        RTE
+SERVICE_ILLEGAL:
+        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
+        MOVE.W  6(SP),D1        ; SR na época
+        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
+
+        MOVE.L  D0,-(SP)
+        LEA     debug_msg,A0
+        JSR     UART_WriteString
+
+        MOVE.L  (SP)+,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D1,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
         CLR.L   D0
         MOVE.W  D2,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
@@ -1557,27 +1607,114 @@ service_illegal:
         JMP MenuLoop
         RTE
 
-service_div0:
+SERVICE_DIV0:
         MOVE.W  #$C400,LED_ADDRESS
         RTE
-service_check:
+SERVICE_CHECK:
         MOVE.W  #$C500,LED_ADDRESS
         RTE
-service_trapv:
+SERVICE_TRAPV:
         MOVE.W  #$C600,LED_ADDRESS
         RTE
-service_priv:
+SERVICE_PRIV:
         MOVE.W  #$C700,LED_ADDRESS
         RTE
-service_trace:
+SERVICE_TRACE:
         MOVE.W  #$C800,LED_ADDRESS
         RTE
-service_line_a:
+SERVICE_LINE_A:
         MOVE.W  #$C900,LED_ADDRESS
         RTE
-service_line_f:
+SERVICE_LINE_F:
         MOVE.W  #$CA00,LED_ADDRESS
         RTE
+TRAP0_HANDLER:
+TRAP2_HANDLER:
+TRAP3_HANDLER:
+TRAP4_HANDLER:
+TRAP5_HANDLER:
+TRAP6_HANDLER:
+TRAP7_HANDLER:
+TRAP8_HANDLER:
+TRAP9_HANDLER:
+TRAPA_HANDLER:
+TRAPB_HANDLER:
+TRAPC_HANDLER:
+TRAPD_HANDLER:
+TRAPE_HANDLER:
+TRAPF_HANDLER:
+        RTE
+
+; --------------------------------
+; Handler do TRAP #1
+; Entrada:
+;   D0.W - Número da função
+;   D1.L - Parâmetro (para escrita)
+; Saída:
+;   D0.L - Resultado (para leitura)
+; --------------------------------
+TRAP1_HANDLER:
+    cmp.w   #1,d0         ; Compara com CCONIN (ler caractere)
+    BEQ     trap_cconin    ; Se for 1, vai para leitura
+    cmp.w   #2,d0         ; Compara com CCONOUT (escrever caractere)
+    BEQ     trap_cconout   ; Se for 2, vai para escrita
+    cmp.w   #3,d0         ; Compara com CCONOUT (escrever string)
+    BEQ     trap_strout   ; Se for 2, vai para escrita
+    cmp.w   #0,d0         ; Compara com PTERM0 (terminar)
+    BEQ     trap_pterm0    ; Se for 0, vai para terminar
+    move.l  #-1,d0        ; Retorna erro se função não reconhecida
+    RTE                   ; Retorna da exceção
+
+
+
+; --------------------------------
+; TRAP_CCONIN - Ler caractere do console
+; Saída: D0.L - Caractere lido
+; --------------------------------
+trap_cconin:
+    JSR         UART_ReadCharNonEcho
+    ANDI.L      #$FF,D0       ; Mantém apenas o byte inferior
+    RTE                   ; Retorna da exceção
+
+; --------------------------------
+; TRAP_CCONOUT - Escrever caractere no console
+; Entrada: D1.L - Caractere a escrever
+; --------------------------------
+trap_cconout:
+    ANDI.L      #$FF,D1         ; Mantém apenas o byte inferior
+    MOVE.B      D1,D0
+    JSR         UART_WriteChar
+    RTE                   ; Retorna da exceção
+
+trap_strout:
+    MOVE.B      (A0)+,D0
+    CMP.B       #0,D0
+    BEQ         .fim
+    JSR         UART_WriteChar
+    BRA         trap_strout
+.fim:
+    RTE
+
+; --------------------------------
+; TRAP_PTERM0 - Terminar programa
+; --------------------------------
+trap_pterm0:
+    move.w  #0,d0         ; Código de saída 0
+    bsr     hardware_exit ; Chama rotina de término
+    RTE                   ; Retorna da exceção (nunca executado)
+
+; --------------------------------
+; hardware_exit - Terminar execução
+; Entrada: D0.W - Código de saída
+; --------------------------------
+hardware_exit:
+    ; >>> ADAPTE PARA SUA PLACA <<<
+    ; Exemplo: parar o processador
+    ; stop    #$2700
+
+    ; Exemplo simples: loop infinito
+    BRA     hardware_exit
+    RTS
 
 
     ALIGN 2
@@ -1657,6 +1794,8 @@ Msg_Cscalc:
     DC.B    " - Checksum CAL.: ",0
 Msg_default_handler:
     DC.B    " Default handler wrote UART ",13,10,0
+Msg_via_trap1:
+    DC.B    "Mensagem via trap #1",13,10,0
 
     ALIGN   2
     ;Isso preenche 762 com 00
@@ -1694,11 +1833,12 @@ xmodem_buffer       DS.B   512        ; Buffer de dados
 block_number        DS.B   1           ; Número do bloco atual
 expected_block      DS.B   1           ; Próximo bloco esperado
 usr_buffer_addr     DS.B   512
-    ALIGN 2
-pgm_buffer          DS.B   1024
 checksum_calc       DS.L   1
 flag_pgm_loaded     DS.B   1
 minhas_flags        DS.L   1
 
-
+        ORG $00082000
+        ALIGN 2
+pgm_buffer          DS.B   8192
+        END
 

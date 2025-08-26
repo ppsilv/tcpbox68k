@@ -17,7 +17,7 @@ MEMDUMP                 EQU $00000418
 UART_ReadCharNonEcho    EQU $0000041C
 _start                  EQU $00000420
 warm_start              EQU $00000424
-
+MenuLoop                EQU $00000428
 
 ; --- Macros para chamar as rotinas ---
 ; (Facilitam o uso sem precisar lembrar dos endereços)

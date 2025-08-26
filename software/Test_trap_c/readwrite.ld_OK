@@ -1,0 +1,33 @@
+/* Script de linker para endereço 0x82000 */
+OUTPUT_FORMAT("elf32-m68k")
+ENTRY(_start)
+
+MEMORY {
+    RAM (rwx) : ORIGIN = 0x82000, LENGTH = 64K
+}
+
+SECTIONS {
+    /* Define o endereço de início */
+    . = 0x82000;
+
+    .text : {
+        *(.text)        /* Seção de código */
+        *(.text.*)      /* Seção de código */
+        *(.rodata)      /* Dados somente leitura */
+    } > RAM
+
+    .data : {
+        *(.data)        /* Dados inicializados */
+    } > RAM
+
+    .bss : {
+        *(.bss)         /* Dados não inicializados */
+        *(COMMON)
+    } > RAM
+
+    /* Define o ponto de entrada */
+    _start = .;
+
+    /* Pilha no topo da memória */
+    _stack = ORIGIN(RAM) + LENGTH(RAM);
+}

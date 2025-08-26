@@ -12,6 +12,10 @@ SECTIONS {
         KEEP(*(.vectors))
     } > ROM
 
+    .jumptable 0x00000400 : {
+        KEEP(*(.jumptable))
+    } > ROM
+
     /* --- Seu código principal --- */
     .text 0x00001000 : {
         _start = .;
@@ -41,13 +45,13 @@ SECTIONS {
         LONG(0);  /* Espaço reservado (será preenchido pós-build) */
     } > ROM
 
-    .bss : {
+    .bss (NOLOAD) : {
         __bss_start = .;
         *(.bss .bss.*)
         *(COMMON)
         . = ALIGN(2);
         __bss_end = .;
-    }
+    } > RAM
 
     /DISCARD/ : {
         *(.comment)
