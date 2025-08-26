@@ -40,7 +40,17 @@ void outch(char c) {
         : "d0", "d1", "a0", "cc", "memory"
     );
 }
-
+int get_status(void){
+    int result=0;
+    asm volatile (
+        "MOVE.W %%SR, %%D0\n\t"   // CCONIN
+        "MOVE.L %%D0, %0"
+        : "=g" (result)
+        :
+        : "d0", "d1", "cc", "memory"
+    );
+    return result;
+}
 // Ler caractere do console
 int read_char(void) {
     int result;
@@ -67,10 +77,54 @@ void write_char(int c) {
         : "d0", "d1", "cc", "memory"
     );
 }
+// Print a string.
+void printString(const char *s) {
+    while (*s != 0) {
+        outch(*s);
+        s++;
+    }
+}
+/*
+void printNumber(unsigned int n) {
+    unsigned int d;
+    short digitPrinted = 0;
+    unsigned int mult = 1000000000;
 
+    while (mult > 1) {
+        d = n / mult;
+        if (d == 0) {
+            if (digitPrinted) {
+                outch(d + '0');
+            }
+        } else {
+            outch(d + '0');
+            digitPrinted = 1;
+        }
+        n = n - d * mult;
+        mult = mult / 10;
+    }
+    outch(n + '0');
+}
+
+__printf (const char *format, ...)
+{
+   va_list arg;
+   int done;
+
+   va_start (arg, format);
+   done = vfprintf (stdout, format, arg);
+   va_end (arg);
+
+   return done;
+}
+*/
 // Função principal
 int main(void) {
+    int status=get_status();
     // Teste básico de escrita
+    printString("Teste basico de ling C e assembler\n");
+    printString("Status ");
+   // printNumber(status);
     outch('A');
     outch('A');
     outch('A');
@@ -94,6 +148,16 @@ int main(void) {
     // Loop de leitura/escrita
     while(1) {
         int c = read_char();
+        if( c == 0x1b ){
+            printString("Digitado ESC retornando");
+            asm volatile (
+                "MOVE.W #0, %%D0\n\t"   // PTERM0
+                "TRAP #0\n\t"
+                :
+                :
+                : "d0", "cc"
+            );
+        }
         write_char('\n');
         write_char('R');
         write_char('e');

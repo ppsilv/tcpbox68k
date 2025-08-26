@@ -20,38 +20,37 @@ Linker script and memory map
  *(.jumptable)
  .jumptable     0x00000400       0x2c monitor.o
 
-.text           0x00001000      0xce0
+.text           0x00001000      0xcf8
                 0x00001000                        _start = .
  *(.text .text.*)
- .text          0x00001000      0xce0 monitor.o
-                0x00001ce0                        . = ALIGN (0x2)
-                0x00001ce0                        _start_end = .
+ .text          0x00001000      0xcf8 monitor.o
+                0x00001cf8                        . = ALIGN (0x2)
+                0x00001cf8                        _start_end = .
 
-.rodata         0x00001ce0        0x0
+.rodata         0x00001cf8        0x0
  *(.rodata .rodata.*)
-                0x00001ce0                        . = ALIGN (0x2)
+                0x00001cf8                        . = ALIGN (0x2)
 
-.data           0x00001ce0      0x504
-                0x00001ce0                        __data_load = LOADADDR (.data)
-                0x00001ce0                        __data_start = .
+.data           0x00001cf8      0x504
+                0x00001cf8                        __data_load = LOADADDR (.data)
+                0x00001cf8                        __data_start = .
  *(.data .data.*)
- .data          0x00001ce0      0x504 monitor.o
-                0x000021e4                        . = ALIGN (0x2)
-                0x000021e4                        __data_end = .
+ .data          0x00001cf8      0x504 monitor.o
+                0x000021fc                        . = ALIGN (0x2)
+                0x000021fc                        __data_end = .
 
-.checksum       0x000021e4        0x4
-                0x000021e4                        . = ALIGN (0x2)
-                0x000021e4                        __checksum_addr = .
-                0x000021e4        0x4 LONG 0x0
+.checksum       0x000021fc        0x4
+                0x000021fc                        . = ALIGN (0x2)
+                0x000021fc                        __checksum_addr = .
+                0x000021fc        0x4 LONG 0x0
 
-.bss            0x00080000     0x253c
+.bss            0x00080000     0x254c
                 0x00080000                        __bss_start = .
  *(.bss .bss.*)
- .bss           0x00080000     0x253b monitor.o
+ .bss           0x00080000     0x254c monitor.o
  *(COMMON)
-                0x0008253c                        . = ALIGN (0x2)
- *fill*         0x0008253b        0x1 
-                0x0008253c                        __bss_end = .
+                0x0008254c                        . = ALIGN (0x2)
+                0x0008254c                        __bss_end = .
 
 /DISCARD/
  *(.comment)

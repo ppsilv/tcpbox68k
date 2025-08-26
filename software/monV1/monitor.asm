@@ -901,6 +901,8 @@ RUNPROGRAM:
 .run_program
         LEA     RunPrompt,A0
         JSR     UART_WriteString
+        MOVE.L  SP,A0
+        MOVE.L  A0,monitor_stack
         LEA     pgm_buffer,A0   ; A0 aponta para o endereço buffer onde esta o progama
         JSR     (A0)        ; Chama o código como uma sub-rotina (salva o endereço de retorno)
         BRA     MenuLoop
@@ -1629,6 +1631,11 @@ SERVICE_LINE_F:
         MOVE.W  #$CA00,LED_ADDRESS
         RTE
 TRAP0_HANDLER:
+    ; Manipula o endereço de retorno na pilha
+    MOVE.L  monitor_stack,A0
+    MOVE.L  A0,SP
+    BRA MenuLoop ; Substitui na pilha
+    rte
 TRAP2_HANDLER:
 TRAP3_HANDLER:
 TRAP4_HANDLER:
@@ -1833,9 +1840,11 @@ xmodem_buffer       DS.B   512        ; Buffer de dados
 block_number        DS.B   1           ; Número do bloco atual
 expected_block      DS.B   1           ; Próximo bloco esperado
 usr_buffer_addr     DS.B   512
-checksum_calc       DS.L   1
 flag_pgm_loaded     DS.B   1
+        ALIGN 4
+checksum_calc       DS.L   1
 minhas_flags        DS.L   1
+monitor_stack       DS.L   1
 
         ORG $00082000
         ALIGN 2
