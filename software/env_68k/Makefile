@@ -49,14 +49,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	@mkdir -p $(dir $@)
 	$(AS) $(ASFLAGS) $< -o $@
 
-# Compilar exemplos
-examples: lib
-	@$(MAKE) -C examples
+# Compilar apps
+apps/hello: lib
+	@$(MAKE) -C apps/hello
 
 # Limpar
 clean:
 	rm -rf $(OBJ_DIR) $(LIB_DIR)
-	@$(MAKE) -C examples clean
+	@$(MAKE) -C apps/hello clean
 
 # Ver conteúdo da biblioteca
 info:

@@ -29,9 +29,16 @@ mc68000-lib/
 │       ├── serial.c
 │       ├── timer.c
 │       └── interrupt.c
-├── lib/                  # ✅ Aqui será gerada libmc68000.a
-├── examples/
-│   ├── Makefile         # ✅ Makefile DOS EXEMPLOS
-│   ├── hello.c
-│   └── test.c
+├── lib/                  # ✅ libmc68000.a
+│   └──libmc68000.a
+├── apps/                 # ✅ Diretório para aplicações
+│   │
+│   ├──hello              # ✅ Aplicação hello world
+│   │  ├──── Makefile
+│   │  └──── hello.c
+│   │
+│   └──drv8253
+│      ├──── Makefile
+│      └──── drv8253.c
+│
 └── build.sh             # ✅ Script de build opcional

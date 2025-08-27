@@ -116,6 +116,24 @@ EOT         EQU     $04        ; End Of Transmission
 ACK         EQU     $06        ; Acknowledge
 NAK         EQU     $15        ; Negative Acknowledge
 CAN         EQU     $18        ; Cancel
+;=== Timer ======================================================
+; Definições de constantes (ajuste conforme seu hardware)
+TIMER_CTRL     equ     $4606       ; Endereço do registrador de controle
+TIMER0_COUNT   equ     $4600       ; Endereço do contador do canal 0
+
+; Bits de controle do 8253
+TIMER_SEL0     equ     $00         ; Select channel 0
+TIMER_RW_BOTH  equ     $30         ; Read/Write LSB then MSB
+TIMER_MODE3    equ     $06         ; Mode 3: Square wave generator
+TIMER_BINARY   equ     $00         ; Binary counting
+
+; Valor de configuração
+CONFIG_VALUE   equ     TIMER_SEL0|TIMER_RW_BOTH|TIMER_MODE3|TIMER_BINARY
+
+; Valor do contador para 10ms @ 1MHz
+COUNT_VALUE    equ     2000        ; 2000 ticks (você especificou 2000)
+;=== Timer ======================================================
+
 
 ; --- Macro para Setar Flag ---
 SET_FLAG   MACRO
@@ -173,6 +191,7 @@ CLEARRAM:
         JSR     UART_WriteString
 
         JSR     INIT_8253
+        JSR     TIMER_SET_10MS_TICK
 
         JSR     LED_INIT
 
@@ -258,33 +277,44 @@ MsgViaTrap1:
         TRAP    #1
 .imprimir_fim:
         BRA     MenuLoop
-; =============================================
-; Delay em milissegundos para MC68000 @ 16MHz
-; Entrada: D0 = tempo em ms (16 bits)
-; Destrói: D0
-; =============================================
-; ==============================================
-; INICIALIZAÇÃO DO 8253 - TICK 10ms
-; ==============================================
+; ******************************************************************
+; * timer_init - Inicializa o timer 8253                           *
+; * Configura canal 0: modo 3, 16-bit, binary                      *
+; * Entrada: Nenhuma                                               *
+; * Saída: Nenhuma                                                 *
+; * Destrói: D0                                                    *
+; ******************************************************************
+
 INIT_8253:
-    MOVEM.L D0-D1/A0,-(SP)
+    ;MOVEM.L D0-D1/A0,-(SP)
+        ; Configurar canal 0: modo 3, 16-bit, binary
+        MOVE.B  #CONFIG_VALUE,TIMER_CTRL   ; 12 ciclos - escreve no registrador de controle
 
-    MOVE.L   CurrentTimer,A0
-    ;LEA      $4603,A1
-    ; --- Configura Canal 0 ---
-    ; Modo 3 (Square Wave), Divisor 16-bit
-    MOVE.B  #%00110110,+3(A0) ; CW: Canal 0, Modo 3, MSB+LSB
+        ; Inicializar contador com valor máximo temporariamente
+        MOVE.B  #$FF,TIMER0_COUNT          ; 12 ciclos - LSB = 0xFF
+        MOVE.B  #$FF,TIMER0_COUNT          ; 12 ciclos - MSB = 0xFF
 
-    ; --- Calcula divisor 10000 = $2710 ---
-    MOVE.W  #$2710,D0        ; 10000 em hexa
-
-    ; --- Envia divisor LSB depois MSB ---
-    MOVE.B  D0,(A0)         ; LSB
-    LSR.W   #8,D0            ; Pega MSB
-    MOVE.B  D0,(A0)         ; MSB
-
-    MOVEM.L (SP)+,D0-D1/A0
+    ;MOVEM.L (SP)+,D0-D1/A0
     RTS
+; ******************************************************************
+; * timer_set_10ms_tick - Configura timer para tick de 10ms        *
+; * Assume clock de 1MHz: 1000000 * 0.01 = 10000 ticks             *
+; * Entrada: Nenhuma                                               *
+; * Saída: Nenhuma                                                 *
+; * Destrói: D0                                                    *
+; ******************************************************************
+;        xdef _timer_set_10ms_tick
+TIMER_SET_10MS_TICK:
+
+        ; Configurar canal 0: modo 3, 16-bit, binary
+        MOVE.B  #CONFIG_VALUE,TIMER_CTRL   ; 12 ciclos - escreve no registrador de controle
+
+        ; Escrever valor do contador (LSB primeiro, depois MSB)
+        move.b  #COUNT_VALUE&$FF,TIMER0_COUNT    ; LSB
+        move.b  #(COUNT_VALUE>>8)&$FF,TIMER0_COUNT ; MSB
+
+        RTS                                ; 16 ciclos - retorna
+                                           ; Total: ~52 ciclos
 
 ; ==============================================
 ; ROTINA QUE LÊ CONTADOR (PARA DEBUG)
@@ -1518,12 +1548,12 @@ INT5_HANDLER:
         MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 INT6_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
+        ;MOVEM.L D0-D7/A0-A6,-(A7)
         ; Seu código de tratamento aqui
-        MOVE.W  #$D600,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
+        ;MOVE.W  #$D600,D0
+        ;MOVE.W  D0,LED_ADDRESS
+        ADDQ.L  #1,system_tick
+        ;MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 INT7_HANDLER:
         MOVEM.L D0-D7/A0-A6,-(A7)
@@ -1846,6 +1876,7 @@ flag_pgm_loaded     DS.B   1
 checksum_calc       DS.L   1
 minhas_flags        DS.L   1
 monitor_stack       DS.L   1
+system_tick         DS.L   1
 
         ORG $00082000
         ALIGN 2
