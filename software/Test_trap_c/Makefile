@@ -4,8 +4,8 @@ CC = m68k-elf-gcc
 LD = m68k-elf-ld
 OBJCOPY = m68k-elf-objcopy
 
-CFLAGS = -m68000 -O0 -Wall -fno-builtin -ffreestanding -nostdlib
-LDFLAGS = -nostdlib -T readwrite.ld
+CFLAGS = -m68000 -O0 -Wall -fno-builtin -ffreestanding -nostdlib -I/usr/local/lib/gcc/m68k-elf/15.1.0/include
+LDFLAGS = -nostdlib -T readwrite.ld -L/usr/local/m68k-elf/lib -L/usr/local/m68k-elf/lib/newlib -lm -lc -lgcc
 
 all: readwrite.bin
 
