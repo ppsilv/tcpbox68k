@@ -1634,6 +1634,7 @@ TRAP0_HANDLER:
     ; Manipula o endereço de retorno na pilha
     MOVE.L  monitor_stack,A0
     MOVE.L  A0,SP
+    JSR PrintHexAddress
     BRA MenuLoop ; Substitui na pilha
     rte
 TRAP2_HANDLER:

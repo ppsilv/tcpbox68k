@@ -1,4 +1,8 @@
+#include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
+
+
 /*
  *
     printf("=== Sistema MC68000 ===\n");
@@ -35,6 +39,7 @@
  *
  */
 // Função para enviar um caractere pela serial
+/*
 void putchar(char c) {
     asm volatile (
         "movem.l %%d0/%%d1/%%a0,-(%%sp)\n\t"  // Save modified registers
@@ -49,18 +54,19 @@ void putchar(char c) {
 }
 
 // Função para enviar string
+
 void puts(const char *str) {
     while (*str) {
         putchar(*str++);
     }
 }
-
+*/
 // Função strlen simples
-int strlen(const char *str) {
-    int len = 0;
-    while (*str++) len++;
-    return len;
-}
+//int strlen(const char *str) {
+//    int len = 0;
+//    while (*str++) len++;
+//    return len;
+//}
 
 // Conversão de hexadecimal usando shifts (sem divisão)
 char *itox(unsigned int value, char *str) {
@@ -343,24 +349,24 @@ int printf(const char *format, ...) {
 
 
 // Funções auxiliares simples
-void memcpy(void *dest, const void *src, int n) {
-    char *d = (char *)dest;
-    const char *s = (const char *)src;
-    while (n--) *d++ = *s++;
-}
+//void memcpy(void *dest, const void *src, int n) {
+//    char *d = (char *)dest;
+//    const char *s = (const char *)src;
+//    while (n--) *d++ = *s++;
+//}
 
-void memset(void *s, int c, int n) {
-    char *p = (char *)s;
-    while (n--) *p++ = c;
-}
+//void memset(void *s, int c, int n) {
+//    char *p = (char *)s;
+//    while (n--) *p++ = c;
+//}
 
-int strcmp(const char *s1, const char *s2) {
-    while (*s1 && (*s1 == *s2)) {
-        s1++;
-        s2++;
-    }
-    return *(unsigned char *)s1 - *(unsigned char *)s2;
-}
+//int strcmp(const char *s1, const char *s2) {
+//    while (*s1 && (*s1 == *s2)) {
+//        s1++;
+//        s2++;
+//    }
+//    return *(unsigned char *)s1 - *(unsigned char *)s2;
+//}
 
 
 

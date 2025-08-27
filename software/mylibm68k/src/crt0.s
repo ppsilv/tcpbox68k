@@ -18,7 +18,7 @@ clear_bss:
 
 skip_clear:
     /* Chamar _main_wrapper */
-    jsr main   /*;_wrapper*/
+    jsr _main_wrapper
 
     trap #0
     /* Parar a CPU */
