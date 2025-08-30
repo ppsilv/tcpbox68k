@@ -21,5 +21,13 @@
 #define TIMER_BCD      (1 << 0)  // BCD counting
 #define TIMER_BINARY   (0 << 0)  // Binary counting
 
+// Novo macro para configuração de pulso de 15 segundos
+#define TIMER0_15S_PULSE_CONFIG() \
+    timer_init_channel0(0xFFFF, TIMER_MODE0 | TIMER_RW_BOTH | TIMER_BINARY)
+uint16_t timer_read_channel0(void);
+
+// Protótipo da função de pulso longo
+void timer_15s_pulse(void);
+
 // Frequência do clock do 8253 (ajuste conforme seu hardware)
 #define TIMER_CLK_FREQ 1000000   // 1 MHz (comum para 8253)

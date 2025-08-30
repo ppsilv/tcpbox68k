@@ -342,33 +342,28 @@ READ_8253:
     BRA     MenuLoop
 
 LIGA_INT:
-
         JSR     new_line
         LEA     spu_msg,A0
         JSR     UART_WriteString
         MOVE.L  USP,A0       ; Lê USP atual
         MOVE.L  A0,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
+;        JSR     new_line
 
         LEA     sr_msg,A0
         JSR     UART_WriteString
         CLR.L   D0
         MOVE.W  SR,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
+ ;       JSR     new_line
 
         LEA     sp_msg,A0
         JSR     UART_WriteString
         MOVE.L  SP,D0
         JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
+;        JSR     new_line
 
         MOVE    #$2000,SR
-
-
-        LEA     RunPrompt,A0
-        JSR     UART_WriteString
 
         BRA     MenuLoop       ; Volta para menu
 
@@ -1548,12 +1543,11 @@ INT5_HANDLER:
         MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 INT6_HANDLER:
-        ;MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        ;MOVE.W  #$D600,D0
-        ;MOVE.W  D0,LED_ADDRESS
+        MOVE.W #$2700,SR
+
         ADDQ.L  #1,system_tick
         ;MOVEM.L (A7)+,D0-D7/A0-A6
+    ;   MOVE    #$2000,SR
         RTE
 INT7_HANDLER:
         MOVEM.L D0-D7/A0-A6,-(A7)

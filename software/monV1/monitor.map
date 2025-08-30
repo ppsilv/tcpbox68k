@@ -20,29 +20,29 @@ Linker script and memory map
  *(.jumptable)
  .jumptable     0x00000400       0x2c monitor.o
 
-.text           0x00001000      0xcfc
+.text           0x00001000      0xcec
                 0x00001000                        _start = .
  *(.text .text.*)
- .text          0x00001000      0xcfc monitor.o
-                0x00001cfc                        . = ALIGN (0x2)
-                0x00001cfc                        _start_end = .
+ .text          0x00001000      0xcec monitor.o
+                0x00001cec                        . = ALIGN (0x2)
+                0x00001cec                        _start_end = .
 
-.rodata         0x00001cfc        0x0
+.rodata         0x00001cec        0x0
  *(.rodata .rodata.*)
-                0x00001cfc                        . = ALIGN (0x2)
+                0x00001cec                        . = ALIGN (0x2)
 
-.data           0x00001cfc      0x504
-                0x00001cfc                        __data_load = LOADADDR (.data)
-                0x00001cfc                        __data_start = .
+.data           0x00001cec      0x504
+                0x00001cec                        __data_load = LOADADDR (.data)
+                0x00001cec                        __data_start = .
  *(.data .data.*)
- .data          0x00001cfc      0x504 monitor.o
-                0x00002200                        . = ALIGN (0x2)
-                0x00002200                        __data_end = .
+ .data          0x00001cec      0x504 monitor.o
+                0x000021f0                        . = ALIGN (0x2)
+                0x000021f0                        __data_end = .
 
-.checksum       0x00002200        0x4
-                0x00002200                        . = ALIGN (0x2)
-                0x00002200                        __checksum_addr = .
-                0x00002200        0x4 LONG 0x0
+.checksum       0x000021f0        0x4
+                0x000021f0                        . = ALIGN (0x2)
+                0x000021f0                        __checksum_addr = .
+                0x000021f0        0x4 LONG 0x0
 
 .bss            0x00080000     0x2550
                 0x00080000                        __bss_start = .

@@ -163,6 +163,37 @@ void timer_pause_resume(void) {
 
     }
 }
+// Rotina que configura o canal 0 para gerar um pulso a cada 15 segundos
+// Configuração REAL para 15 segundos usando cascateamento
+void timer_15s_config(void) {
+    // Canal 0: Divide por 10000 = 100Hz (10ms)
+    TIMER_CTRL = TIMER_SEL0 | TIMER_MODE2 | TIMER_RW_BOTH | TIMER_BINARY;
+    TIMER0_COUNT = 10000;
+
+    // Canal 1: Conta 1500 pulsos do canal 0 (100Hz * 15s = 1500)
+    TIMER_CTRL = TIMER_SEL1 | TIMER_MODE0 | TIMER_RW_BOTH | TIMER_BINARY;
+    TIMER1_COUNT = 1500;
+}
+
+
+// Função para ler o canal 0 - 8253 NÃO TEM LATCH COMMAND!
+uint16_t timer_read_channel0(void) {
+    // No 8253, precisamos parar a contagem para ler corretamente
+    // Salvamos a configuração atual
+    uint8_t original_config = TIMER_CTRL;
+
+    // Congela a contagem escrevendo um latch não oficial
+    TIMER_CTRL = TIMER_SEL0 | TIMER_RW_LSB;
+
+    // Lê LSB e MSB
+    uint8_t lsb = TIMER0_COUNT;
+    uint8_t msb = TIMER0_COUNT;
+
+    // Restaura a configuração original
+    TIMER_CTRL = original_config;
+
+    return (msb << 8) | lsb;
+}
 int main() {
     char c='0';
     uint16_t count=0;
@@ -183,10 +214,11 @@ int main() {
         printf("2 - Stop timer \n");
         printf("3 - Restart timer \n");
         printf("4 - Timer pause/resume.... \n");
-        printf("5 - Termina app.... \n");
+        printf("5 - Config 4 x minuto.... \n");
+        printf("9 - Termina app.... \n");
         c = getchar();
         printf("Opção escolhida %c\n",c);
-        if ( c == '5' ){
+        if ( c == '9' ){
             break;
         }
         switch(c){
@@ -203,6 +235,10 @@ int main() {
                 break;
             case '4':
                 timer_pause_resume();
+                break;
+            case '5':
+                timer_init();
+                timer_15s_config();
                 break;
         }
     }

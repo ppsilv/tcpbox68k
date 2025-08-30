@@ -13,10 +13,11 @@ IPL0 = IPL0IN
 IPL1 = IPL1IN
 IPL2 = IPL2IN
 
-!IACK6 =   A3 &  A2 & !A1 & FC0 & FC1 & FC1 & !AS
-!IACK3 =  !A3 &  A2 &  A1 & FC0 & FC1 & FC1 & !AS
-!IACK2 =  !A3 &  A2 & !A1 & FC0 & FC1 & FC1 & !AS
-!IACK1 =  !A3 & !A2 &  A1 & FC0 & FC1 & FC1 & !AS
+;!IACK6 =   A3 &  A2 & !A1 & FC0 & FC1 & FC2 & !AS
+!IACK6 =   A3 &  A2 & !A1 & FC0 & FC1 & FC2
+!IACK3 =  !A3 &  A2 &  A1 & FC0 & FC1 & FC2 & !AS
+!IACK2 =  !A3 &  A2 & !A1 & FC0 & FC1 & FC2 & !AS
+!IACK1 =  !A3 & !A2 &  A1 & FC0 & FC1 & FC2 & !AS
 
 !VPA = !IACK6 # !IACK3 # !IACK2 # !IACK1
 
