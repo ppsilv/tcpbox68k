@@ -1543,15 +1543,19 @@ INT5_HANDLER:
         MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 INT6_HANDLER:
-        MOVE.W #$2700,SR
+        MOVEM.L D0-D7/A0-A6,-(A7)
 
         ADDQ.L  #1,system_tick
-        ;MOVEM.L (A7)+,D0-D7/A0-A6
-    ;   MOVE    #$2000,SR
+
+        MOVE.W  #$D600,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
         RTE
 INT7_HANDLER:
         MOVEM.L D0-D7/A0-A6,-(A7)
         ; Seu código de tratamento aqui
+        ADDQ.L  #1,system_tick
         MOVE.W  #$D700,D0
         MOVE.W  D0,LED_ADDRESS
 

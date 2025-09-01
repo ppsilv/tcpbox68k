@@ -26,67 +26,27 @@
 #define IRQ7_PIN  PD7
 #define ALL_IRQ_MASK ((1<<IRQ1_PIN)|(1<<IRQ2_PIN)|(1<<IRQ3_PIN)|(1<<IRQ4_PIN)|(1<<IRQ5_PIN)|(1<<IRQ7_PIN))
 
+#define TIMEOUT  1000
+long timer1=millis()+100;
+long timer2=millis()+TIMEOUT;
 
-#define FC0 PB2
-#define FC1 PB3
-#define FC2 PB4
-
-// Configuração adicional dos pinos
-#define VPA_PIN PC5  // Usando PC3 para VPA (ajuste conforme seu hardware)
-
-unsigned char irq_s[8]={0,0,0,0,0,0,0,0};
-
+#define NOT_ACTIVE 7
+unsigned char irq_s[8]={NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE,NOT_ACTIVE};
 // Variáveis globais
-volatile uint8_t active_irq = 0;
-volatile uint8_t irq_being_processed = 0;
+volatile uint8_t active_irq = NOT_ACTIVE;
 
-// Função de verificação do bus
-void check_bus_cycle() {
-    if ((PINB & 0x1C) == 0x1C) {  // FC0-FC2 = 111
-        if (active_irq != 0) {
-            Serial.print("check_bus_cycle: PINB ");
-            Serial.print( PINB,16);
-            Serial.print("Limpando o vetor de irqs: ");
-            Serial.println(active_irq,16);
-            irq_s[active_irq]=0;
-            
-            PORTC |= (1 << VPA_PIN);   // Assert VPA
-            _delay_us(0.1);
-            set_ipl(0);                // Remove IPL
-            _delay_us(0.1);
-            PORTC &= ~(1 << VPA_PIN);  // De-assert VPA
-            //set_ipl(0) já limpou essa variavel.
-            //active_irq = 0;            // Finaliza tratamento
-            Serial.println("vou aguardar fc0-fc2 deassert");
-            while(((PINB & 0x1C) == 0x1C) ){
-               _delay_us(1000);
-            }            
-        }
-        else {
-            // ❌ ERRO: ACK sem interrupção
-            log_error(ACK_WITHOUT_INT);
-        }
-    }
-}
-void log_error(uint8_t error){
-
-}
+#define LED_PIN PB5  // Exemplo: LED no PB5 (ajuste conforme seu hardware)
+#define LED_PORT PORTB
 
 // Configuração dos ports
 void setup_ports() {
     // Configurar PB0-PB2 como saídas (IPL0-IPL2) + VPA_PIN
-    DDRC |= (1 << IPL0) | (1 << IPL1) | (1 << IPL2) | (1 << VPA_PIN);
-    PORTC &= ~IPL_MASK;  // Inicializa em 0
-    
-    // Configurar PB1 como saída (OC1A - Debug)
-    DDRB |= (1 << PB1)  ;
-    
-    // Configurar PB3-PB5 como entradas (FC0-FC2) com pull-up
-    DDRB &= ~((1 << FC0) | (1 << FC1) | (1 << FC2));
-    PORTB |= ((1 << FC0) | (1 << FC1) | (1 << FC2));
-    
+    DDRC |= (1 << IPL0) | (1 << IPL1) | (1 << IPL2) ;
     // VPA inicialmente inativo    
-    PORTC |= (1 << VPA_PIN);  
+    PORTC |=  (1 << IPL0) | (1 << IPL1) | (1 << IPL2) ;  
+    
+    // Configurar PB1 como saída (OC1A - Debug) LED
+    DDRB |= (1 << PB1)|(1 << PB5)  ;
 
     // Configura PD0-PD5 como entradas com pull-up
     DDRD &= ~ALL_IRQ_MASK;
@@ -100,105 +60,126 @@ void setup_timer1() {
     TIMSK |= (1 << OCIE1A);    // Habilitar interrupção
 }
 
-//volatile uint32_t ms_counter = 0;
+volatile uint32_t ms_counter = 0;
 
 ISR(TIMER1_COMPA_vect) {
-//  ms_counter++;
-  start_irq(6);  // Gera IRQ nível 6
+  ms_counter++;
+  //start_irq(1);  // Gera IRQ nível 6
+}
+
+void setup_timer2() {  // ATMega8 usa Timer2, não Timer0
+    // Configurar Timer2 para CTC mode
+    TCCR2 = (1 << WGM21);              // CTC mode
+    OCR2 = 78;                         // 50us @ 16MHz/8
+    TCCR2 |= (1 << CS21);              // Prescaler 8
+    TIMSK |= (1 << OCIE2);             // Enable interrupt
+}
+
+ISR(TIMER2_COMP_vect) {
+
+}
+void setup_fc_interrupt() {
+    // Configurar INT0 para FALLING EDGE (transição 1→0)
+    MCUCR |= (1 << ISC01);      // Falling edge generates interrupt  
+    MCUCR &= ~(1 << ISC00);     // Clear ISC00 bit
+    GICR |= (1 << INT0);        // Enable INT0
+}
+
+ISR(INT0_vect) {
+  irq_s[active_irq]=NOT_ACTIVE;
+        __asm__ volatile("nop");   // +125ns - 1 ciclo
+        __asm__ volatile("nop");   // +125ns - 1 ciclo  
+        __asm__ volatile("nop");   // +125ns - 1 ciclo  
+        __asm__ volatile("nop");   // +125ns - 1 ciclo
+        __asm__ volatile("nop");   // +125ns - 1 ciclo  
+        __asm__ volatile("nop");   // +125ns - 1 ciclo        
+  PORTC = (PORTC & 0xF8);  //Limpa
+  PORTC = PORTC | NOT_ACTIVE;   //seta
 }
 
 uint8_t check_irq_pins_status() {
     return (~PIND) & ALL_IRQ_MASK;
 }
 
+
+
 uint8_t get_irq_started() {
     uint8_t status = check_irq_pins_status();
-    if (status & (1<<IRQ7_PIN)) return 7;
-    if (status & (1<<IRQ5_PIN)) return 5;
-    if (status & (1<<IRQ4_PIN)) return 4;
-    if (status & (1<<IRQ3_PIN)) return 3;
-    if (status & (1<<IRQ2_PIN)) return 2;
-    if (status & (1<<IRQ1_PIN)) return 1;
-    return 0;
+    if (status & (1<<IRQ7_PIN)) return 0;
+    if (status & (1<<IRQ5_PIN)) return 2;
+    if (status & (1<<IRQ4_PIN)) return 3;
+    if (status & (1<<IRQ3_PIN)) return 4;
+    if (status & (1<<IRQ2_PIN)) return 5;
+    if (status & (1<<IRQ1_PIN)) return 6;
+    return NOT_ACTIVE;
 }
-// Função principal de verificação de IRQs
-void verifica_interrupts() {
-    uint8_t started_irq = get_irq_started();
-    
-    if (started_irq > 0) {
-        set_ipl(started_irq);
-        
-        while (get_irq_started() == active_irq) {
-            // Espera IRQ ser liberada
-        }        
-        set_ipl(0);
-    }
-}
+
 // ✅ Função set_ipl CORRIGIDA
 void set_ipl(uint8_t level) {
-    level &= 0x07;
-    if( irq_s[level] == 0 ){
-      PORTC = (PORTC & 0xF8) | level;  // Limpa E depois seta
-      irq_s[level]=level;
-      Serial.print("set_ipl: PORTC ");
-      Serial.print(PORTC,16);  
-      Serial.print(" level: ");
-      Serial.println(level,16);  
-      active_irq = irq_s[level];
-    }
-    else{
-      //❌ ERRO: Irq <level> must be released
-      log_error(IRQ_MUST_BE_RELEASED);
-    }   
+  level &= 0x07;
+  //PORTC = (PORTC & 0xF8);  //Limpa 
+  //PORTC = PORTC | level;   //seta
+  PORTC = (PORTC & 0xF8) | level;  // Seta nível
+
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
+  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
+  // ⏰ Timing calibrado manualmente
+    __asm__ volatile("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop");
+
+  PORTC = (PORTC & 0xF8) | NOT_ACTIVE;  // Limpa ANTES do retrigger
+
+  //PORTC = (PORTC & 0xF8);  //Limpa
+  //PORTC = PORTC | NOT_ACTIVE;   //seta
+  _delay_us(500);
+  irq_s[active_irq]=NOT_ACTIVE;
+  
+
 }
 
 void start_irq(uint8_t new_irq){
-  if (new_irq != 0 && active_irq == 0) {
-    Serial.print("loop: new_irq=");
-    Serial.print(new_irq,16);  
-    Serial.print("    active_irq=");
-    Serial.println(active_irq,16);  
+  if(new_irq == NOT_ACTIVE) return; //excesso de zelo quando estiver funcionando corretamente tirar isso daqui
+  if (new_irq < 7 && irq_s[new_irq] == NOT_ACTIVE) {
     active_irq = new_irq;
+    irq_s[active_irq]=active_irq;
     set_ipl(active_irq);
-    Serial.println("Setting active irq");            
-  }else{
-    //❌ ERRO: Irq <new_irq> lost
-    log_error(IRQ_REQUEST_LOST);
   }
 }
 
-#define TIMEOUT  500
-long timer1=millis()+TIMEOUT;
-
 void setup(){
   Serial.begin(9600);
-  Serial.println("Teste do gerenciador de interrupção"); 
-    setup_ports();
-    setup_timer1();
-    sei();
-    pinMode(LED_BUILTIN, OUTPUT);    
-    timer1=millis()+TIMEOUT;
-}
+  Serial.println("Teste do gerenciador de interrupção 1.0"); 
+  setup_ports();
 
-#define LED_PIN PB5  // Exemplo: LED no PB5 (ajuste conforme seu hardware)
-#define LED_PORT PORTB
+  //Setup interrups
+  setup_timer1();
+  //setup_timer2();
+
+  sei();
+  pinMode(LED_BUILTIN, OUTPUT);    
+  timer1=millis()+TIMEOUT;
+  //delay(5000); // 5 segundo
+}
 
 
 void loop() {
-  uint8_t new_irq;
 
   while(1) {
     // 1️⃣ Verificação SÍNCRONA das IRQs
-    new_irq = get_irq_started();
-    if( new_irq > 0)
-      start_irq(new_irq);
-
-    // 2️⃣ Verificação SÍNCRONA do ACK
-    check_bus_cycle();
+    start_irq(get_irq_started());
 
     //Activity led
-    if ( millis() > timer1 ){
-      timer1=millis()+TIMEOUT;
+    if ( (millis() > timer1) ){
+      timer1=millis()+100;
       LED_PORT ^= (1 << LED_PIN);  // toggle LED
     }
   }
