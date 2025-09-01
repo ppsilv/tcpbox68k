@@ -53,20 +53,24 @@ void setup_ports() {
     PORTD |= ALL_IRQ_MASK;    
 }
 
+/*
+  Gerando o sinal de 1KHZ no pino PB1
+  Usado para gerar interrupção 7 no 68000
+*/
 void setup_timer1() {
     TCCR1A = (1 << COM1A0);    // Toggle OC1A on compare match
     TCCR1B = (1 << WGM12) | (1 << CS11);  // CTC mode, prescaler 8
     OCR1A = 500;              // 1ms period
     TIMSK |= (1 << OCIE1A);    // Habilitar interrupção
 }
-
+//Dummy counter, not used
 volatile uint32_t ms_counter = 0;
-
 ISR(TIMER1_COMPA_vect) {
   ms_counter++;
   //start_irq(1);  // Gera IRQ nível 6
 }
 
+//Timer 2 not used
 void setup_timer2() {  // ATMega8 usa Timer2, não Timer0
     // Configurar Timer2 para CTC mode
     TCCR2 = (1 << WGM21);              // CTC mode
@@ -74,35 +78,35 @@ void setup_timer2() {  // ATMega8 usa Timer2, não Timer0
     TCCR2 |= (1 << CS21);              // Prescaler 8
     TIMSK |= (1 << OCIE2);             // Enable interrupt
 }
-
 ISR(TIMER2_COMP_vect) {
 
 }
+
+//int0 not used
 void setup_fc_interrupt() {
     // Configurar INT0 para FALLING EDGE (transição 1→0)
     MCUCR |= (1 << ISC01);      // Falling edge generates interrupt  
     MCUCR &= ~(1 << ISC00);     // Clear ISC00 bit
     GICR |= (1 << INT0);        // Enable INT0
 }
-
 ISR(INT0_vect) {
-  irq_s[active_irq]=NOT_ACTIVE;
-        __asm__ volatile("nop");   // +125ns - 1 ciclo
-        __asm__ volatile("nop");   // +125ns - 1 ciclo  
-        __asm__ volatile("nop");   // +125ns - 1 ciclo  
-        __asm__ volatile("nop");   // +125ns - 1 ciclo
-        __asm__ volatile("nop");   // +125ns - 1 ciclo  
-        __asm__ volatile("nop");   // +125ns - 1 ciclo        
-  PORTC = (PORTC & 0xF8);  //Limpa
-  PORTC = PORTC | NOT_ACTIVE;   //seta
+
 }
 
 uint8_t check_irq_pins_status() {
     return (~PIND) & ALL_IRQ_MASK;
 }
-
-
-
+/*
+  To start:
+          int7 send 0
+          int6 send 1
+          int5 send 2
+          int4 send 3
+          int3 send 4
+          int2 send 5
+          int1 send 6
+       no int  send 7 
+*/
 uint8_t get_irq_started() {
     uint8_t status = check_irq_pins_status();
     if (status & (1<<IRQ7_PIN)) return 0;
@@ -114,36 +118,16 @@ uint8_t get_irq_started() {
     return NOT_ACTIVE;
 }
 
-// ✅ Função set_ipl CORRIGIDA
+// ✅ Função set and reset IPLx
 void set_ipl(uint8_t level) {
   level &= 0x07;
-  //PORTC = (PORTC & 0xF8);  //Limpa 
-  //PORTC = PORTC | level;   //seta
   PORTC = (PORTC & 0xF8) | level;  // Seta nível
-
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo  
-  //      __asm__ volatile("nop");   // +125ns - 1 ciclo        
   // ⏰ Timing calibrado manualmente
     __asm__ volatile("nop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop\nnop");
 
   PORTC = (PORTC & 0xF8) | NOT_ACTIVE;  // Limpa ANTES do retrigger
-
-  //PORTC = (PORTC & 0xF8);  //Limpa
-  //PORTC = PORTC | NOT_ACTIVE;   //seta
   _delay_us(500);
   irq_s[active_irq]=NOT_ACTIVE;
-  
-
 }
 
 void start_irq(uint8_t new_irq){
@@ -167,9 +151,8 @@ void setup(){
   sei();
   pinMode(LED_BUILTIN, OUTPUT);    
   timer1=millis()+TIMEOUT;
-  //delay(5000); // 5 segundo
+  delay(0.100); // 100 mili segundos
 }
-
 
 void loop() {
 
@@ -179,7 +162,7 @@ void loop() {
 
     //Activity led
     if ( (millis() > timer1) ){
-      timer1=millis()+100;
+      timer1=millis()+500;
       LED_PORT ^= (1 << LED_PIN);  // toggle LED
     }
   }
