@@ -137,7 +137,7 @@ char eliminateCompileErrors = 1;  // fix to suppress arduino build errors
 #define FORCE_DESKTOP
 #undef ENABLE_EEPROM
 // hack to let makefiles work with this file unchanged
-#ifdef FORCE_DESKTOP 
+#ifdef FORCE_DESKTOP
 #undef ARDUINO
 #include "desktop.h"
 #else
@@ -336,7 +336,7 @@ enum {
 #endif
 #ifdef ARDUINO
 #ifdef ENABLE_EEPROM
-  KW_ECHAIN, KW_ELIST, KW_ELOAD, KW_EFORMAT, KW_ESAVE, 
+  KW_ECHAIN, KW_ELIST, KW_ELOAD, KW_EFORMAT, KW_ESAVE,
 #endif
 #endif
   KW_DEFAULT /* always the final one*/
@@ -816,7 +816,7 @@ static short int expr4(void)
 #ifdef ARDUINO
     case FUNC_AREAD:
       pinMode( a, INPUT );
-      return analogRead( a );                        
+      return analogRead( a );
     case FUNC_DREAD:
       pinMode( a, INPUT );
       return digitalRead( a );
@@ -1332,7 +1332,7 @@ elist:
 
       if( ((val < ' ') || (val  > '~')) && (val != NL) && (val != CR))  {
         outchar( '?' );
-      } 
+      }
       else {
         outchar( val );
       }
@@ -1365,11 +1365,11 @@ esave:
 
     // go back to standard output, close the file
     outStream = kStreamSerial;
-    
+
     goto warmstart;
   }
-  
-  
+
+
 echain:
   runAfterLoad = true;
 
@@ -1687,15 +1687,15 @@ mem:
     // eprom size
     printnum( E2END+1 );
     printmsg( eeprommsg );
-    
+
     // figure out the memory usage;
     val = ' ';
-    int i;   
+    int i;
     for( i=0 ; (i<(E2END+1)) && (val != '\0') ; i++ ) {
-      val = EEPROM.read( i );    
+      val = EEPROM.read( i );
     }
     printnum( (E2END +1) - (i-1) );
-    
+
     printmsg( eepromamsg );
   }
 #endif /* ENABLE_EEPROM */
@@ -1727,17 +1727,17 @@ dwrite:
     ignore_blanks();
 
 
-    txtposBak = txtpos; 
+    txtposBak = txtpos;
     scantable(highlow_tab);
     if(table_index != HIGHLOW_UNKNOWN)
     {
       if( table_index <= HIGHLOW_HIGH ) {
         value = 1;
-      } 
+      }
       else {
         value = 0;
       }
-    } 
+    }
     else {
 
       // and the value (numerical)
@@ -1749,7 +1749,7 @@ dwrite:
     pinMode( pinNo, OUTPUT );
     if( isDigital ) {
       digitalWrite( pinNo, value );
-    } 
+    }
     else {
       analogWrite( pinNo, value );
     }
@@ -1798,7 +1798,7 @@ load:
     if( !SD.exists( (char *)filename ))
     {
       printmsg( sdfilemsg );
-    } 
+    }
     else {
 
       fp = SD.open( (const char *)filename );
@@ -1976,13 +1976,13 @@ void setup()
 #ifdef ARDUINO
   Serial.begin(kConsoleBaud);	// opens serial port
   while( !Serial ); // for Leonardo
-  
+
   Serial.println( sentinel );
   printmsg(initmsg);
 
 #ifdef ENABLE_FILEIO
   initSD();
-  
+
 #ifdef ENABLE_AUTORUN
   if( SD.exists( kAutorunFilename )) {
     program_end = program_start;
@@ -2034,7 +2034,7 @@ static int inchar()
 {
   int v;
 #ifdef ARDUINO
-  
+
   switch( inStream ) {
   case( kStreamFile ):
 #ifdef ENABLE_FILEIO
@@ -2044,7 +2044,7 @@ static int inchar()
       fp.close();
       goto inchar_loadfinish;
     }
-    return v;    
+    return v;
 #else
 #endif
      break;
@@ -2070,7 +2070,7 @@ static int inchar()
         return Serial.read();
     }
   }
-  
+
 inchar_loadfinish:
   inStream = kStreamSerial;
   inhibitOutput = false;
@@ -2080,7 +2080,7 @@ inchar_loadfinish:
     triggerRun = true;
   }
   return NL; // trigger a prompt.
-  
+
 #else
   // otherwise. desktop!
   int got = getchar();
@@ -2102,7 +2102,7 @@ static void outchar(unsigned char c)
     if( outStream == kStreamFile ) {
       // output to a file
       fp.write( c );
-    } 
+    }
     else
   #endif
   #ifdef ARDUINO
@@ -2110,7 +2110,7 @@ static void outchar(unsigned char c)
     if( outStream == kStreamEEProm ) {
       EEPROM.write( eepos++, c );
     }
-    else 
+    else
   #endif /* ENABLE_EEPROM */
   #endif /* ARDUINO */
     Serial.write(c);
@@ -2128,12 +2128,12 @@ static void outchar(unsigned char c)
 static int initSD( void )
 {
   // if the card is already initialized, we just go with it.
-  // there is no support (yet?) for hot-swap of SD Cards. if you need to 
+  // there is no support (yet?) for hot-swap of SD Cards. if you need to
   // swap, pop the card, reset the arduino.)
 
   if( sd_is_initialized == true ) return kSD_OK;
 
-  // due to the way the SD Library works, pin 10 always needs to be 
+  // due to the way the SD Library works, pin 10 always needs to be
   // an output, even when your shield uses another line for CS
   pinMode(10, OUTPUT); // change this to 53 on a mega
 
