@@ -39,13 +39,13 @@ int cmd_Files( void )
 }
 #endif
 
-void setup( void );
+//void setup( void );
 void loop( void );
 
 int main( int argc, char ** argv )
 {
-    printf( "Starting up TinyBasic Plus...\n\n" );
+    printf( "TinyBasic pgordao @copyleft 2025...\n" );
 
-    setup();
+    //setup();
     loop();
 }

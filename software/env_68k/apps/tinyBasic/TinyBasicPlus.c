@@ -431,7 +431,7 @@ static const unsigned char okmsg[]            PROGMEM = "OK";
 static const unsigned char whatmsg[]          PROGMEM = "What? ";
 static const unsigned char howmsg[]           PROGMEM =	"How?";
 static const unsigned char sorrymsg[]         PROGMEM = "Sorry!";
-static const unsigned char initmsg[]          PROGMEM = "TinyBasic Plus " kVersion;
+static const unsigned char initmsg[]          PROGMEM = "TinyBasic m68000 V1.0 2025 " kVersion;
 static const unsigned char memorymsg[]        PROGMEM = " bytes free.";
 #ifdef ARDUINO
 #ifdef ENABLE_EEPROM
@@ -452,8 +452,9 @@ static const unsigned char spacemsg[]         PROGMEM = " ";
 static int inchar(void);
 static void outchar(unsigned char c);
 static void line_terminator(void);
-static short int expression(void);
+static unsigned long expression(void);
 static unsigned char breakcheck(void);
+static unsigned char peek(unsigned long a);
 
 #include <stdint.h>
 
@@ -747,7 +748,7 @@ void printline()
 }
 
 /***************************************************************************/
-static short int expr4(void)
+static unsigned long expr4(void)
 {
   // fix provided by Jurg Wullschleger wullschleger@gmail.com
   // fixes whitespace and unary operations
@@ -767,7 +768,7 @@ static short int expr4(void)
 
   if(*txtpos >= '1' && *txtpos <= '9')
   {
-    short int a = 0;
+    unsigned long a = 0;
     do 	{
       a = a*10 + *txtpos - '0';
       txtpos++;
@@ -779,11 +780,11 @@ static short int expr4(void)
   // Is it a function or variable reference?
   if(txtpos[0] >= 'A' && txtpos[0] <= 'Z')
   {
-    short int a;
+    unsigned long a;
     // Is it a variable reference (single alpha)
     if(txtpos[1] < 'A' || txtpos[1] > 'Z')
     {
-      a = ((short int *)variables_begin)[*txtpos - 'A'];
+      a = ((unsigned long *)variables_begin)[*txtpos - 'A'];
       txtpos++;
       return a;
     }
@@ -806,34 +807,22 @@ static short int expr4(void)
     switch(f)
     {
     case FUNC_PEEK:
-      return program[a];
+      return peek(a);
       
     case FUNC_ABS:
       if(a < 0) 
         return -a;
       return a;
 
-#ifdef ARDUINO
-    case FUNC_AREAD:
-      pinMode( a, INPUT );
-      return analogRead( a );
-    case FUNC_DREAD:
-      pinMode( a, INPUT );
-      return digitalRead( a );
-#endif
 
     case FUNC_RND:
-#ifdef ARDUINO
-      return( random( a ));
-#else
       return( rand() % a );
-#endif
     }
   }
 
   if(*txtpos == '(')
   {
-    short int a;
+    unsigned long a;
     txtpos++;
     a = expression();
     if(*txtpos != ')')
@@ -849,10 +838,23 @@ expr4_error:
 
 }
 
-/***************************************************************************/
-static short int expr3(void)
+static unsigned char peek(unsigned long a)
 {
-  short int a,b;
+    unsigned long *p;
+    unsigned char b;
+    p = (unsigned long *)a;
+
+    // Pega byte específico (0 = primeiro, 1 = segundo, etc)
+    b = ((*p) >> (3 * 8)) & 0xFF;
+
+    printf("Voce chamou honoravel peek a = [%lu]  p = [%lu] result [%x]\n", a, (unsigned long)p, b);
+    return b;
+}
+
+/***************************************************************************/
+static unsigned long  expr3(void)
+{
+  unsigned long  a,b;
 
   a = expr4();
 
@@ -881,9 +883,9 @@ static short int expr3(void)
 }
 
 /***************************************************************************/
-static short int expr2(void)
+static unsigned long expr2(void)
 {
-  short int a,b;
+  unsigned long  a,b;
 
   if(*txtpos == '-' || *txtpos == '+')
     a = 0;
@@ -909,9 +911,9 @@ static short int expr2(void)
   }
 }
 /***************************************************************************/
-static short int expression(void)
+static unsigned long expression(void)
 {
-  short int a,b;
+  unsigned long a,b;
 
   a = expr2();
 
@@ -972,25 +974,17 @@ void loop()
   program_start = program;
   program_end = program_start;
   sp = program+sizeof(program);  // Needed for printnum
-#ifdef ALIGN_MEMORY
+
   // Ensure these memory blocks start on even pages
   stack_limit = ALIGN_DOWN(program+sizeof(program)-STACK_SIZE);
   variables_begin = ALIGN_DOWN(stack_limit - 27*VAR_SIZE);
-#else
-  stack_limit = program+sizeof(program)-STACK_SIZE;
-  variables_begin = stack_limit - 27*VAR_SIZE;
-#endif
+  printf("program_start..: [%08x]\n",program);
+  printf("stack_limit....: [%08X]\n",stack_limit);
+  printf("variables_begin: [%08X]\n",variables_begin);
 
   // memory free
   printnum(variables_begin-program_end);
   printmsg(memorymsg);
-#ifdef ARDUINO
-#ifdef ENABLE_EEPROM
-  // eprom size
-  printnum( E2END+1 );
-  printmsg( eeprommsg );
-#endif /* ENABLE_EEPROM */
-#endif /* ARDUINO */
 
 warmstart:
   // this signifies that it is running in 'direct' mode.
@@ -1009,6 +1003,7 @@ prompt:
   toUppercaseBuffer();
 
   txtpos = program_end+sizeof(unsigned short);
+  printf("txtpos.........: [%08X]\n",txtpos);
 
   // Find the end of the freshly entered line
   while(*txtpos != NL)
@@ -1186,17 +1181,7 @@ interperateAtTxtpos:
   switch(table_index)
   {
   case KW_DELAY:
-    {
-#ifdef ARDUINO
-      expression_error = 0;
-      val = expression();
-      delay( val );
-      goto execnextline;
-#else
       goto unimplemented;
-#endif
-    }
-
   case KW_FILES:
     goto files;
   case KW_LIST:
@@ -1585,15 +1570,15 @@ assignment:
   goto run_next_statement;
 poke:
   {
-    short int value;
-    unsigned char *address;
+    unsigned long value;
+    unsigned char *address;  // Mude para ponteiro de byte
 
     // Work out where to put it
     expression_error = 0;
     value = expression();
     if(expression_error)
       goto qwhat;
-    address = (unsigned char *)value;
+    address = (unsigned char *)value;  // Cast para ponteiro de byte
 
     // check for a comma
     ignore_blanks();
@@ -1607,7 +1592,8 @@ poke:
     value = expression();
     if(expression_error)
       goto qwhat;
-    //printf("Poke %p value %i\n",address, (unsigned char)value);
+    *address = (unsigned char)value;  // Agora escreve apenas 1 byte
+    printf("Poke %X value %x\n", (unsigned long)address, (unsigned char)value);
     // Check that we are at the end of the statement
     if(*txtpos != NL && *txtpos != ':')
       goto qwhat;

@@ -245,1686 +245,1777 @@
  240 0206 4240      		clr.w %d0
  241 0208 4840      		swap %d0
  242 020a 4E75      		rts
- 244               		.align	2
- 246               	expr4:
- 247 020c 48E7 3800 		movem.l #14336,-(%sp)
- 248 0210 7601      		moveq #1,%d3
- 249               	.L61:
- 250 0212 41FA FDEC 		lea ignore_blanks,%a0
- 251 0216 4E90      		jsr (%a0)
- 252 0218 2239 0000 		move.l txtpos,%d1
- 252      0000 
- 253 021e 2041      		move.l %d1,%a0
- 254 0220 1010      		move.b (%a0),%d0
- 255 0222 0C00 002D 		cmp.b #45,%d0
- 256 0226 660C      		jne .L60
- 257 0228 5281      		addq.l #1,%d1
- 258 022a 23C1 0000 		move.l %d1,txtpos
- 258      0000 
- 259 0230 4443      		neg.w %d3
- 260 0232 60DE      		jra .L61
- 261               	.L60:
- 262 0234 0C00 0030 		cmp.b #48,%d0
- 263 0238 660C      		jne .L62
- 264 023a 5281      		addq.l #1,%d1
- 265 023c 23C1 0000 		move.l %d1,txtpos
- 265      0000 
- 266               	.L63:
- 267 0242 4242      		clr.w %d2
- 268 0244 603A      		jra .L66
- 269               	.L62:
- 270 0246 1400      		move.b %d0,%d2
- 271 0248 0602 FFCF 		add.b #-49,%d2
- 272 024c 0C02 0008 		cmp.b #8,%d2
- 273 0250 6238      		jhi .L64
- 274 0252 4242      		clr.w %d2
- 275               	.L65:
- 276 0254 3042      		move.w %d2,%a0
- 277 0256 D0C2      		add.w %d2,%a0
- 278 0258 D0C8      		add.w %a0,%a0
- 279 025a D0C2      		add.w %d2,%a0
- 280 025c D0C8      		add.w %a0,%a0
- 281 025e 4242      		clr.w %d2
- 282 0260 1400      		move.b %d0,%d2
- 283 0262 0642 FFD0 		add.w #-48,%d2
- 284 0266 D448      		add.w %a0,%d2
- 285 0268 5281      		addq.l #1,%d1
- 286 026a 2041      		move.l %d1,%a0
- 287 026c 1010      		move.b (%a0),%d0
- 288 026e 1800      		move.b %d0,%d4
- 289 0270 0604 FFD0 		add.b #-48,%d4
- 290 0274 0C04 0009 		cmp.b #9,%d4
- 291 0278 63DA      		jls .L65
- 292               	.L76:
- 293 027a 23C1 0000 		move.l %d1,txtpos
- 293      0000 
- 294               	.L66:
- 295 0280 3003      		move.w %d3,%d0
- 296 0282 C1C2      		muls.w %d2,%d0
- 297 0284 4CDF 001C 		movem.l (%sp)+,#28
- 298 0288 4E75      		rts
- 299               	.L64:
- 300 028a 1400      		move.b %d0,%d2
- 301 028c 0602 FFBF 		add.b #-65,%d2
- 302 0290 0C02 0019 		cmp.b #25,%d2
- 303 0294 6200 00C2 		jhi .L67
- 304 0298 1428 0001 		move.b 1(%a0),%d2
- 305 029c 0602 FFBF 		add.b #-65,%d2
- 306 02a0 0C02 0019 		cmp.b #25,%d2
- 307 02a4 631C      		jls .L68
- 308 02a6 0280 0000 		and.l #255,%d0
- 308      00FF 
- 309 02ac 0680 7FFF 		add.l #2147483583,%d0
- 309      FFBF 
- 310 02b2 D080      		add.l %d0,%d0
- 311 02b4 2079 0000 		move.l variables_begin,%a0
- 311      0000 
- 312 02ba 3430 0800 		move.w (%a0,%d0.l),%d2
- 313 02be 5281      		addq.l #1,%d1
- 314 02c0 60B8      		jra .L76
- 315               	.L68:
- 316 02c2 4879 0000 		pea func_tab
- 316      0000 
- 317 02c8 4EBA FD5E 		jsr scantable
- 318 02cc 1839 0000 		move.b table_index,%d4
- 318      0000 
- 319 02d2 588F      		addq.l #4,%sp
- 320 02d4 0C04 0005 		cmp.b #5,%d4
- 321 02d8 6700 00AE 		jeq .L69
- 322 02dc 2039 0000 		move.l txtpos,%d0
+ 244               		.section	.rodata.str1.1,"aMS",@progbits,1
+ 245               	.LC0:
+ 246 0000 566F 6365 		.string	"Voce chamou honoravel peek a = [%lu]  p = [%lu] result [%x]\n"
+ 246      2063 6861 
+ 246      6D6F 7520 
+ 246      686F 6E6F 
+ 246      7261 7665 
+ 247               		.text
+ 248               		.align	2
+ 250               	expr4:
+ 251 020c 48E7 3020 		movem.l #12320,-(%sp)
+ 252 0210 7401      		moveq #1,%d2
+ 253 0212 45FA FDEC 		lea ignore_blanks,%a2
+ 254               	.L61:
+ 255 0216 4E92      		jsr (%a2)
+ 256 0218 2239 0000 		move.l txtpos,%d1
+ 256      0000 
+ 257 021e 2041      		move.l %d1,%a0
+ 258 0220 1010      		move.b (%a0),%d0
+ 259 0222 0C00 002D 		cmp.b #45,%d0
+ 260 0226 660C      		jne .L60
+ 261 0228 5281      		addq.l #1,%d1
+ 262 022a 23C1 0000 		move.l %d1,txtpos
+ 262      0000 
+ 263 0230 4482      		neg.l %d2
+ 264 0232 60E2      		jra .L61
+ 265               	.L60:
+ 266 0234 0C00 0030 		cmp.b #48,%d0
+ 267 0238 660C      		jne .L62
+ 268 023a 5281      		addq.l #1,%d1
+ 269 023c 23C1 0000 		move.l %d1,txtpos
+ 269      0000 
+ 270               	.L63:
+ 271 0242 95CA      		sub.l %a2,%a2
+ 272 0244 603C      		jra .L66
+ 273               	.L62:
+ 274 0246 1600      		move.b %d0,%d3
+ 275 0248 0603 FFCF 		add.b #-49,%d3
+ 276 024c 0C03 0008 		cmp.b #8,%d3
+ 277 0250 6242      		jhi .L64
+ 278 0252 95CA      		sub.l %a2,%a2
+ 279               	.L65:
+ 280 0254 41F2 A800 		lea (%a2,%a2.l),%a0
+ 281 0258 D1C8      		add.l %a0,%a0
+ 282 025a 45F0 A800 		lea (%a0,%a2.l),%a2
+ 283 025e D5CA      		add.l %a2,%a2
+ 284 0260 0280 0000 		and.l #255,%d0
+ 284      00FF 
+ 285 0266 45F2 08D0 		lea -48(%a2,%d0.l),%a2
+ 286 026a 5281      		addq.l #1,%d1
+ 287 026c 2041      		move.l %d1,%a0
+ 288 026e 1010      		move.b (%a0),%d0
+ 289 0270 1600      		move.b %d0,%d3
+ 290 0272 0603 FFD0 		add.b #-48,%d3
+ 291 0276 0C03 0009 		cmp.b #9,%d3
+ 292 027a 63D8      		jls .L65
+ 293               	.L78:
+ 294 027c 23C1 0000 		move.l %d1,txtpos
+ 294      0000 
+ 295               	.L66:
+ 296 0282 2F0A      		move.l %a2,-(%sp)
+ 297 0284 2F02      		move.l %d2,-(%sp)
+ 298 0286 4EB9 0000 		jsr __mulsi3
+ 298      0000 
+ 299 028c 508F      		addq.l #8,%sp
+ 300 028e 4CDF 040C 		movem.l (%sp)+,#1036
+ 301 0292 4E75      		rts
+ 302               	.L64:
+ 303 0294 1600      		move.b %d0,%d3
+ 304 0296 0603 FFBF 		add.b #-65,%d3
+ 305 029a 0C03 0019 		cmp.b #25,%d3
+ 306 029e 6200 00C6 		jhi .L67
+ 307 02a2 1628 0001 		move.b 1(%a0),%d3
+ 308 02a6 0603 FFBF 		add.b #-65,%d3
+ 309 02aa 0C03 0019 		cmp.b #25,%d3
+ 310 02ae 631E      		jls .L68
+ 311 02b0 0280 0000 		and.l #255,%d0
+ 311      00FF 
+ 312 02b6 0680 3FFF 		add.l #1073741759,%d0
+ 312      FFBF 
+ 313 02bc D080      		add.l %d0,%d0
+ 314 02be D080      		add.l %d0,%d0
+ 315 02c0 2079 0000 		move.l variables_begin,%a0
+ 315      0000 
+ 316 02c6 2470 0800 		move.l (%a0,%d0.l),%a2
+ 317 02ca 5281      		addq.l #1,%d1
+ 318 02cc 60AE      		jra .L78
+ 319               	.L68:
+ 320 02ce 4879 0000 		pea func_tab
+ 320      0000 
+ 321 02d4 4EBA FD52 		jsr scantable
+ 322 02d8 1639 0000 		move.b table_index,%d3
  322      0000 
- 323 02e2 2040      		move.l %d0,%a0
- 324 02e4 0C10 0028 		cmp.b #40,(%a0)
- 325 02e8 6600 009E 		jne .L69
- 326 02ec 5280      		addq.l #1,%d0
- 327 02ee 23C0 0000 		move.l %d0,txtpos
- 327      0000 
- 328 02f4 4EBA 0166 		jsr expression
- 329 02f8 3400      		move.w %d0,%d2
- 330 02fa 2079 0000 		move.l txtpos,%a0
- 330      0000 
- 331 0300 0C10 0029 		cmp.b #41,(%a0)
- 332 0304 6600 0082 		jne .L69
- 333 0308 2208      		move.l %a0,%d1
- 334 030a 5281      		addq.l #1,%d1
- 335 030c 23C1 0000 		move.l %d1,txtpos
- 335      0000 
- 336 0312 0C04 0001 		cmp.b #1,%d4
- 337 0316 671C      		jeq .L70
- 338 0318 0C04 0004 		cmp.b #4,%d4
- 339 031c 6722      		jeq .L71
- 340 031e 4A04      		tst.b %d4
- 341 0320 6636      		jne .L67
- 342 0322 41F9 0000 		lea program,%a0
- 342      0000 
- 343 0328 1430 0000 		move.b (%a0,%d0.w),%d2
- 344 032c 0242 00FF 		and.w #255,%d2
- 345 0330 6000 FF4E 		jra .L66
- 346               	.L70:
- 347 0334 4A40      		tst.w %d0
- 348 0336 6C00 FF48 		jge .L66
- 349 033a 4442      		neg.w %d2
- 350 033c 6000 FF42 		jra .L66
- 351               	.L71:
- 352 0340 4EBA FEA0 		jsr rand
- 353 0344 3042      		move.w %d2,%a0
- 354 0346 2F08      		move.l %a0,-(%sp)
- 355 0348 2F00      		move.l %d0,-(%sp)
- 356 034a 4EB9 0000 		jsr __modsi3
- 356      0000 
- 357 0350 508F      		addq.l #8,%sp
- 358 0352 3400      		move.w %d0,%d2
- 359 0354 6000 FF2A 		jra .L66
- 360               	.L67:
- 361 0358 2041      		move.l %d1,%a0
- 362 035a 0C10 0028 		cmp.b #40,(%a0)
- 363 035e 6628      		jne .L69
- 364 0360 5281      		addq.l #1,%d1
- 365 0362 23C1 0000 		move.l %d1,txtpos
- 365      0000 
- 366 0368 4EBA 00F2 		jsr expression
- 367 036c 3400      		move.w %d0,%d2
- 368 036e 2039 0000 		move.l txtpos,%d0
- 368      0000 
- 369 0374 2040      		move.l %d0,%a0
- 370 0376 0C10 0029 		cmp.b #41,(%a0)
- 371 037a 660C      		jne .L69
- 372 037c 5280      		addq.l #1,%d0
- 373 037e 23C0 0000 		move.l %d0,txtpos
- 373      0000 
- 374 0384 6000 FEFA 		jra .L66
- 375               	.L69:
- 376 0388 13FC 0001 		move.b #1,expression_error
- 376      0000 0000 
- 377 0390 6000 FEB0 		jra .L63
- 379               		.align	2
- 381               	expr3:
- 382 0394 48E7 2030 		movem.l #8240,-(%sp)
- 383 0398 45FA FE72 		lea expr4,%a2
- 384 039c 4E92      		jsr (%a2)
- 385 039e 3400      		move.w %d0,%d2
- 386 03a0 4EBA FC5E 		jsr ignore_blanks
- 387               	.L78:
- 388 03a4 2039 0000 		move.l txtpos,%d0
- 388      0000 
- 389 03aa 2040      		move.l %d0,%a0
- 390 03ac 1210      		move.b (%a0),%d1
- 391 03ae 0C01 002A 		cmp.b #42,%d1
- 392 03b2 660E      		jne .L79
- 393 03b4 5280      		addq.l #1,%d0
- 394 03b6 23C0 0000 		move.l %d0,txtpos
- 394      0000 
- 395 03bc 4E92      		jsr (%a2)
- 396 03be C5C0      		muls.w %d0,%d2
- 397 03c0 60E2      		jra .L78
- 398               	.L79:
- 399 03c2 0C01 002F 		cmp.b #47,%d1
- 400 03c6 662C      		jne .L77
- 401 03c8 5280      		addq.l #1,%d0
- 402 03ca 23C0 0000 		move.l %d0,txtpos
+ 323 02de 588F      		addq.l #4,%sp
+ 324 02e0 0C03 0005 		cmp.b #5,%d3
+ 325 02e4 6700 00B0 		jeq .L69
+ 326 02e8 2039 0000 		move.l txtpos,%d0
+ 326      0000 
+ 327 02ee 2040      		move.l %d0,%a0
+ 328 02f0 0C10 0028 		cmp.b #40,(%a0)
+ 329 02f4 6600 00A0 		jne .L69
+ 330 02f8 5280      		addq.l #1,%d0
+ 331 02fa 23C0 0000 		move.l %d0,txtpos
+ 331      0000 
+ 332 0300 4EBA 016C 		jsr expression
+ 333 0304 2440      		move.l %d0,%a2
+ 334 0306 2079 0000 		move.l txtpos,%a0
+ 334      0000 
+ 335 030c 0C10 0029 		cmp.b #41,(%a0)
+ 336 0310 6600 0084 		jne .L69
+ 337 0314 2208      		move.l %a0,%d1
+ 338 0316 5281      		addq.l #1,%d1
+ 339 0318 23C1 0000 		move.l %d1,txtpos
+ 339      0000 
+ 340 031e 0C03 0001 		cmp.b #1,%d3
+ 341 0322 6700 FF5E 		jeq .L66
+ 342 0326 0C03 0004 		cmp.b #4,%d3
+ 343 032a 6724      		jeq .L70
+ 344 032c 4A03      		tst.b %d3
+ 345 032e 6636      		jne .L67
+ 346 0330 7600      		moveq #0,%d3
+ 347 0332 1612      		move.b (%a2),%d3
+ 348 0334 2F03      		move.l %d3,-(%sp)
+ 349 0336 2F00      		move.l %d0,-(%sp)
+ 350 0338 2F00      		move.l %d0,-(%sp)
+ 351 033a 4879 0000 		pea .LC0
+ 351      0000 
+ 352 0340 4EB9 0000 		jsr printf
+ 352      0000 
+ 353 0346 4FEF 0010 		lea (16,%sp),%sp
+ 354 034a 2443      		move.l %d3,%a2
+ 355 034c 6000 FF34 		jra .L66
+ 356               	.L70:
+ 357 0350 4EBA FE90 		jsr rand
+ 358 0354 2F0A      		move.l %a2,-(%sp)
+ 359 0356 2F00      		move.l %d0,-(%sp)
+ 360 0358 4EB9 0000 		jsr __umodsi3
+ 360      0000 
+ 361 035e 508F      		addq.l #8,%sp
+ 362 0360 2440      		move.l %d0,%a2
+ 363 0362 6000 FF1E 		jra .L66
+ 364               	.L67:
+ 365 0366 2041      		move.l %d1,%a0
+ 366 0368 0C10 0028 		cmp.b #40,(%a0)
+ 367 036c 6628      		jne .L69
+ 368 036e 5281      		addq.l #1,%d1
+ 369 0370 23C1 0000 		move.l %d1,txtpos
+ 369      0000 
+ 370 0376 4EBA 00F6 		jsr expression
+ 371 037a 2440      		move.l %d0,%a2
+ 372 037c 2039 0000 		move.l txtpos,%d0
+ 372      0000 
+ 373 0382 2040      		move.l %d0,%a0
+ 374 0384 0C10 0029 		cmp.b #41,(%a0)
+ 375 0388 660C      		jne .L69
+ 376 038a 5280      		addq.l #1,%d0
+ 377 038c 23C0 0000 		move.l %d0,txtpos
+ 377      0000 
+ 378 0392 6000 FEEE 		jra .L66
+ 379               	.L69:
+ 380 0396 13FC 0001 		move.b #1,expression_error
+ 380      0000 0000 
+ 381 039e 6000 FEA2 		jra .L63
+ 383               		.align	2
+ 385               	expr3:
+ 386 03a2 48E7 2038 		movem.l #8248,-(%sp)
+ 387 03a6 45FA FE64 		lea expr4,%a2
+ 388 03aa 4E92      		jsr (%a2)
+ 389 03ac 2400      		move.l %d0,%d2
+ 390 03ae 4EBA FC50 		jsr ignore_blanks
+ 391               	.L80:
+ 392 03b2 2039 0000 		move.l txtpos,%d0
+ 392      0000 
+ 393 03b8 2040      		move.l %d0,%a0
+ 394 03ba 1210      		move.b (%a0),%d1
+ 395 03bc 0C01 002A 		cmp.b #42,%d1
+ 396 03c0 661A      		jne .L81
+ 397 03c2 5280      		addq.l #1,%d0
+ 398 03c4 23C0 0000 		move.l %d0,txtpos
+ 398      0000 
+ 399 03ca 4E92      		jsr (%a2)
+ 400 03cc 2F00      		move.l %d0,-(%sp)
+ 401 03ce 2F02      		move.l %d2,-(%sp)
+ 402 03d0 4EB9 0000 		jsr __mulsi3
  402      0000 
- 403 03d0 4E92      		jsr (%a2)
- 404 03d2 4A40      		tst.w %d0
- 405 03d4 6714      		jeq .L82
- 406 03d6 3040      		move.w %d0,%a0
- 407 03d8 2F08      		move.l %a0,-(%sp)
- 408 03da 3042      		move.w %d2,%a0
- 409 03dc 2F08      		move.l %a0,-(%sp)
- 410 03de 4EB9 0000 		jsr __divsi3
- 410      0000 
- 411 03e4 508F      		addq.l #8,%sp
- 412 03e6 3400      		move.w %d0,%d2
- 413 03e8 60BA      		jra .L78
- 414               	.L82:
- 415 03ea 13FC 0001 		move.b #1,expression_error
- 415      0000 0000 
- 416 03f2 60B0      		jra .L78
- 417               	.L77:
- 418 03f4 3002      		move.w %d2,%d0
- 419 03f6 4CDF 0C04 		movem.l (%sp)+,#3076
- 420 03fa 4E75      		rts
- 422               		.align	2
- 424               	expr2:
- 425 03fc 2F0A      		move.l %a2,-(%sp)
- 426 03fe 2F02      		move.l %d2,-(%sp)
- 427 0400 2079 0000 		move.l txtpos,%a0
- 427      0000 
- 428 0406 1010      		move.b (%a0),%d0
- 429 0408 0C00 002D 		cmp.b #45,%d0
- 430 040c 672E      		jeq .L90
- 431 040e 0C00 002B 		cmp.b #43,%d0
- 432 0412 6728      		jeq .L90
- 433 0414 4EBA FF7E 		jsr expr3
- 434 0418 3400      		move.w %d0,%d2
- 435               	.L84:
- 436 041a 45FA FF78 		lea expr3,%a2
- 437               	.L85:
- 438 041e 2039 0000 		move.l txtpos,%d0
- 438      0000 
- 439 0424 2040      		move.l %d0,%a0
- 440 0426 1210      		move.b (%a0),%d1
- 441 0428 0C01 002D 		cmp.b #45,%d1
- 442 042c 6612      		jne .L86
- 443 042e 5280      		addq.l #1,%d0
- 444 0430 23C0 0000 		move.l %d0,txtpos
- 444      0000 
- 445 0436 4E92      		jsr (%a2)
- 446 0438 9440      		sub.w %d0,%d2
- 447 043a 60E2      		jra .L85
- 448               	.L90:
- 449 043c 4242      		clr.w %d2
- 450 043e 60DA      		jra .L84
- 451               	.L86:
- 452 0440 0C01 002B 		cmp.b #43,%d1
- 453 0444 660E      		jne .L83
- 454 0446 5280      		addq.l #1,%d0
- 455 0448 23C0 0000 		move.l %d0,txtpos
- 455      0000 
- 456 044e 4E92      		jsr (%a2)
- 457 0450 D440      		add.w %d0,%d2
- 458 0452 60CA      		jra .L85
- 459               	.L83:
- 460 0454 3002      		move.w %d2,%d0
- 461 0456 241F      		move.l (%sp)+,%d2
- 462 0458 245F      		move.l (%sp)+,%a2
- 463 045a 4E75      		rts
- 465               		.align	2
- 467               	expression:
- 468 045c 2F0A      		move.l %a2,-(%sp)
- 469 045e 2F02      		move.l %d2,-(%sp)
- 470 0460 45FA FF9A 		lea expr2,%a2
- 471 0464 4E92      		jsr (%a2)
- 472 0466 3400      		move.w %d0,%d2
- 473 0468 4A39 0000 		tst.b expression_error.l
- 473      0000 
- 474 046e 6648      		jne .L91
- 475 0470 4879 0000 		pea relop_tab
- 475      0000 
- 476 0476 4EBA FBB0 		jsr scantable
- 477 047a 1039 0000 		move.b table_index,%d0
- 477      0000 
- 478 0480 588F      		addq.l #4,%sp
- 479 0482 0C00 0007 		cmp.b #7,%d0
- 480 0486 6730      		jeq .L91
- 481 0488 0C00 0006 		cmp.b #6,%d0
- 482 048c 625A      		jhi .L102
- 483 048e 0280 0000 		and.l #255,%d0
- 483      00FF 
- 484 0494 D080      		add.l %d0,%d0
- 485 0496 303B 0806 		move.w .L96(%pc,%d0.l),%d0
- 486 049a 4EFB 0002 		jmp %pc@(2,%d0:w)
- 487               		.balignw 2,0x284c
- 488               		.swbeg	&7
- 489               	.L96:
- 490 049e 000E      		.word .L101-.L96
- 491 04a0 0022      		.word .L95-.L96
- 492 04a2 002A      		.word .L100-.L96
- 493 04a4 0032      		.word .L99-.L96
- 494 04a6 003A      		.word .L98-.L96
- 495 04a8 0042      		.word .L97-.L96
- 496 04aa 0022      		.word .L95-.L96
- 497               	.L101:
- 498 04ac 4E92      		jsr (%a2)
- 499 04ae B042      		cmp.w %d2,%d0
- 500 04b0 5FC0      		sle %d0
- 501               	.L103:
- 502 04b2 4880      		ext.w %d0
- 503 04b4 3400      		move.w %d0,%d2
- 504 04b6 4442      		neg.w %d2
- 505               	.L91:
- 506 04b8 3002      		move.w %d2,%d0
- 507 04ba 241F      		move.l (%sp)+,%d2
- 508 04bc 245F      		move.l (%sp)+,%a2
- 509 04be 4E75      		rts
- 510               	.L95:
- 511 04c0 4E92      		jsr (%a2)
- 512 04c2 B042      		cmp.w %d2,%d0
- 513 04c4 56C0      		sne %d0
- 514 04c6 60EA      		jra .L103
- 515               	.L100:
- 516 04c8 4E92      		jsr (%a2)
- 517 04ca B042      		cmp.w %d2,%d0
- 518 04cc 5DC0      		slt %d0
- 519 04ce 60E2      		jra .L103
- 520               	.L99:
- 521 04d0 4E92      		jsr (%a2)
- 522 04d2 B042      		cmp.w %d2,%d0
- 523 04d4 57C0      		seq %d0
- 524 04d6 60DA      		jra .L103
- 525               	.L98:
- 526 04d8 4E92      		jsr (%a2)
- 527 04da B042      		cmp.w %d2,%d0
- 528 04dc 5CC0      		sge %d0
- 529 04de 60D2      		jra .L103
- 530               	.L97:
- 531 04e0 4E92      		jsr (%a2)
- 532 04e2 B042      		cmp.w %d2,%d0
- 533 04e4 5EC0      		sgt %d0
- 534 04e6 60CA      		jra .L103
- 535               	.L102:
- 536 04e8 4242      		clr.w %d2
- 537 04ea 60CC      		jra .L91
- 539               		.align	2
- 540               		.globl	printnum
- 542               	printnum:
- 543 04ec 48E7 3838 		movem.l #14392,-(%sp)
- 544 04f0 242F 001C 		move.l 28(%sp),%d2
- 545 04f4 6A0C      		jpl .L105
- 546 04f6 4482      		neg.l %d2
- 547 04f8 4878 002D 		pea 45.w
- 548 04fc 4EBA FC62 		jsr outchar
- 549 0500 588F      		addq.l #4,%sp
- 550               	.L105:
- 551 0502 2639 0000 		move.l sp,%d3
- 551      0000 
- 552 0508 2443      		move.l %d3,%a2
- 553               	.L106:
- 554 050a 4878 000A 		pea 10.w
- 555 050e 2F02      		move.l %d2,-(%sp)
- 556 0510 4EB9 0000 		jsr __modsi3
- 556      0000 
- 557 0516 508F      		addq.l #8,%sp
- 558 0518 0600 0030 		add.b #48,%d0
- 559 051c 1500      		move.b %d0,-(%a2)
- 560 051e 2802      		move.l %d2,%d4
- 561 0520 4878 000A 		pea 10.w
- 562 0524 2F02      		move.l %d2,-(%sp)
- 563 0526 4EB9 0000 		jsr __divsi3
- 563      0000 
- 564 052c 508F      		addq.l #8,%sp
- 565 052e 2400      		move.l %d0,%d2
- 566 0530 7009      		moveq #9,%d0
- 567 0532 B084      		cmp.l %d4,%d0
- 568 0534 6DD4      		jlt .L106
- 569 0536 968A      		sub.l %a2,%d3
- 570 0538 23CA 0000 		move.l %a2,sp
- 570      0000 
- 571 053e 45FA FC20 		lea outchar,%a2
- 572               	.L107:
- 573 0542 2239 0000 		move.l sp,%d1
- 573      0000 
- 574 0548 5281      		addq.l #1,%d1
- 575 054a 2079 0000 		move.l sp,%a0
- 575      0000 
- 576 0550 23C1 0000 		move.l %d1,sp
+ 403               	.L85:
+ 404 03d6 508F      		addq.l #8,%sp
+ 405 03d8 2400      		move.l %d0,%d2
+ 406 03da 60D6      		jra .L80
+ 407               	.L81:
+ 408 03dc 0C01 002F 		cmp.b #47,%d1
+ 409 03e0 6624      		jne .L79
+ 410 03e2 5280      		addq.l #1,%d0
+ 411 03e4 23C0 0000 		move.l %d0,txtpos
+ 411      0000 
+ 412 03ea 4E92      		jsr (%a2)
+ 413 03ec 4A80      		tst.l %d0
+ 414 03ee 670C      		jeq .L84
+ 415 03f0 2F00      		move.l %d0,-(%sp)
+ 416 03f2 2F02      		move.l %d2,-(%sp)
+ 417 03f4 4EB9 0000 		jsr __udivsi3
+ 417      0000 
+ 418 03fa 60DA      		jra .L85
+ 419               	.L84:
+ 420 03fc 13FC 0001 		move.b #1,expression_error
+ 420      0000 0000 
+ 421 0404 60AC      		jra .L80
+ 422               	.L79:
+ 423 0406 2002      		move.l %d2,%d0
+ 424 0408 4CDF 1C04 		movem.l (%sp)+,#7172
+ 425 040c 4E75      		rts
+ 427               		.align	2
+ 429               	expr2:
+ 430 040e 2F0A      		move.l %a2,-(%sp)
+ 431 0410 2F02      		move.l %d2,-(%sp)
+ 432 0412 2079 0000 		move.l txtpos,%a0
+ 432      0000 
+ 433 0418 1010      		move.b (%a0),%d0
+ 434 041a 0C00 002D 		cmp.b #45,%d0
+ 435 041e 672E      		jeq .L93
+ 436 0420 0C00 002B 		cmp.b #43,%d0
+ 437 0424 6728      		jeq .L93
+ 438 0426 4EBA FF7A 		jsr expr3
+ 439 042a 2400      		move.l %d0,%d2
+ 440               	.L87:
+ 441 042c 45FA FF74 		lea expr3,%a2
+ 442               	.L88:
+ 443 0430 2039 0000 		move.l txtpos,%d0
+ 443      0000 
+ 444 0436 2040      		move.l %d0,%a0
+ 445 0438 1210      		move.b (%a0),%d1
+ 446 043a 0C01 002D 		cmp.b #45,%d1
+ 447 043e 6612      		jne .L89
+ 448 0440 5280      		addq.l #1,%d0
+ 449 0442 23C0 0000 		move.l %d0,txtpos
+ 449      0000 
+ 450 0448 4E92      		jsr (%a2)
+ 451 044a 9480      		sub.l %d0,%d2
+ 452 044c 60E2      		jra .L88
+ 453               	.L93:
+ 454 044e 7400      		moveq #0,%d2
+ 455 0450 60DA      		jra .L87
+ 456               	.L89:
+ 457 0452 0C01 002B 		cmp.b #43,%d1
+ 458 0456 660E      		jne .L86
+ 459 0458 5280      		addq.l #1,%d0
+ 460 045a 23C0 0000 		move.l %d0,txtpos
+ 460      0000 
+ 461 0460 4E92      		jsr (%a2)
+ 462 0462 D480      		add.l %d0,%d2
+ 463 0464 60CA      		jra .L88
+ 464               	.L86:
+ 465 0466 2002      		move.l %d2,%d0
+ 466 0468 241F      		move.l (%sp)+,%d2
+ 467 046a 245F      		move.l (%sp)+,%a2
+ 468 046c 4E75      		rts
+ 470               		.align	2
+ 472               	expression:
+ 473 046e 2F0A      		move.l %a2,-(%sp)
+ 474 0470 2F02      		move.l %d2,-(%sp)
+ 475 0472 45FA FF9A 		lea expr2,%a2
+ 476 0476 4E92      		jsr (%a2)
+ 477 0478 2400      		move.l %d0,%d2
+ 478 047a 4A39 0000 		tst.b expression_error.l
+ 478      0000 
+ 479 0480 664A      		jne .L94
+ 480 0482 4879 0000 		pea relop_tab
+ 480      0000 
+ 481 0488 4EBA FB9E 		jsr scantable
+ 482 048c 1039 0000 		move.b table_index,%d0
+ 482      0000 
+ 483 0492 588F      		addq.l #4,%sp
+ 484 0494 0C00 0007 		cmp.b #7,%d0
+ 485 0498 6732      		jeq .L94
+ 486 049a 0C00 0006 		cmp.b #6,%d0
+ 487 049e 625C      		jhi .L105
+ 488 04a0 0280 0000 		and.l #255,%d0
+ 488      00FF 
+ 489 04a6 D080      		add.l %d0,%d0
+ 490 04a8 303B 0806 		move.w .L99(%pc,%d0.l),%d0
+ 491 04ac 4EFB 0002 		jmp %pc@(2,%d0:w)
+ 492               		.balignw 2,0x284c
+ 493               		.swbeg	&7
+ 494               	.L99:
+ 495 04b0 000E      		.word .L104-.L99
+ 496 04b2 0024      		.word .L98-.L99
+ 497 04b4 002C      		.word .L103-.L99
+ 498 04b6 0034      		.word .L102-.L99
+ 499 04b8 003C      		.word .L101-.L99
+ 500 04ba 0044      		.word .L100-.L99
+ 501 04bc 0024      		.word .L98-.L99
+ 502               	.L104:
+ 503 04be 4E92      		jsr (%a2)
+ 504 04c0 B082      		cmp.l %d2,%d0
+ 505 04c2 53C0      		sls %d0
+ 506               	.L106:
+ 507 04c4 4880      		ext.w %d0
+ 508 04c6 48C0      		ext.l %d0
+ 509 04c8 2400      		move.l %d0,%d2
+ 510 04ca 4482      		neg.l %d2
+ 511               	.L94:
+ 512 04cc 2002      		move.l %d2,%d0
+ 513 04ce 241F      		move.l (%sp)+,%d2
+ 514 04d0 245F      		move.l (%sp)+,%a2
+ 515 04d2 4E75      		rts
+ 516               	.L98:
+ 517 04d4 4E92      		jsr (%a2)
+ 518 04d6 B082      		cmp.l %d2,%d0
+ 519 04d8 56C0      		sne %d0
+ 520 04da 60E8      		jra .L106
+ 521               	.L103:
+ 522 04dc 4E92      		jsr (%a2)
+ 523 04de B082      		cmp.l %d2,%d0
+ 524 04e0 55C0      		scs %d0
+ 525 04e2 60E0      		jra .L106
+ 526               	.L102:
+ 527 04e4 4E92      		jsr (%a2)
+ 528 04e6 B082      		cmp.l %d2,%d0
+ 529 04e8 57C0      		seq %d0
+ 530 04ea 60D8      		jra .L106
+ 531               	.L101:
+ 532 04ec 4E92      		jsr (%a2)
+ 533 04ee B082      		cmp.l %d2,%d0
+ 534 04f0 54C0      		scc %d0
+ 535 04f2 60D0      		jra .L106
+ 536               	.L100:
+ 537 04f4 4E92      		jsr (%a2)
+ 538 04f6 B082      		cmp.l %d2,%d0
+ 539 04f8 52C0      		shi %d0
+ 540 04fa 60C8      		jra .L106
+ 541               	.L105:
+ 542 04fc 7400      		moveq #0,%d2
+ 543 04fe 60CC      		jra .L94
+ 545               		.align	2
+ 546               		.globl	printnum
+ 548               	printnum:
+ 549 0500 48E7 3838 		movem.l #14392,-(%sp)
+ 550 0504 242F 001C 		move.l 28(%sp),%d2
+ 551 0508 6A0C      		jpl .L108
+ 552 050a 4482      		neg.l %d2
+ 553 050c 4878 002D 		pea 45.w
+ 554 0510 4EBA FC4E 		jsr outchar
+ 555 0514 588F      		addq.l #4,%sp
+ 556               	.L108:
+ 557 0516 2639 0000 		move.l sp,%d3
+ 557      0000 
+ 558 051c 2443      		move.l %d3,%a2
+ 559               	.L109:
+ 560 051e 4878 000A 		pea 10.w
+ 561 0522 2F02      		move.l %d2,-(%sp)
+ 562 0524 4EB9 0000 		jsr __modsi3
+ 562      0000 
+ 563 052a 508F      		addq.l #8,%sp
+ 564 052c 0600 0030 		add.b #48,%d0
+ 565 0530 1500      		move.b %d0,-(%a2)
+ 566 0532 2802      		move.l %d2,%d4
+ 567 0534 4878 000A 		pea 10.w
+ 568 0538 2F02      		move.l %d2,-(%sp)
+ 569 053a 4EB9 0000 		jsr __divsi3
+ 569      0000 
+ 570 0540 508F      		addq.l #8,%sp
+ 571 0542 2400      		move.l %d0,%d2
+ 572 0544 7009      		moveq #9,%d0
+ 573 0546 B084      		cmp.l %d4,%d0
+ 574 0548 6DD4      		jlt .L109
+ 575 054a 968A      		sub.l %a2,%d3
+ 576 054c 23CA 0000 		move.l %a2,sp
  576      0000 
- 577 0556 7000      		moveq #0,%d0
- 578 0558 1010      		move.b (%a0),%d0
- 579 055a 2F00      		move.l %d0,-(%sp)
- 580 055c 4E92      		jsr (%a2)
- 581 055e 5383      		subq.l #1,%d3
- 582 0560 588F      		addq.l #4,%sp
- 583 0562 66DE      		jne .L107
- 584 0564 4CDF 1C1C 		movem.l (%sp)+,#7196
- 585 0568 4E75      		rts
- 587               		.align	2
- 588               		.globl	printUnum
- 590               	printUnum:
- 591 056a 48E7 3038 		movem.l #12344,-(%sp)
- 592 056e 2439 0000 		move.l sp,%d2
- 592      0000 
- 593 0574 2442      		move.l %d2,%a2
- 594               	.L111:
- 595 0576 4878 000A 		pea 10.w
- 596 057a 2F2F 001C 		move.l 28(%sp),-(%sp)
- 597 057e 4EB9 0000 		jsr __umodsi3
- 597      0000 
- 598 0584 508F      		addq.l #8,%sp
- 599 0586 0600 0030 		add.b #48,%d0
- 600 058a 1500      		move.b %d0,-(%a2)
- 601 058c 262F 0018 		move.l 24(%sp),%d3
- 602 0590 4878 000A 		pea 10.w
- 603 0594 2F03      		move.l %d3,-(%sp)
- 604 0596 4EB9 0000 		jsr __udivsi3
- 604      0000 
- 605 059c 508F      		addq.l #8,%sp
- 606 059e 2F40 0018 		move.l %d0,24(%sp)
- 607 05a2 7009      		moveq #9,%d0
- 608 05a4 B083      		cmp.l %d3,%d0
- 609 05a6 65CE      		jcs .L111
- 610 05a8 948A      		sub.l %a2,%d2
- 611 05aa 23CA 0000 		move.l %a2,sp
- 611      0000 
- 612 05b0 45FA FBAE 		lea outchar,%a2
- 613               	.L112:
- 614 05b4 2239 0000 		move.l sp,%d1
- 614      0000 
- 615 05ba 5281      		addq.l #1,%d1
- 616 05bc 2079 0000 		move.l sp,%a0
- 616      0000 
- 617 05c2 23C1 0000 		move.l %d1,sp
+ 577 0552 45FA FC0C 		lea outchar,%a2
+ 578               	.L110:
+ 579 0556 2239 0000 		move.l sp,%d1
+ 579      0000 
+ 580 055c 5281      		addq.l #1,%d1
+ 581 055e 2079 0000 		move.l sp,%a0
+ 581      0000 
+ 582 0564 23C1 0000 		move.l %d1,sp
+ 582      0000 
+ 583 056a 7000      		moveq #0,%d0
+ 584 056c 1010      		move.b (%a0),%d0
+ 585 056e 2F00      		move.l %d0,-(%sp)
+ 586 0570 4E92      		jsr (%a2)
+ 587 0572 5383      		subq.l #1,%d3
+ 588 0574 588F      		addq.l #4,%sp
+ 589 0576 66DE      		jne .L110
+ 590 0578 4CDF 1C1C 		movem.l (%sp)+,#7196
+ 591 057c 4E75      		rts
+ 593               		.align	2
+ 594               		.globl	printUnum
+ 596               	printUnum:
+ 597 057e 48E7 3038 		movem.l #12344,-(%sp)
+ 598 0582 2439 0000 		move.l sp,%d2
+ 598      0000 
+ 599 0588 2442      		move.l %d2,%a2
+ 600               	.L114:
+ 601 058a 4878 000A 		pea 10.w
+ 602 058e 2F2F 001C 		move.l 28(%sp),-(%sp)
+ 603 0592 4EB9 0000 		jsr __umodsi3
+ 603      0000 
+ 604 0598 508F      		addq.l #8,%sp
+ 605 059a 0600 0030 		add.b #48,%d0
+ 606 059e 1500      		move.b %d0,-(%a2)
+ 607 05a0 262F 0018 		move.l 24(%sp),%d3
+ 608 05a4 4878 000A 		pea 10.w
+ 609 05a8 2F03      		move.l %d3,-(%sp)
+ 610 05aa 4EB9 0000 		jsr __udivsi3
+ 610      0000 
+ 611 05b0 508F      		addq.l #8,%sp
+ 612 05b2 2F40 0018 		move.l %d0,24(%sp)
+ 613 05b6 7009      		moveq #9,%d0
+ 614 05b8 B083      		cmp.l %d3,%d0
+ 615 05ba 65CE      		jcs .L114
+ 616 05bc 948A      		sub.l %a2,%d2
+ 617 05be 23CA 0000 		move.l %a2,sp
  617      0000 
- 618 05c8 7000      		moveq #0,%d0
- 619 05ca 1010      		move.b (%a0),%d0
- 620 05cc 2F00      		move.l %d0,-(%sp)
- 621 05ce 4E92      		jsr (%a2)
- 622 05d0 5382      		subq.l #1,%d2
- 623 05d2 588F      		addq.l #4,%sp
- 624 05d4 66DE      		jne .L112
- 625 05d6 4CDF 1C0C 		movem.l (%sp)+,#7180
- 626 05da 4E75      		rts
- 628               		.align	2
- 629               		.globl	printmsgNoNL
- 631               	printmsgNoNL:
- 632 05dc 2F0B      		move.l %a3,-(%sp)
- 633 05de 2F0A      		move.l %a2,-(%sp)
- 634 05e0 246F 000C 		move.l 12(%sp),%a2
- 635 05e4 47FA FB7A 		lea outchar,%a3
- 636               	.L116:
- 637 05e8 1012      		move.b (%a2),%d0
- 638 05ea 6606      		jne .L117
- 639 05ec 245F      		move.l (%sp)+,%a2
- 640 05ee 265F      		move.l (%sp)+,%a3
- 641 05f0 4E75      		rts
- 642               	.L117:
- 643 05f2 528A      		addq.l #1,%a2
- 644 05f4 0280 0000 		and.l #255,%d0
- 644      00FF 
- 645 05fa 2F00      		move.l %d0,-(%sp)
- 646 05fc 4E93      		jsr (%a3)
- 647 05fe 588F      		addq.l #4,%sp
- 648 0600 60E6      		jra .L116
- 650               		.align	2
- 651               		.globl	printmsg
- 653               	printmsg:
- 654 0602 2F2F 0004 		move.l 4(%sp),-(%sp)
- 655 0606 4EBA FFD4 		jsr printmsgNoNL
- 656 060a 588F      		addq.l #4,%sp
- 657 060c 6000 FB6E 		jra line_terminator
- 659               		.align	2
- 661               	getln:
- 662 0610 2F0B      		move.l %a3,-(%sp)
- 663 0612 2F0A      		move.l %a2,-(%sp)
- 664 0614 102F 000F 		move.b 15(%sp),%d0
- 665 0618 4880      		ext.w %d0
- 666 061a 3040      		move.w %d0,%a0
- 667 061c 2F08      		move.l %a0,-(%sp)
- 668 061e 45FA FB40 		lea outchar,%a2
- 669 0622 4E92      		jsr (%a2)
- 670 0624 2039 0000 		move.l program_end,%d0
- 670      0000 
- 671 062a 5480      		addq.l #2,%d0
- 672 062c 23C0 0000 		move.l %d0,txtpos
- 672      0000 
- 673               	.L133:
- 674 0632 588F      		addq.l #4,%sp
- 675               	.L120:
- 676 0634 4EB9 0000 		jsr getchar
+ 618 05c4 45FA FB9A 		lea outchar,%a2
+ 619               	.L115:
+ 620 05c8 2239 0000 		move.l sp,%d1
+ 620      0000 
+ 621 05ce 5281      		addq.l #1,%d1
+ 622 05d0 2079 0000 		move.l sp,%a0
+ 622      0000 
+ 623 05d6 23C1 0000 		move.l %d1,sp
+ 623      0000 
+ 624 05dc 7000      		moveq #0,%d0
+ 625 05de 1010      		move.b (%a0),%d0
+ 626 05e0 2F00      		move.l %d0,-(%sp)
+ 627 05e2 4E92      		jsr (%a2)
+ 628 05e4 5382      		subq.l #1,%d2
+ 629 05e6 588F      		addq.l #4,%sp
+ 630 05e8 66DE      		jne .L115
+ 631 05ea 4CDF 1C0C 		movem.l (%sp)+,#7180
+ 632 05ee 4E75      		rts
+ 634               		.align	2
+ 635               		.globl	printmsgNoNL
+ 637               	printmsgNoNL:
+ 638 05f0 2F0B      		move.l %a3,-(%sp)
+ 639 05f2 2F0A      		move.l %a2,-(%sp)
+ 640 05f4 246F 000C 		move.l 12(%sp),%a2
+ 641 05f8 47FA FB66 		lea outchar,%a3
+ 642               	.L119:
+ 643 05fc 1012      		move.b (%a2),%d0
+ 644 05fe 6606      		jne .L120
+ 645 0600 245F      		move.l (%sp)+,%a2
+ 646 0602 265F      		move.l (%sp)+,%a3
+ 647 0604 4E75      		rts
+ 648               	.L120:
+ 649 0606 528A      		addq.l #1,%a2
+ 650 0608 0280 0000 		and.l #255,%d0
+ 650      00FF 
+ 651 060e 2F00      		move.l %d0,-(%sp)
+ 652 0610 4E93      		jsr (%a3)
+ 653 0612 588F      		addq.l #4,%sp
+ 654 0614 60E6      		jra .L119
+ 656               		.align	2
+ 657               		.globl	printmsg
+ 659               	printmsg:
+ 660 0616 2F2F 0004 		move.l 4(%sp),-(%sp)
+ 661 061a 4EBA FFD4 		jsr printmsgNoNL
+ 662 061e 588F      		addq.l #4,%sp
+ 663 0620 6000 FB5A 		jra line_terminator
+ 665               		.align	2
+ 667               	getln:
+ 668 0624 2F0B      		move.l %a3,-(%sp)
+ 669 0626 2F0A      		move.l %a2,-(%sp)
+ 670 0628 102F 000F 		move.b 15(%sp),%d0
+ 671 062c 4880      		ext.w %d0
+ 672 062e 3040      		move.w %d0,%a0
+ 673 0630 2F08      		move.l %a0,-(%sp)
+ 674 0632 45FA FB2C 		lea outchar,%a2
+ 675 0636 4E92      		jsr (%a2)
+ 676 0638 2039 0000 		move.l program_end,%d0
  676      0000 
- 677 063a 720A      		moveq #10,%d1
- 678 063c B280      		cmp.l %d0,%d1
- 679 063e 6718      		jeq .L121
- 680 0640 0C00 0008 		cmp.b #8,%d0
- 681 0644 6726      		jeq .L122
- 682 0646 0C00 0007 		cmp.b #7,%d0
- 683 064a 6F42      		jle .L123
- 684 064c 0C00 000A 		cmp.b #10,%d0
- 685 0650 6706      		jeq .L121
- 686 0652 0C00 000D 		cmp.b #13,%d0
- 687 0656 6636      		jne .L123
- 688               	.L121:
- 689 0658 4EBA FB22 		jsr line_terminator
- 690 065c 2079 0000 		move.l txtpos,%a0
- 690      0000 
- 691 0662 10BC 000A 		move.b #10,(%a0)
- 692 0666 245F      		move.l (%sp)+,%a2
- 693 0668 265F      		move.l (%sp)+,%a3
- 694 066a 4E75      		rts
- 695               	.L122:
- 696 066c 2039 0000 		move.l txtpos,%d0
+ 677 063e 5480      		addq.l #2,%d0
+ 678 0640 23C0 0000 		move.l %d0,txtpos
+ 678      0000 
+ 679               	.L136:
+ 680 0646 588F      		addq.l #4,%sp
+ 681               	.L123:
+ 682 0648 4EB9 0000 		jsr getchar
+ 682      0000 
+ 683 064e 720A      		moveq #10,%d1
+ 684 0650 B280      		cmp.l %d0,%d1
+ 685 0652 6718      		jeq .L124
+ 686 0654 0C00 0008 		cmp.b #8,%d0
+ 687 0658 6726      		jeq .L125
+ 688 065a 0C00 0007 		cmp.b #7,%d0
+ 689 065e 6F42      		jle .L126
+ 690 0660 0C00 000A 		cmp.b #10,%d0
+ 691 0664 6706      		jeq .L124
+ 692 0666 0C00 000D 		cmp.b #13,%d0
+ 693 066a 6636      		jne .L126
+ 694               	.L124:
+ 695 066c 4EBA FB0E 		jsr line_terminator
+ 696 0670 2079 0000 		move.l txtpos,%a0
  696      0000 
- 697 0672 B0B9 0000 		cmp.l program_end.l,%d0
- 697      0000 
- 698 0678 67BA      		jeq .L120
- 699 067a 5380      		subq.l #1,%d0
- 700 067c 23C0 0000 		move.l %d0,txtpos
- 700      0000 
- 701 0682 4879 0000 		pea backspacemsg
- 701      0000 
- 702 0688 4EBA FF78 		jsr printmsg
- 703 068c 60A4      		jra .L133
- 704               	.L123:
- 705 068e 2239 0000 		move.l txtpos,%d1
- 705      0000 
- 706 0694 2079 0000 		move.l variables_begin,%a0
+ 697 0676 10BC 000A 		move.b #10,(%a0)
+ 698 067a 245F      		move.l (%sp)+,%a2
+ 699 067c 265F      		move.l (%sp)+,%a3
+ 700 067e 4E75      		rts
+ 701               	.L125:
+ 702 0680 2039 0000 		move.l txtpos,%d0
+ 702      0000 
+ 703 0686 B0B9 0000 		cmp.l program_end.l,%d0
+ 703      0000 
+ 704 068c 67BA      		jeq .L123
+ 705 068e 5380      		subq.l #1,%d0
+ 706 0690 23C0 0000 		move.l %d0,txtpos
  706      0000 
- 707 069a 5588      		subq.l #2,%a0
- 708 069c B1C1      		cmp.l %d1,%a0
- 709 069e 6608      		jne .L125
- 710 06a0 4878 0008 		pea 8.w
- 711               	.L134:
- 712 06a4 4E92      		jsr (%a2)
- 713 06a6 608A      		jra .L133
- 714               	.L125:
- 715 06a8 2041      		move.l %d1,%a0
- 716 06aa 1080      		move.b %d0,(%a0)
- 717 06ac 5281      		addq.l #1,%d1
- 718 06ae 23C1 0000 		move.l %d1,txtpos
- 718      0000 
- 719 06b4 7200      		moveq #0,%d1
- 720 06b6 4601      		not.b %d1
- 721 06b8 C280      		and.l %d0,%d1
- 722 06ba 2F01      		move.l %d1,-(%sp)
- 723 06bc 60E6      		jra .L134
- 725               		.align	2
- 726               		.globl	printline
- 728               	printline:
- 729 06be 2F0A      		move.l %a2,-(%sp)
- 730 06c0 2F02      		move.l %d2,-(%sp)
- 731 06c2 2239 0000 		move.l list_line,%d1
- 731      0000 
- 732 06c8 5681      		addq.l #3,%d1
- 733 06ca 2079 0000 		move.l list_line,%a0
- 733      0000 
- 734 06d0 23C1 0000 		move.l %d1,list_line
- 734      0000 
- 735 06d6 7000      		moveq #0,%d0
- 736 06d8 3010      		move.w (%a0),%d0
- 737 06da 2F00      		move.l %d0,-(%sp)
- 738 06dc 4EBA FE0E 		jsr printnum
- 739 06e0 4878 0020 		pea 32.w
- 740 06e4 45FA FA7A 		lea outchar,%a2
- 741 06e8 4E92      		jsr (%a2)
- 742 06ea 508F      		addq.l #8,%sp
- 743               	.L136:
- 744 06ec 2079 0000 		move.l list_line,%a0
- 744      0000 
- 745 06f2 1010      		move.b (%a0),%d0
- 746 06f4 0C00 000A 		cmp.b #10,%d0
- 747 06f8 6620      		jne .L137
- 748 06fa 2208      		move.l %a0,%d1
- 749 06fc 5281      		addq.l #1,%d1
- 750 06fe 2008      		move.l %a0,%d0
- 751 0700 5480      		addq.l #2,%d0
- 752 0702 74FE      		moveq #-2,%d2
- 753 0704 C480      		and.l %d0,%d2
- 754 0706 B481      		cmp.l %d1,%d2
- 755 0708 6602      		jne .L138
- 756 070a 2001      		move.l %d1,%d0
- 757               	.L138:
- 758 070c 23C0 0000 		move.l %d0,list_line
- 758      0000 
- 759 0712 241F      		move.l (%sp)+,%d2
- 760 0714 245F      		move.l (%sp)+,%a2
- 761 0716 6000 FA64 		jra line_terminator
- 762               	.L137:
- 763 071a 0280 0000 		and.l #255,%d0
- 763      00FF 
- 764 0720 2F00      		move.l %d0,-(%sp)
- 765 0722 4E92      		jsr (%a2)
- 766 0724 52B9 0000 		addq.l #1,list_line
- 766      0000 
- 767 072a 588F      		addq.l #4,%sp
- 768 072c 60BE      		jra .L136
- 770               		.align	2
- 771               		.globl	loop
- 773               	loop:
- 774 072e 598F      		subq.l #4,%sp
- 775 0730 48E7 383E 		movem.l #14398,-(%sp)
- 776 0734 23FC 0000 		move.l #program,program_start
- 776      0000 0000 
- 776      0000 
- 777 073e 23FC 0000 		move.l #program,program_end
- 777      0000 0000 
- 777      0000 
- 778 0748 23FC 0000 		move.l #program+65536,sp
- 778      0000 0000 
- 778      0000 
- 779 0752 203C 0000 		move.l #program+65466,%d0
- 779      0000 
- 780 0758 0240 FFFE 		and.w #65534,%d0
- 781 075c 23C0 0000 		move.l %d0,stack_limit
- 781      0000 
- 782 0762 72CA      		moveq #-54,%d1
- 783 0764 D280      		add.l %d0,%d1
- 784 0766 23C1 0000 		move.l %d1,variables_begin
- 784      0000 
- 785 076c 0480 0000 		sub.l #program+54,%d0
- 785      0000 
- 786 0772 2F00      		move.l %d0,-(%sp)
- 787 0774 47FA FD76 		lea printnum,%a3
- 788 0778 4E93      		jsr (%a3)
- 789 077a 4879 0000 		pea memorymsg
- 789      0000 
- 790 0780 45FA FE80 		lea printmsg,%a2
- 791 0784 4E92      		jsr (%a2)
- 792 0786 508F      		addq.l #8,%sp
- 793 0788 49FA F89E 		lea scantable,%a4
- 794               	.L140:
- 795 078c 42B9 0000 		clr.l current_line
+ 707 0696 4879 0000 		pea backspacemsg
+ 707      0000 
+ 708 069c 4EBA FF78 		jsr printmsg
+ 709 06a0 60A4      		jra .L136
+ 710               	.L126:
+ 711 06a2 2239 0000 		move.l txtpos,%d1
+ 711      0000 
+ 712 06a8 2079 0000 		move.l variables_begin,%a0
+ 712      0000 
+ 713 06ae 5588      		subq.l #2,%a0
+ 714 06b0 B1C1      		cmp.l %d1,%a0
+ 715 06b2 6608      		jne .L128
+ 716 06b4 4878 0008 		pea 8.w
+ 717               	.L137:
+ 718 06b8 4E92      		jsr (%a2)
+ 719 06ba 608A      		jra .L136
+ 720               	.L128:
+ 721 06bc 2041      		move.l %d1,%a0
+ 722 06be 1080      		move.b %d0,(%a0)
+ 723 06c0 5281      		addq.l #1,%d1
+ 724 06c2 23C1 0000 		move.l %d1,txtpos
+ 724      0000 
+ 725 06c8 7200      		moveq #0,%d1
+ 726 06ca 4601      		not.b %d1
+ 727 06cc C280      		and.l %d0,%d1
+ 728 06ce 2F01      		move.l %d1,-(%sp)
+ 729 06d0 60E6      		jra .L137
+ 731               		.align	2
+ 732               		.globl	printline
+ 734               	printline:
+ 735 06d2 2F0A      		move.l %a2,-(%sp)
+ 736 06d4 2F02      		move.l %d2,-(%sp)
+ 737 06d6 2239 0000 		move.l list_line,%d1
+ 737      0000 
+ 738 06dc 5681      		addq.l #3,%d1
+ 739 06de 2079 0000 		move.l list_line,%a0
+ 739      0000 
+ 740 06e4 23C1 0000 		move.l %d1,list_line
+ 740      0000 
+ 741 06ea 7000      		moveq #0,%d0
+ 742 06ec 3010      		move.w (%a0),%d0
+ 743 06ee 2F00      		move.l %d0,-(%sp)
+ 744 06f0 4EBA FE0E 		jsr printnum
+ 745 06f4 4878 0020 		pea 32.w
+ 746 06f8 45FA FA66 		lea outchar,%a2
+ 747 06fc 4E92      		jsr (%a2)
+ 748 06fe 508F      		addq.l #8,%sp
+ 749               	.L139:
+ 750 0700 2079 0000 		move.l list_line,%a0
+ 750      0000 
+ 751 0706 1010      		move.b (%a0),%d0
+ 752 0708 0C00 000A 		cmp.b #10,%d0
+ 753 070c 6620      		jne .L140
+ 754 070e 2208      		move.l %a0,%d1
+ 755 0710 5281      		addq.l #1,%d1
+ 756 0712 2008      		move.l %a0,%d0
+ 757 0714 5480      		addq.l #2,%d0
+ 758 0716 74FE      		moveq #-2,%d2
+ 759 0718 C480      		and.l %d0,%d2
+ 760 071a B481      		cmp.l %d1,%d2
+ 761 071c 6602      		jne .L141
+ 762 071e 2001      		move.l %d1,%d0
+ 763               	.L141:
+ 764 0720 23C0 0000 		move.l %d0,list_line
+ 764      0000 
+ 765 0726 241F      		move.l (%sp)+,%d2
+ 766 0728 245F      		move.l (%sp)+,%a2
+ 767 072a 6000 FA50 		jra line_terminator
+ 768               	.L140:
+ 769 072e 0280 0000 		and.l #255,%d0
+ 769      00FF 
+ 770 0734 2F00      		move.l %d0,-(%sp)
+ 771 0736 4E92      		jsr (%a2)
+ 772 0738 52B9 0000 		addq.l #1,list_line
+ 772      0000 
+ 773 073e 588F      		addq.l #4,%sp
+ 774 0740 60BE      		jra .L139
+ 776               		.section	.rodata.str1.1
+ 777               	.LC1:
+ 778 003d 7072 6F67 		.string	"program_start..: [%08x]\n"
+ 778      7261 6D5F 
+ 778      7374 6172 
+ 778      742E 2E3A 
+ 778      205B 2530 
+ 779               	.LC2:
+ 780 0056 7374 6163 		.string	"stack_limit....: [%08X]\n"
+ 780      6B5F 6C69 
+ 780      6D69 742E 
+ 780      2E2E 2E3A 
+ 780      205B 2530 
+ 781               	.LC3:
+ 782 006f 7661 7269 		.string	"variables_begin: [%08X]\n"
+ 782      6162 6C65 
+ 782      735F 6265 
+ 782      6769 6E3A 
+ 782      205B 2530 
+ 783               	.LC4:
+ 784 0088 7478 7470 		.string	"txtpos.........: [%08X]\n"
+ 784      6F73 2E2E 
+ 784      2E2E 2E2E 
+ 784      2E2E 2E3A 
+ 784      205B 2530 
+ 785               	.LC5:
+ 786 00a1 506F 6B65 		.string	"Poke %X value %x\n"
+ 786      2025 5820 
+ 786      7661 6C75 
+ 786      6520 2578 
+ 786      0A00 
+ 787               		.text
+ 788               		.align	2
+ 789               		.globl	loop
+ 791               	loop:
+ 792 0742 598F      		subq.l #4,%sp
+ 793 0744 48E7 3E3E 		movem.l #15934,-(%sp)
+ 794 0748 23FC 0000 		move.l #program,program_start
+ 794      0000 0000 
+ 794      0000 
+ 795 0752 23FC 0000 		move.l #program,program_end
+ 795      0000 0000 
  795      0000 
- 796 0792 23FC 0000 		move.l #program+65536,sp
+ 796 075c 23FC 0000 		move.l #program+65536,sp
  796      0000 0000 
  796      0000 
- 797 079c 4879 0000 		pea okmsg
+ 797 0766 203C 0000 		move.l #program+65466,%d0
  797      0000 
- 798               	.L328:
- 799 07a2 4E92      		jsr (%a2)
- 800 07a4 588F      		addq.l #4,%sp
- 801 07a6 6000 0170 		jra .L143
- 802               	.L224:
- 803 07aa 4A01      		tst.b %d1
- 804 07ac 67DE      		jeq .L140
- 805 07ae 23C8 0000 		move.l %a0,tempsp
+ 798 076c 0240 FFFE 		and.w #65534,%d0
+ 799 0770 23C0 0000 		move.l %d0,stack_limit
+ 799      0000 
+ 800 0776 72CA      		moveq #-54,%d1
+ 801 0778 D280      		add.l %d0,%d1
+ 802 077a 23C1 0000 		move.l %d1,variables_begin
+ 802      0000 
+ 803 0780 4879 0000 		pea program
+ 803      0000 
+ 804 0786 4879 0000 		pea .LC1
+ 804      0000 
+ 805 078c 47F9 0000 		lea printf,%a3
  805      0000 
- 806 07b4 60D6      		jra .L140
- 807               	.L147:
- 808 07b6 4878 003E 		pea 62.w
- 809 07ba 4EBA FE54 		jsr getln
- 810 07be 4EBA F956 		jsr toUppercaseBuffer
- 811 07c2 2C79 0000 		move.l program_end,%a6
+ 806 0792 4E93      		jsr (%a3)
+ 807 0794 2F39 0000 		move.l stack_limit,-(%sp)
+ 807      0000 
+ 808 079a 4879 0000 		pea .LC2
+ 808      0000 
+ 809 07a0 4E93      		jsr (%a3)
+ 810 07a2 2F39 0000 		move.l variables_begin,-(%sp)
+ 810      0000 
+ 811 07a8 4879 0000 		pea .LC3
  811      0000 
- 812 07c8 240E      		move.l %a6,%d2
- 813 07ca 5482      		addq.l #2,%d2
- 814 07cc 588F      		addq.l #4,%sp
- 815 07ce 2042      		move.l %d2,%a0
- 816 07d0 4201      		clr.b %d1
- 817               	.L149:
- 818 07d2 2008      		move.l %a0,%d0
- 819 07d4 0C18 000A 		cmp.b #10,(%a0)+
- 820 07d8 661E      		jne .L250
- 821 07da 4A01      		tst.b %d1
- 822 07dc 6602      		jne .L150
- 823 07de 2002      		move.l %d2,%d0
- 824               	.L150:
- 825 07e0 2239 0000 		move.l variables_begin,%d1
+ 812 07ae 4E93      		jsr (%a3)
+ 813 07b0 2039 0000 		move.l variables_begin,%d0
+ 813      0000 
+ 814 07b6 90B9 0000 		sub.l program_end,%d0
+ 814      0000 
+ 815 07bc 2F00      		move.l %d0,-(%sp)
+ 816 07be 49FA FD40 		lea printnum,%a4
+ 817 07c2 4E94      		jsr (%a4)
+ 818 07c4 4879 0000 		pea memorymsg
+ 818      0000 
+ 819 07ca 45FA FE4A 		lea printmsg,%a2
+ 820 07ce 4E92      		jsr (%a2)
+ 821 07d0 4FEF 0020 		lea (32,%sp),%sp
+ 822 07d4 2C0C      		move.l %a4,%d6
+ 823 07d6 4BFA F850 		lea scantable,%a5
+ 824               	.L143:
+ 825 07da 42B9 0000 		clr.l current_line
  825      0000 
- 826 07e6 5381      		subq.l #1,%d1
- 827 07e8 2040      		move.l %d0,%a0
- 828 07ea 2241      		move.l %d1,%a1
- 829               	.L152:
- 830 07ec 1290      		move.b (%a0),(%a1)
- 831 07ee B1C2      		cmp.l %d2,%a0
- 832 07f0 670A      		jeq .L151
- 833 07f2 5389      		subq.l #1,%a1
- 834 07f4 5388      		subq.l #1,%a0
- 835 07f6 60F4      		jra .L152
- 836               	.L250:
- 837 07f8 7201      		moveq #1,%d1
- 838 07fa 60D6      		jra .L149
- 839               	.L151:
- 840 07fc D282      		add.l %d2,%d1
- 841 07fe 9280      		sub.l %d0,%d1
- 842 0800 23C1 0000 		move.l %d1,txtpos
- 842      0000 
- 843 0806 4EBA F888 		jsr testnum
- 844 080a 3600      		move.w %d0,%d3
- 845 080c 33C0 0000 		move.w %d0,linenum
+ 826 07e0 23FC 0000 		move.l #program+65536,sp
+ 826      0000 0000 
+ 826      0000 
+ 827 07ea 4879 0000 		pea okmsg
+ 827      0000 
+ 828               	.L333:
+ 829 07f0 4E92      		jsr (%a2)
+ 830 07f2 588F      		addq.l #4,%sp
+ 831 07f4 6000 0194 		jra .L146
+ 832               	.L227:
+ 833 07f8 4A01      		tst.b %d1
+ 834 07fa 67DE      		jeq .L143
+ 835 07fc 23C8 0000 		move.l %a0,tempsp
+ 835      0000 
+ 836 0802 60D6      		jra .L143
+ 837               	.L150:
+ 838 0804 4878 003E 		pea 62.w
+ 839 0808 4EBA FE1A 		jsr getln
+ 840 080c 4EBA F908 		jsr toUppercaseBuffer
+ 841 0810 2039 0000 		move.l program_end,%d0
+ 841      0000 
+ 842 0816 5480      		addq.l #2,%d0
+ 843 0818 23C0 0000 		move.l %d0,txtpos
+ 843      0000 
+ 844 081e 2F00      		move.l %d0,-(%sp)
+ 845 0820 4879 0000 		pea .LC4
  845      0000 
- 846 0812 4EBA F7EC 		jsr ignore_blanks
- 847 0816 4A43      		tst.w %d3
- 848 0818 6670      		jne .L153
- 849 081a 23C2 0000 		move.l %d2,txtpos
- 849      0000 
- 850 0820 0C2E 000A 		cmp.b #10,2(%a6)
- 850      0002 
- 851 0826 6700 00F0 		jeq .L143
- 852               	.L216:
- 853 082a 4879 0000 		pea keywords
- 853      0000 
- 854 0830 4E94      		jsr (%a4)
- 855 0832 1439 0000 		move.b table_index,%d2
- 855      0000 
- 856 0838 588F      		addq.l #4,%sp
- 857 083a 0C02 001C 		cmp.b #28,%d2
- 858 083e 6200 01BE 		jhi .L183
- 859 0842 7000      		moveq #0,%d0
- 860 0844 1002      		move.b %d2,%d0
- 861 0846 D080      		add.l %d0,%d0
- 862 0848 303B 0806 		move.w .L185(%pc,%d0.l),%d0
- 863 084c 4EFB 0002 		jmp %pc@(2,%d0:w)
- 864               		.balignw 2,0x284c
- 865               		.swbeg	&29
- 866               	.L185:
- 867 0850 01C6      		.word .L202-.L185
- 868 0852 0862      		.word .L186-.L185
- 869 0854 0226      		.word .L201-.L185
- 870 0856 00D8      		.word .L200-.L185
- 871 0858 086C      		.word .L175-.L185
- 872 085a 0242      		.word .L199-.L185
- 873 085c 06EE      		.word .L184-.L185
- 874 085e 02AA      		.word .L198-.L185
- 875 0860 02D2      		.word .L197-.L185
- 876 0862 02FE      		.word .L196-.L185
- 877 0864 027C      		.word .L195-.L185
- 878 0866 01AE      		.word .L183-.L185
- 879 0868 0356      		.word .L194-.L185
- 880 086a 03B4      		.word .L193-.L185
- 881 086c 0454      		.word .L189-.L185
- 882 086e 0472      		.word .L192-.L185
- 883 0870 04D6      		.word .L188-.L185
- 884 0872 0876      		.word .L139-.L185
- 885 0874 086C      		.word .L175-.L185
- 886 0876 0200      		.word .L190-.L185
- 887 0878 0454      		.word .L189-.L185
- 888 087a 01AE      		.word .L183-.L185
- 889 087c 086C      		.word .L175-.L185
- 890 087e 086C      		.word .L175-.L185
- 891 0880 086C      		.word .L175-.L185
- 892 0882 04D6      		.word .L188-.L185
- 893 0884 04EE      		.word .L187-.L185
- 894 0886 0862      		.word .L186-.L185
- 895 0888 06EE      		.word .L184-.L185
- 896               	.L153:
- 897 088a 0C43 FFFF 		cmp.w #-1,%d3
- 898 088e 6700 0260 		jeq .L157
- 899 0892 2079 0000 		move.l txtpos,%a0
- 899      0000 
- 900 0898 4202      		clr.b %d2
- 901               	.L158:
- 902 089a 7000      		moveq #0,%d0
- 903 089c 1002      		move.b %d2,%d0
- 904 089e 0C30 000A 		cmp.b #10,(%a0,%d0.l)
- 904      0800 
- 905 08a4 6600 00A4 		jne .L159
- 906 08a8 4BE8 FFFD 		lea (-3,%a0),%a5
- 907 08ac 2008      		move.l %a0,%d0
- 908 08ae 0800 0000 		btst #0,%d0
- 909 08b2 6700 009C 		jeq .L160
- 910 08b6 5802      		addq.b #4,%d2
- 911 08b8 23CD 0000 		move.l %a5,txtpos
- 911      0000 
- 912               	.L161:
- 913 08be 3A83      		move.w %d3,(%a5)
- 914 08c0 1B42 0002 		move.b %d2,2(%a5)
- 915 08c4 4EBA F826 		jsr findline
- 916 08c8 2040      		move.l %d0,%a0
- 917 08ca B08E      		cmp.l %a6,%d0
- 918 08cc 6720      		jeq .L164
- 919 08ce B650      		cmp.w (%a0),%d3
- 920 08d0 661C      		jne .L164
- 921 08d2 7000      		moveq #0,%d0
- 922 08d4 1028 0002 		move.b 2(%a0),%d0
- 923 08d8 43F0 0800 		lea (%a0,%d0.l),%a1
- 924 08dc 9DC9      		sub.l %a1,%a6
- 925 08de 7000      		moveq #0,%d0
- 926               	.L165:
- 927 08e0 B08E      		cmp.l %a6,%d0
- 928 08e2 6600 0090 		jne .L166
- 929 08e6 DDC8      		add.l %a0,%a6
- 930 08e8 23CE 0000 		move.l %a6,program_end
- 930      0000 
- 931               	.L164:
- 932 08ee 0C2D 000A 		cmp.b #10,3(%a5)
- 932      0003 
- 933 08f4 6722      		jeq .L143
- 934 08f6 2279 0000 		move.l program_end,%a1
- 934      0000 
- 935 08fc 4204      		clr.b %d4
- 936 08fe 4200      		clr.b %d0
- 937               	.L167:
- 938 0900 4A02      		tst.b %d2
- 939 0902 667C      		jne .L173
- 940 0904 4A04      		tst.b %d4
- 941 0906 6706      		jeq .L144
- 942 0908 23CD 0000 		move.l %a5,txtpos
- 942      0000 
- 943               	.L144:
- 944 090e 4A00      		tst.b %d0
- 945 0910 6706      		jeq .L143
- 946 0912 23C9 0000 		move.l %a1,program_end
- 946      0000 
- 947               	.L143:
- 948 0918 4AB9 0000 		tst.l triggerRun
- 948      0000 
- 949 091e 6700 FE96 		jeq .L147
- 950 0922 42B9 0000 		clr.l triggerRun
+ 846 0826 4E93      		jsr (%a3)
+ 847 0828 2039 0000 		move.l txtpos,%d0
+ 847      0000 
+ 848 082e 2200      		move.l %d0,%d1
+ 849 0830 4FEF 000C 		lea (12,%sp),%sp
+ 850 0834 4202      		clr.b %d2
+ 851               	.L152:
+ 852 0836 2041      		move.l %d1,%a0
+ 853 0838 5281      		addq.l #1,%d1
+ 854 083a 0C10 000A 		cmp.b #10,(%a0)
+ 855 083e 6628      		jne .L253
+ 856 0840 4A02      		tst.b %d2
+ 857 0842 6702      		jeq .L153
+ 858 0844 2008      		move.l %a0,%d0
+ 859               	.L153:
+ 860 0846 2239 0000 		move.l variables_begin,%d1
+ 860      0000 
+ 861 084c 5381      		subq.l #1,%d1
+ 862 084e 2639 0000 		move.l program_end,%d3
+ 862      0000 
+ 863 0854 2403      		move.l %d3,%d2
+ 864 0856 5482      		addq.l #2,%d2
+ 865 0858 2040      		move.l %d0,%a0
+ 866 085a 2241      		move.l %d1,%a1
+ 867               	.L155:
+ 868 085c 1290      		move.b (%a0),(%a1)
+ 869 085e B1C2      		cmp.l %d2,%a0
+ 870 0860 670A      		jeq .L154
+ 871 0862 5389      		subq.l #1,%a1
+ 872 0864 5388      		subq.l #1,%a0
+ 873 0866 60F4      		jra .L155
+ 874               	.L253:
+ 875 0868 7401      		moveq #1,%d2
+ 876 086a 60CA      		jra .L152
+ 877               	.L154:
+ 878 086c D282      		add.l %d2,%d1
+ 879 086e 9280      		sub.l %d0,%d1
+ 880 0870 23C1 0000 		move.l %d1,txtpos
+ 880      0000 
+ 881 0876 4EBA F818 		jsr testnum
+ 882 087a 3800      		move.w %d0,%d4
+ 883 087c 33C0 0000 		move.w %d0,linenum
+ 883      0000 
+ 884 0882 4EBA F77C 		jsr ignore_blanks
+ 885 0886 4A44      		tst.w %d4
+ 886 0888 6672      		jne .L156
+ 887 088a 23C2 0000 		move.l %d2,txtpos
+ 887      0000 
+ 888 0890 2043      		move.l %d3,%a0
+ 889 0892 0C28 000A 		cmp.b #10,2(%a0)
+ 889      0002 
+ 890 0898 6700 00F0 		jeq .L146
+ 891               	.L219:
+ 892 089c 4879 0000 		pea keywords
+ 892      0000 
+ 893 08a2 4E95      		jsr (%a5)
+ 894 08a4 1439 0000 		move.b table_index,%d2
+ 894      0000 
+ 895 08aa 588F      		addq.l #4,%sp
+ 896 08ac 0C02 001C 		cmp.b #28,%d2
+ 897 08b0 6200 01C0 		jhi .L186
+ 898 08b4 7000      		moveq #0,%d0
+ 899 08b6 1002      		move.b %d2,%d0
+ 900 08b8 D080      		add.l %d0,%d0
+ 901 08ba 303B 0806 		move.w .L188(%pc,%d0.l),%d0
+ 902 08be 4EFB 0002 		jmp %pc@(2,%d0:w)
+ 903               		.balignw 2,0x284c
+ 904               		.swbeg	&29
+ 905               	.L188:
+ 906 08c2 01C8      		.word .L205-.L188
+ 907 08c4 0882      		.word .L189-.L188
+ 908 08c6 022A      		.word .L204-.L188
+ 909 08c8 00D8      		.word .L203-.L188
+ 910 08ca 088C      		.word .L178-.L188
+ 911 08cc 0246      		.word .L202-.L188
+ 912 08ce 070A      		.word .L187-.L188
+ 913 08d0 02AE      		.word .L201-.L188
+ 914 08d2 02D6      		.word .L200-.L188
+ 915 08d4 0302      		.word .L199-.L188
+ 916 08d6 0280      		.word .L198-.L188
+ 917 08d8 01B0      		.word .L186-.L188
+ 918 08da 035A      		.word .L197-.L188
+ 919 08dc 03B8      		.word .L196-.L188
+ 920 08de 0456      		.word .L192-.L188
+ 921 08e0 0474      		.word .L195-.L188
+ 922 08e2 04F6      		.word .L191-.L188
+ 923 08e4 0896      		.word .L142-.L188
+ 924 08e6 088C      		.word .L178-.L188
+ 925 08e8 0202      		.word .L193-.L188
+ 926 08ea 0456      		.word .L192-.L188
+ 927 08ec 01B0      		.word .L186-.L188
+ 928 08ee 088C      		.word .L178-.L188
+ 929 08f0 088C      		.word .L178-.L188
+ 930 08f2 088C      		.word .L178-.L188
+ 931 08f4 04F6      		.word .L191-.L188
+ 932 08f6 050E      		.word .L190-.L188
+ 933 08f8 0882      		.word .L189-.L188
+ 934 08fa 070A      		.word .L187-.L188
+ 935               	.L156:
+ 936 08fc 0C44 FFFF 		cmp.w #-1,%d4
+ 937 0900 6700 0264 		jeq .L160
+ 938 0904 2079 0000 		move.l txtpos,%a0
+ 938      0000 
+ 939 090a 4202      		clr.b %d2
+ 940               	.L161:
+ 941 090c 7000      		moveq #0,%d0
+ 942 090e 1002      		move.b %d2,%d0
+ 943 0910 0C30 000A 		cmp.b #10,(%a0,%d0.l)
+ 943      0800 
+ 944 0916 6600 00A4 		jne .L162
+ 945 091a 4DE8 FFFD 		lea (-3,%a0),%a6
+ 946 091e 2008      		move.l %a0,%d0
+ 947 0920 0800 0000 		btst #0,%d0
+ 948 0924 6700 009C 		jeq .L163
+ 949 0928 5802      		addq.b #4,%d2
+ 950 092a 23CE 0000 		move.l %a6,txtpos
  950      0000 
- 951               	.L200:
- 952 0928 2039 0000 		move.l program_start,%d0
- 952      0000 
- 953               	.L148:
- 954 092e 23C0 0000 		move.l %d0,current_line
- 954      0000 
- 955 0934 B0B9 0000 		cmp.l program_end.l,%d0
- 955      0000 
- 956 093a 6700 FE50 		jeq .L140
- 957 093e 5680      		addq.l #3,%d0
- 958 0940 23C0 0000 		move.l %d0,txtpos
- 958      0000 
- 959 0946 6000 FEE2 		jra .L216
- 960               	.L159:
- 961 094a 5202      		addq.b #1,%d2
- 962 094c 6000 FF4C 		jra .L158
- 963               	.L160:
- 964 0950 4BE8 FFFC 		lea (-4,%a0),%a5
- 965 0954 23CD 0000 		move.l %a5,txtpos
- 965      0000 
- 966 095a 5A02      		addq.b #5,%d2
- 967 095c 5388      		subq.l #1,%a0
- 968 095e 7000      		moveq #0,%d0
- 969 0960 1002      		move.b %d2,%d0
- 970 0962 43F5 08FF 		lea -1(%a5,%d0.l),%a1
- 971               	.L162:
- 972 0966 B3C8      		cmp.l %a0,%a1
- 973 0968 6300 FF54 		jls .L161
- 974 096c 10A8 0001 		move.b 1(%a0),(%a0)
- 975 0970 5288      		addq.l #1,%a0
- 976 0972 60F2      		jra .L162
- 977               	.L166:
- 978 0974 11B1 0800 		move.b (%a1,%d0.l),(%a0,%d0.l)
- 978      0800 
- 979 097a 5280      		addq.l #1,%d0
- 980 097c 6000 FF62 		jra .L165
- 981               	.L173:
- 982 0980 7200      		moveq #0,%d1
- 983 0982 1202      		move.b %d2,%d1
- 984 0984 200D      		move.l %a5,%d0
- 985 0986 9089      		sub.l %a1,%d0
- 986 0988 B280      		cmp.l %d0,%d1
- 987 098a 6402      		jcc .L168
- 988 098c 2001      		move.l %d1,%d0
- 989               	.L168:
- 990 098e 4DF1 0800 		lea (%a1,%d0.l),%a6
- 991 0992 2609      		move.l %a1,%d3
- 992 0994 9688      		sub.l %a0,%d3
- 993 0996 4683      		not.l %d3
- 994 0998 7200      		moveq #0,%d1
- 995               	.L169:
- 996 099a 5381      		subq.l #1,%d1
- 997 099c B681      		cmp.l %d1,%d3
- 998 099e 6614      		jne .L170
- 999 09a0 7200      		moveq #0,%d1
- 1000               	.L171:
- 1001 09a2 B280      		cmp.l %d0,%d1
- 1002 09a4 6616      		jne .L172
- 1003 09a6 DBC0      		add.l %d0,%a5
- 1004 09a8 9400      		sub.b %d0,%d2
- 1005 09aa D1C0      		add.l %d0,%a0
- 1006 09ac 224E      		move.l %a6,%a1
- 1007 09ae 7001      		moveq #1,%d0
- 1008 09b0 6000 FF4E 		jra .L167
- 1009               	.L170:
- 1010 09b4 1DB1 1800 		move.b (%a1,%d1.l),(%a6,%d1.l)
- 1010      1800 
- 1011 09ba 60DE      		jra .L169
- 1012               	.L172:
- 1013 09bc 11B5 1800 		move.b (%a5,%d1.l),(%a0,%d1.l)
- 1013      1800 
- 1014 09c2 5281      		addq.l #1,%d1
- 1015 09c4 7801      		moveq #1,%d4
- 1016 09c6 60DA      		jra .L171
- 1017               	.L221:
- 1018 09c8 4879 0000 		pea sorrymsg
- 1018      0000 
- 1019 09ce 4E92      		jsr (%a2)
- 1020 09d0 588F      		addq.l #4,%sp
- 1021 09d2 6000 FDB8 		jra .L140
- 1022               	.L252:
- 1023 09d6 7201      		moveq #1,%d1
- 1024               	.L180:
- 1025 09d8 2040      		move.l %d0,%a0
- 1026 09da 5280      		addq.l #1,%d0
- 1027 09dc 0C10 003A 		cmp.b #58,(%a0)
- 1028 09e0 67F4      		jeq .L252
- 1029 09e2 4A01      		tst.b %d1
- 1030 09e4 6706      		jeq .L181
- 1031 09e6 23C8 0000 		move.l %a0,txtpos
- 1031      0000 
- 1032               	.L181:
- 1033 09ec 4EBA F612 		jsr ignore_blanks
- 1034 09f0 2079 0000 		move.l txtpos,%a0
- 1034      0000 
- 1035 09f6 0C10 000A 		cmp.b #10,(%a0)
- 1036 09fa 6600 FE2E 		jne .L216
- 1037               	.L183:
- 1038 09fe 2039 0000 		move.l current_line,%d0
- 1038      0000 
- 1039 0a04 6700 FF12 		jeq .L143
- 1040 0a08 2240      		move.l %d0,%a1
- 1041 0a0a 7200      		moveq #0,%d1
- 1042 0a0c 1229 0002 		move.b 2(%a1),%d1
- 1043 0a10 D081      		add.l %d1,%d0
- 1044 0a12 6000 FF1A 		jra .L148
- 1045               	.L202:
- 1046 0a16 4EBA F678 		jsr testnum
- 1047 0a1a 33C0 0000 		move.w %d0,linenum
- 1047      0000 
- 1048 0a20 2079 0000 		move.l txtpos,%a0
- 1048      0000 
- 1049 0a26 0C10 000A 		cmp.b #10,(%a0)
- 1050 0a2a 6600 0198 		jne .L203
- 1051 0a2e 4EBA F6BC 		jsr findline
- 1052 0a32 23C0 0000 		move.l %d0,list_line
- 1052      0000 
- 1053 0a38 4BFA FC84 		lea printline,%a5
- 1054               	.L236:
- 1055 0a3c 2279 0000 		move.l list_line,%a1
- 1055      0000 
- 1056 0a42 B3F9 0000 		cmp.l program_end.l,%a1
- 1056      0000 
- 1057 0a48 6700 FD42 		jeq .L140
- 1058 0a4c 4E95      		jsr (%a5)
- 1059 0a4e 60EC      		jra .L236
- 1060               	.L190:
- 1061 0a50 2239 0000 		move.l variables_begin,%d1
- 1061      0000 
- 1062 0a56 92B9 0000 		sub.l program_end,%d1
- 1062      0000 
- 1063 0a5c 2F01      		move.l %d1,-(%sp)
- 1064 0a5e 4E93      		jsr (%a3)
- 1065 0a60 4879 0000 		pea memorymsg
- 1065      0000 
- 1066 0a66 4E92      		jsr (%a2)
- 1067 0a68 508F      		addq.l #8,%sp
- 1068               	.L205:
- 1069 0a6a 2039 0000 		move.l txtpos,%d0
- 1069      0000 
- 1070 0a70 4201      		clr.b %d1
- 1071 0a72 6000 FF64 		jra .L180
- 1072               	.L201:
- 1073 0a76 2079 0000 		move.l txtpos,%a0
- 1073      0000 
- 1074 0a7c 0C10 000A 		cmp.b #10,(%a0)
- 1075 0a80 6600 0142 		jne .L203
- 1076 0a84 23F9 0000 		move.l program_start,program_end
- 1076      0000 0000 
- 1076      0000 
- 1077 0a8e 6000 FE88 		jra .L143
- 1078               	.L199:
- 1079 0a92 4BFA F56C 		lea ignore_blanks,%a5
- 1080 0a96 4E95      		jsr (%a5)
- 1081 0a98 2039 0000 		move.l txtpos,%d0
- 1081      0000 
- 1082 0a9e 2040      		move.l %d0,%a0
- 1083 0aa0 1210      		move.b (%a0),%d1
- 1084 0aa2 0601 FFBF 		add.b #-65,%d1
- 1085 0aa6 0C01 0019 		cmp.b #25,%d1
- 1086 0aaa 6244      		jhi .L157
- 1087 0aac 5280      		addq.l #1,%d0
- 1088 0aae 23C0 0000 		move.l %d0,txtpos
+ 951               	.L164:
+ 952 0930 3C84      		move.w %d4,(%a6)
+ 953 0932 1D42 0002 		move.b %d2,2(%a6)
+ 954 0936 4EBA F7B4 		jsr findline
+ 955 093a 2040      		move.l %d0,%a0
+ 956 093c B083      		cmp.l %d3,%d0
+ 957 093e 6720      		jeq .L167
+ 958 0940 B850      		cmp.w (%a0),%d4
+ 959 0942 661C      		jne .L167
+ 960 0944 7000      		moveq #0,%d0
+ 961 0946 1028 0002 		move.b 2(%a0),%d0
+ 962 094a 43F0 0800 		lea (%a0,%d0.l),%a1
+ 963 094e 9689      		sub.l %a1,%d3
+ 964 0950 7000      		moveq #0,%d0
+ 965               	.L168:
+ 966 0952 B680      		cmp.l %d0,%d3
+ 967 0954 6600 0090 		jne .L169
+ 968 0958 D088      		add.l %a0,%d0
+ 969 095a 23C0 0000 		move.l %d0,program_end
+ 969      0000 
+ 970               	.L167:
+ 971 0960 0C2E 000A 		cmp.b #10,3(%a6)
+ 971      0003 
+ 972 0966 6722      		jeq .L146
+ 973 0968 2279 0000 		move.l program_end,%a1
+ 973      0000 
+ 974 096e 4204      		clr.b %d4
+ 975 0970 4200      		clr.b %d0
+ 976               	.L170:
+ 977 0972 4A02      		tst.b %d2
+ 978 0974 667C      		jne .L176
+ 979 0976 4A04      		tst.b %d4
+ 980 0978 6706      		jeq .L147
+ 981 097a 23CE 0000 		move.l %a6,txtpos
+ 981      0000 
+ 982               	.L147:
+ 983 0980 4A00      		tst.b %d0
+ 984 0982 6706      		jeq .L146
+ 985 0984 23C9 0000 		move.l %a1,program_end
+ 985      0000 
+ 986               	.L146:
+ 987 098a 4AB9 0000 		tst.l triggerRun
+ 987      0000 
+ 988 0990 6700 FE72 		jeq .L150
+ 989 0994 42B9 0000 		clr.l triggerRun
+ 989      0000 
+ 990               	.L203:
+ 991 099a 2039 0000 		move.l program_start,%d0
+ 991      0000 
+ 992               	.L151:
+ 993 09a0 23C0 0000 		move.l %d0,current_line
+ 993      0000 
+ 994 09a6 B0B9 0000 		cmp.l program_end.l,%d0
+ 994      0000 
+ 995 09ac 6700 FE2C 		jeq .L143
+ 996 09b0 5680      		addq.l #3,%d0
+ 997 09b2 23C0 0000 		move.l %d0,txtpos
+ 997      0000 
+ 998 09b8 6000 FEE2 		jra .L219
+ 999               	.L162:
+ 1000 09bc 5202      		addq.b #1,%d2
+ 1001 09be 6000 FF4C 		jra .L161
+ 1002               	.L163:
+ 1003 09c2 4DE8 FFFC 		lea (-4,%a0),%a6
+ 1004 09c6 23CE 0000 		move.l %a6,txtpos
+ 1004      0000 
+ 1005 09cc 5A02      		addq.b #5,%d2
+ 1006 09ce 5388      		subq.l #1,%a0
+ 1007 09d0 7000      		moveq #0,%d0
+ 1008 09d2 1002      		move.b %d2,%d0
+ 1009 09d4 43F6 08FF 		lea -1(%a6,%d0.l),%a1
+ 1010               	.L165:
+ 1011 09d8 B3C8      		cmp.l %a0,%a1
+ 1012 09da 6300 FF54 		jls .L164
+ 1013 09de 10A8 0001 		move.b 1(%a0),(%a0)
+ 1014 09e2 5288      		addq.l #1,%a0
+ 1015 09e4 60F2      		jra .L165
+ 1016               	.L169:
+ 1017 09e6 11B1 0800 		move.b (%a1,%d0.l),(%a0,%d0.l)
+ 1017      0800 
+ 1018 09ec 5280      		addq.l #1,%d0
+ 1019 09ee 6000 FF62 		jra .L168
+ 1020               	.L176:
+ 1021 09f2 7200      		moveq #0,%d1
+ 1022 09f4 1202      		move.b %d2,%d1
+ 1023 09f6 200E      		move.l %a6,%d0
+ 1024 09f8 9089      		sub.l %a1,%d0
+ 1025 09fa B280      		cmp.l %d0,%d1
+ 1026 09fc 6402      		jcc .L171
+ 1027 09fe 2001      		move.l %d1,%d0
+ 1028               	.L171:
+ 1029 0a00 2A09      		move.l %a1,%d5
+ 1030 0a02 DA80      		add.l %d0,%d5
+ 1031 0a04 2609      		move.l %a1,%d3
+ 1032 0a06 9688      		sub.l %a0,%d3
+ 1033 0a08 4683      		not.l %d3
+ 1034 0a0a 7200      		moveq #0,%d1
+ 1035               	.L172:
+ 1036 0a0c 5381      		subq.l #1,%d1
+ 1037 0a0e B681      		cmp.l %d1,%d3
+ 1038 0a10 6614      		jne .L173
+ 1039 0a12 7200      		moveq #0,%d1
+ 1040               	.L174:
+ 1041 0a14 B280      		cmp.l %d0,%d1
+ 1042 0a16 6618      		jne .L175
+ 1043 0a18 9400      		sub.b %d0,%d2
+ 1044 0a1a D1C0      		add.l %d0,%a0
+ 1045 0a1c DDC0      		add.l %d0,%a6
+ 1046 0a1e 2245      		move.l %d5,%a1
+ 1047 0a20 7001      		moveq #1,%d0
+ 1048 0a22 6000 FF4E 		jra .L170
+ 1049               	.L173:
+ 1050 0a26 2845      		move.l %d5,%a4
+ 1051 0a28 19B1 1800 		move.b (%a1,%d1.l),(%a4,%d1.l)
+ 1051      1800 
+ 1052 0a2e 60DC      		jra .L172
+ 1053               	.L175:
+ 1054 0a30 11B6 1800 		move.b (%a6,%d1.l),(%a0,%d1.l)
+ 1054      1800 
+ 1055 0a36 5281      		addq.l #1,%d1
+ 1056 0a38 7801      		moveq #1,%d4
+ 1057 0a3a 60D8      		jra .L174
+ 1058               	.L224:
+ 1059 0a3c 4879 0000 		pea sorrymsg
+ 1059      0000 
+ 1060 0a42 4E92      		jsr (%a2)
+ 1061 0a44 588F      		addq.l #4,%sp
+ 1062 0a46 6000 FD92 		jra .L143
+ 1063               	.L254:
+ 1064 0a4a 7201      		moveq #1,%d1
+ 1065               	.L183:
+ 1066 0a4c 2040      		move.l %d0,%a0
+ 1067 0a4e 5280      		addq.l #1,%d0
+ 1068 0a50 0C10 003A 		cmp.b #58,(%a0)
+ 1069 0a54 67F4      		jeq .L254
+ 1070 0a56 4A01      		tst.b %d1
+ 1071 0a58 6706      		jeq .L184
+ 1072 0a5a 23C8 0000 		move.l %a0,txtpos
+ 1072      0000 
+ 1073               	.L184:
+ 1074 0a60 4EBA F59E 		jsr ignore_blanks
+ 1075 0a64 2079 0000 		move.l txtpos,%a0
+ 1075      0000 
+ 1076 0a6a 0C10 000A 		cmp.b #10,(%a0)
+ 1077 0a6e 6600 FE2C 		jne .L219
+ 1078               	.L186:
+ 1079 0a72 2039 0000 		move.l current_line,%d0
+ 1079      0000 
+ 1080 0a78 6700 FF10 		jeq .L146
+ 1081 0a7c 2040      		move.l %d0,%a0
+ 1082 0a7e 7200      		moveq #0,%d1
+ 1083 0a80 1228 0002 		move.b 2(%a0),%d1
+ 1084 0a84 D081      		add.l %d1,%d0
+ 1085 0a86 6000 FF18 		jra .L151
+ 1086               	.L205:
+ 1087 0a8a 4EBA F604 		jsr testnum
+ 1088 0a8e 33C0 0000 		move.w %d0,linenum
  1088      0000 
- 1089 0ab4 4E95      		jsr (%a5)
- 1090 0ab6 2079 0000 		move.l txtpos,%a0
- 1090      0000 
- 1091 0abc 1010      		move.b (%a0),%d0
- 1092 0abe 0C00 003A 		cmp.b #58,%d0
- 1093 0ac2 6708      		jeq .L195
- 1094 0ac4 0C00 000A 		cmp.b #10,%d0
- 1095 0ac8 6600 00FA 		jne .L203
- 1096               	.L195:
- 1097 0acc 2639 0000 		move.l sp,%d3
+ 1089 0a94 2079 0000 		move.l txtpos,%a0
+ 1089      0000 
+ 1090 0a9a 0C10 000A 		cmp.b #10,(%a0)
+ 1091 0a9e 6600 019A 		jne .L206
+ 1092 0aa2 4EBA F648 		jsr findline
+ 1093 0aa6 23C0 0000 		move.l %d0,list_line
+ 1093      0000 
+ 1094 0aac 4DFA FC24 		lea printline,%a6
+ 1095               	.L239:
+ 1096 0ab0 2079 0000 		move.l list_line,%a0
+ 1096      0000 
+ 1097 0ab6 B1F9 0000 		cmp.l program_end.l,%a0
  1097      0000 
- 1098 0ad2 23C3 0000 		move.l %d3,tempsp
- 1098      0000 
- 1099 0ad8 2043      		move.l %d3,%a0
- 1100 0ada 4201      		clr.b %d1
- 1101               	.L222:
- 1102 0adc B1FC 0000 		cmp.l #program+65535,%a0
+ 1098 0abc 6700 FD1C 		jeq .L143
+ 1099 0ac0 4E96      		jsr (%a6)
+ 1100 0ac2 60EC      		jra .L239
+ 1101               	.L193:
+ 1102 0ac4 2039 0000 		move.l variables_begin,%d0
  1102      0000 
- 1103 0ae2 6500 0392 		jcs .L233
- 1104 0ae6 4A01      		tst.b %d1
- 1105 0ae8 6706      		jeq .L157
- 1106 0aea 23C8 0000 		move.l %a0,tempsp
- 1106      0000 
- 1107               	.L157:
- 1108 0af0 4879 0000 		pea howmsg
- 1108      0000 
- 1109 0af6 6000 FCAA 		jra .L328
- 1110               	.L198:
- 1111 0afa 4239 0000 		clr.b expression_error
+ 1103 0aca 90B9 0000 		sub.l program_end,%d0
+ 1103      0000 
+ 1104 0ad0 2F00      		move.l %d0,-(%sp)
+ 1105 0ad2 2046      		move.l %d6,%a0
+ 1106 0ad4 4E90      		jsr (%a0)
+ 1107 0ad6 4879 0000 		pea memorymsg
+ 1107      0000 
+ 1108 0adc 4E92      		jsr (%a2)
+ 1109 0ade 508F      		addq.l #8,%sp
+ 1110               	.L208:
+ 1111 0ae0 2039 0000 		move.l txtpos,%d0
  1111      0000 
- 1112 0b00 4EBA F95A 		jsr expression
- 1113 0b04 4A39 0000 		tst.b expression_error.l
- 1113      0000 
- 1114 0b0a 66E4      		jne .L157
- 1115 0b0c 2079 0000 		move.l txtpos,%a0
+ 1112 0ae6 4201      		clr.b %d1
+ 1113 0ae8 6000 FF62 		jra .L183
+ 1114               	.L204:
+ 1115 0aec 2079 0000 		move.l txtpos,%a0
  1115      0000 
- 1116 0b12 0C10 000A 		cmp.b #10,(%a0)
- 1117 0b16 67D8      		jeq .L157
- 1118 0b18 4A40      		tst.w %d0
- 1119 0b1a 6600 FD0E 		jne .L216
- 1120 0b1e 6000 FEDE 		jra .L183
- 1121               	.L197:
- 1122 0b22 4239 0000 		clr.b expression_error
- 1122      0000 
- 1123 0b28 4EBA F932 		jsr expression
- 1124 0b2c 33C0 0000 		move.w %d0,linenum
- 1124      0000 
- 1125 0b32 4A39 0000 		tst.b expression_error.l
- 1125      0000 
- 1126 0b38 66B6      		jne .L157
- 1127 0b3a 2079 0000 		move.l txtpos,%a0
- 1127      0000 
- 1128 0b40 0C10 000A 		cmp.b #10,(%a0)
- 1129 0b44 66AA      		jne .L157
- 1130               	.L329:
- 1131 0b46 4EBA F5A4 		jsr findline
- 1132 0b4a 6000 FDE2 		jra .L148
- 1133               	.L196:
- 1134 0b4e 4239 0000 		clr.b expression_error
- 1134      0000 
- 1135 0b54 4EBA F906 		jsr expression
- 1136 0b58 33C0 0000 		move.w %d0,linenum
- 1136      0000 
- 1137 0b5e 4A39 0000 		tst.b expression_error.l
- 1137      0000 
- 1138 0b64 668A      		jne .L157
- 1139 0b66 2279 0000 		move.l txtpos,%a1
+ 1116 0af2 0C10 000A 		cmp.b #10,(%a0)
+ 1117 0af6 6600 0142 		jne .L206
+ 1118 0afa 23F9 0000 		move.l program_start,program_end
+ 1118      0000 0000 
+ 1118      0000 
+ 1119 0b04 6000 FE84 		jra .L146
+ 1120               	.L202:
+ 1121 0b08 4DFA F4F6 		lea ignore_blanks,%a6
+ 1122 0b0c 4E96      		jsr (%a6)
+ 1123 0b0e 2039 0000 		move.l txtpos,%d0
+ 1123      0000 
+ 1124 0b14 2240      		move.l %d0,%a1
+ 1125 0b16 1211      		move.b (%a1),%d1
+ 1126 0b18 0601 FFBF 		add.b #-65,%d1
+ 1127 0b1c 0C01 0019 		cmp.b #25,%d1
+ 1128 0b20 6244      		jhi .L160
+ 1129 0b22 5280      		addq.l #1,%d0
+ 1130 0b24 23C0 0000 		move.l %d0,txtpos
+ 1130      0000 
+ 1131 0b2a 4E96      		jsr (%a6)
+ 1132 0b2c 2079 0000 		move.l txtpos,%a0
+ 1132      0000 
+ 1133 0b32 1010      		move.b (%a0),%d0
+ 1134 0b34 0C00 003A 		cmp.b #58,%d0
+ 1135 0b38 6708      		jeq .L198
+ 1136 0b3a 0C00 000A 		cmp.b #10,%d0
+ 1137 0b3e 6600 00FA 		jne .L206
+ 1138               	.L198:
+ 1139 0b42 2639 0000 		move.l sp,%d3
  1139      0000 
- 1140 0b6c 0C11 000A 		cmp.b #10,(%a1)
- 1141 0b70 6600 FF7E 		jne .L157
- 1142 0b74 2079 0000 		move.l sp,%a0
- 1142      0000 
- 1143 0b7a 4BE8 000A 		lea (10,%a0),%a5
- 1144 0b7e BBF9 0000 		cmp.l stack_limit.l,%a5
+ 1140 0b48 23C3 0000 		move.l %d3,tempsp
+ 1140      0000 
+ 1141 0b4e 2043      		move.l %d3,%a0
+ 1142 0b50 4201      		clr.b %d1
+ 1143               	.L225:
+ 1144 0b52 B1FC 0000 		cmp.l #program+65535,%a0
  1144      0000 
- 1145 0b84 6500 FE42 		jcs .L221
- 1146 0b88 4BE8 FFF6 		lea (-10,%a0),%a5
- 1147 0b8c 23CD 0000 		move.l %a5,sp
- 1147      0000 
- 1148 0b92 117C 0047 		move.b #71,-10(%a0)
- 1148      FFF6 
- 1149 0b98 2149 FFFC 		move.l %a1,-4(%a0)
- 1150 0b9c 2179 0000 		move.l current_line,-8(%a0)
- 1150      0000 FFF8 
- 1151 0ba4 60A0      		jra .L329
- 1152               	.L194:
- 1153 0ba6 43FA F458 		lea ignore_blanks,%a1
- 1154 0baa 4E91      		jsr (%a1)
- 1155 0bac 2039 0000 		move.l txtpos,%d0
+ 1145 0b58 6500 03AA 		jcs .L236
+ 1146 0b5c 4A01      		tst.b %d1
+ 1147 0b5e 6706      		jeq .L160
+ 1148 0b60 23C8 0000 		move.l %a0,tempsp
+ 1148      0000 
+ 1149               	.L160:
+ 1150 0b66 4879 0000 		pea howmsg
+ 1150      0000 
+ 1151 0b6c 6000 FC82 		jra .L333
+ 1152               	.L201:
+ 1153 0b70 4239 0000 		clr.b expression_error
+ 1153      0000 
+ 1154 0b76 4EBA F8F6 		jsr expression
+ 1155 0b7a 4A39 0000 		tst.b expression_error.l
  1155      0000 
- 1156 0bb2 2A40      		move.l %d0,%a5
- 1157 0bb4 1415      		move.b (%a5),%d2
- 1158 0bb6 1202      		move.b %d2,%d1
- 1159 0bb8 0601 FFBF 		add.b #-65,%d1
- 1160 0bbc 0C01 0019 		cmp.b #25,%d1
- 1161 0bc0 6300 019C 		jls .L322
- 1162               	.L203:
- 1163 0bc4 4879 0000 		pea whatmsg
- 1163      0000 
- 1164 0bca 4EBA FA10 		jsr printmsgNoNL
- 1165 0bce 2039 0000 		move.l current_line,%d0
- 1165      0000 
- 1166 0bd4 588F      		addq.l #4,%sp
- 1167 0bd6 6724      		jeq .L178
- 1168 0bd8 2079 0000 		move.l txtpos,%a0
- 1168      0000 
- 1169 0bde 1410      		move.b (%a0),%d2
- 1170 0be0 0C02 000A 		cmp.b #10,%d2
- 1171 0be4 6704      		jeq .L179
- 1172 0be6 10BC 005E 		move.b #94,(%a0)
- 1173               	.L179:
- 1174 0bea 23C0 0000 		move.l %d0,list_line
- 1174      0000 
- 1175 0bf0 4EBA FACC 		jsr printline
- 1176 0bf4 2079 0000 		move.l txtpos,%a0
+ 1156 0b80 66E4      		jne .L160
+ 1157 0b82 2079 0000 		move.l txtpos,%a0
+ 1157      0000 
+ 1158 0b88 0C10 000A 		cmp.b #10,(%a0)
+ 1159 0b8c 67D8      		jeq .L160
+ 1160 0b8e 4A40      		tst.w %d0
+ 1161 0b90 6600 FD0A 		jne .L219
+ 1162 0b94 6000 FEDC 		jra .L186
+ 1163               	.L200:
+ 1164 0b98 4239 0000 		clr.b expression_error
+ 1164      0000 
+ 1165 0b9e 4EBA F8CE 		jsr expression
+ 1166 0ba2 33C0 0000 		move.w %d0,linenum
+ 1166      0000 
+ 1167 0ba8 4A39 0000 		tst.b expression_error.l
+ 1167      0000 
+ 1168 0bae 66B6      		jne .L160
+ 1169 0bb0 2079 0000 		move.l txtpos,%a0
+ 1169      0000 
+ 1170 0bb6 0C10 000A 		cmp.b #10,(%a0)
+ 1171 0bba 66AA      		jne .L160
+ 1172               	.L334:
+ 1173 0bbc 4EBA F52E 		jsr findline
+ 1174 0bc0 6000 FDDE 		jra .L151
+ 1175               	.L199:
+ 1176 0bc4 4239 0000 		clr.b expression_error
  1176      0000 
- 1177 0bfa 1082      		move.b %d2,(%a0)
- 1178               	.L178:
- 1179 0bfc 4EBA F57E 		jsr line_terminator
- 1180 0c00 6000 FD16 		jra .L143
- 1181               	.L193:
- 1182 0c04 4BFA F3FA 		lea ignore_blanks,%a5
- 1183 0c08 4E95      		jsr (%a5)
- 1184 0c0a 2039 0000 		move.l txtpos,%d0
+ 1177 0bca 4EBA F8A2 		jsr expression
+ 1178 0bce 33C0 0000 		move.w %d0,linenum
+ 1178      0000 
+ 1179 0bd4 4A39 0000 		tst.b expression_error.l
+ 1179      0000 
+ 1180 0bda 668A      		jne .L160
+ 1181 0bdc 2279 0000 		move.l txtpos,%a1
+ 1181      0000 
+ 1182 0be2 0C11 000A 		cmp.b #10,(%a1)
+ 1183 0be6 6600 FF7E 		jne .L160
+ 1184 0bea 2079 0000 		move.l sp,%a0
  1184      0000 
- 1185 0c10 2040      		move.l %d0,%a0
- 1186 0c12 1410      		move.b (%a0),%d2
- 1187 0c14 1202      		move.b %d2,%d1
- 1188 0c16 0601 FFBF 		add.b #-65,%d1
- 1189 0c1a 0C01 0019 		cmp.b #25,%d1
- 1190 0c1e 62A4      		jhi .L203
- 1191 0c20 5280      		addq.l #1,%d0
- 1192 0c22 23C0 0000 		move.l %d0,txtpos
- 1192      0000 
- 1193 0c28 4E95      		jsr (%a5)
- 1194 0c2a 2079 0000 		move.l txtpos,%a0
- 1194      0000 
- 1195 0c30 1010      		move.b (%a0),%d0
- 1196 0c32 0C00 000A 		cmp.b #10,%d0
- 1197 0c36 6706      		jeq .L217
- 1198 0c38 0C00 003A 		cmp.b #58,%d0
- 1199 0c3c 6686      		jne .L203
- 1200               	.L217:
- 1201 0c3e 4DFA F81C 		lea expression,%a6
- 1202               	.L218:
- 1203 0c42 23F9 0000 		move.l txtpos,tmptxtpos
- 1203      0000 0000 
- 1203      0000 
- 1204 0c4c 4878 003F 		pea 63.w
- 1205 0c50 41FA F9BE 		lea getln,%a0
- 1206 0c54 4E90      		jsr (%a0)
- 1207 0c56 43FA F4BE 		lea toUppercaseBuffer,%a1
- 1208 0c5a 4E91      		jsr (%a1)
- 1209 0c5c 2039 0000 		move.l program_end,%d0
- 1209      0000 
- 1210 0c62 5480      		addq.l #2,%d0
- 1211 0c64 23C0 0000 		move.l %d0,txtpos
- 1211      0000 
- 1212 0c6a 4E95      		jsr (%a5)
- 1213 0c6c 4239 0000 		clr.b expression_error
- 1213      0000 
- 1214 0c72 4E96      		jsr (%a6)
- 1215 0c74 588F      		addq.l #4,%sp
- 1216 0c76 4A39 0000 		tst.b expression_error.l
+ 1185 0bf0 4DE8 000A 		lea (10,%a0),%a6
+ 1186 0bf4 BDF9 0000 		cmp.l stack_limit.l,%a6
+ 1186      0000 
+ 1187 0bfa 6500 FE40 		jcs .L224
+ 1188 0bfe 49E8 FFF6 		lea (-10,%a0),%a4
+ 1189 0c02 23CC 0000 		move.l %a4,sp
+ 1189      0000 
+ 1190 0c08 117C 0047 		move.b #71,-10(%a0)
+ 1190      FFF6 
+ 1191 0c0e 2149 FFFC 		move.l %a1,-4(%a0)
+ 1192 0c12 2179 0000 		move.l current_line,-8(%a0)
+ 1192      0000 FFF8 
+ 1193 0c1a 60A0      		jra .L334
+ 1194               	.L197:
+ 1195 0c1c 49FA F3E2 		lea ignore_blanks,%a4
+ 1196 0c20 4E94      		jsr (%a4)
+ 1197 0c22 2039 0000 		move.l txtpos,%d0
+ 1197      0000 
+ 1198 0c28 2040      		move.l %d0,%a0
+ 1199 0c2a 1410      		move.b (%a0),%d2
+ 1200 0c2c 1202      		move.b %d2,%d1
+ 1201 0c2e 0601 FFBF 		add.b #-65,%d1
+ 1202 0c32 0C01 0019 		cmp.b #25,%d1
+ 1203 0c36 6300 01B8 		jls .L327
+ 1204               	.L206:
+ 1205 0c3a 4879 0000 		pea whatmsg
+ 1205      0000 
+ 1206 0c40 4EBA F9AE 		jsr printmsgNoNL
+ 1207 0c44 2039 0000 		move.l current_line,%d0
+ 1207      0000 
+ 1208 0c4a 588F      		addq.l #4,%sp
+ 1209 0c4c 6724      		jeq .L181
+ 1210 0c4e 2079 0000 		move.l txtpos,%a0
+ 1210      0000 
+ 1211 0c54 1410      		move.b (%a0),%d2
+ 1212 0c56 0C02 000A 		cmp.b #10,%d2
+ 1213 0c5a 6704      		jeq .L182
+ 1214 0c5c 10BC 005E 		move.b #94,(%a0)
+ 1215               	.L182:
+ 1216 0c60 23C0 0000 		move.l %d0,list_line
  1216      0000 
- 1217 0c7c 66C4      		jne .L218
- 1218 0c7e 0282 0000 		and.l #255,%d2
- 1218      00FF 
- 1219 0c84 0682 7FFF 		add.l #2147483583,%d2
- 1219      FFBF 
- 1220 0c8a D482      		add.l %d2,%d2
- 1221 0c8c 2079 0000 		move.l variables_begin,%a0
- 1221      0000 
- 1222 0c92 3180 2800 		move.w %d0,(%a0,%d2.l)
- 1223 0c96 23F9 0000 		move.l tmptxtpos,txtpos
- 1223      0000 0000 
- 1223      0000 
- 1224 0ca0 6000 FDC8 		jra .L205
- 1225               	.L189:
- 1226 0ca4 2079 0000 		move.l txtpos,%a0
+ 1217 0c66 4EBA FA6A 		jsr printline
+ 1218 0c6a 2079 0000 		move.l txtpos,%a0
+ 1218      0000 
+ 1219 0c70 1082      		move.b %d2,(%a0)
+ 1220               	.L181:
+ 1221 0c72 4EBA F508 		jsr line_terminator
+ 1222 0c76 6000 FD12 		jra .L146
+ 1223               	.L196:
+ 1224 0c7a 4DFA F384 		lea ignore_blanks,%a6
+ 1225 0c7e 4E96      		jsr (%a6)
+ 1226 0c80 2039 0000 		move.l txtpos,%d0
  1226      0000 
- 1227 0caa 1010      		move.b (%a0),%d0
- 1228 0cac 0C00 003A 		cmp.b #58,%d0
- 1229 0cb0 6600 0312 		jne .L324
- 1230 0cb4 4EBA F4C6 		jsr line_terminator
- 1231 0cb8 52B9 0000 		addq.l #1,txtpos
- 1231      0000 
- 1232 0cbe 6000 FDAA 		jra .L205
- 1233               	.L192:
- 1234 0cc2 4239 0000 		clr.b expression_error
+ 1227 0c86 2240      		move.l %d0,%a1
+ 1228 0c88 1411      		move.b (%a1),%d2
+ 1229 0c8a 1202      		move.b %d2,%d1
+ 1230 0c8c 0601 FFBF 		add.b #-65,%d1
+ 1231 0c90 0C01 0019 		cmp.b #25,%d1
+ 1232 0c94 62A4      		jhi .L206
+ 1233 0c96 5280      		addq.l #1,%d0
+ 1234 0c98 23C0 0000 		move.l %d0,txtpos
  1234      0000 
- 1235 0cc8 4BFA F792 		lea expression,%a5
- 1236 0ccc 4E95      		jsr (%a5)
- 1237 0cce 4A39 0000 		tst.b expression_error.l
- 1237      0000 
- 1238 0cd4 6600 FEEE 		jne .L203
- 1239 0cd8 4DFA F326 		lea ignore_blanks,%a6
- 1240 0cdc 4E96      		jsr (%a6)
- 1241 0cde 2039 0000 		move.l txtpos,%d0
- 1241      0000 
- 1242 0ce4 2040      		move.l %d0,%a0
- 1243 0ce6 0C10 002C 		cmp.b #44,(%a0)
- 1244 0cea 6600 FED8 		jne .L203
- 1245 0cee 5280      		addq.l #1,%d0
- 1246 0cf0 23C0 0000 		move.l %d0,txtpos
- 1246      0000 
- 1247 0cf6 4E96      		jsr (%a6)
- 1248 0cf8 4239 0000 		clr.b expression_error
- 1248      0000 
- 1249 0cfe 4E95      		jsr (%a5)
- 1250 0d00 4A39 0000 		tst.b expression_error.l
- 1250      0000 
- 1251 0d06 6600 FEBC 		jne .L203
- 1252 0d0a 2079 0000 		move.l txtpos,%a0
- 1252      0000 
- 1253 0d10 1010      		move.b (%a0),%d0
- 1254 0d12 0C00 000A 		cmp.b #10,%d0
- 1255 0d16 6700 FD52 		jeq .L205
- 1256 0d1a 0C00 003A 		cmp.b #58,%d0
- 1257 0d1e 6700 FD4A 		jeq .L205
- 1258 0d22 6000 FEA0 		jra .L203
- 1259               	.L188:
- 1260 0d26 2079 0000 		move.l txtpos,%a0
- 1260      0000 
- 1261 0d2c 0C10 000A 		cmp.b #10,(%a0)
- 1262 0d30 6600 FE92 		jne .L203
- 1263 0d34 2039 0000 		move.l program_end,%d0
+ 1235 0c9e 4E96      		jsr (%a6)
+ 1236 0ca0 2079 0000 		move.l txtpos,%a0
+ 1236      0000 
+ 1237 0ca6 1010      		move.b (%a0),%d0
+ 1238 0ca8 0C00 000A 		cmp.b #10,%d0
+ 1239 0cac 6706      		jeq .L221
+ 1240 0cae 0C00 003A 		cmp.b #58,%d0
+ 1241 0cb2 6686      		jne .L206
+ 1242               	.L221:
+ 1243 0cb4 23F9 0000 		move.l txtpos,tmptxtpos
+ 1243      0000 0000 
+ 1243      0000 
+ 1244 0cbe 4878 003F 		pea 63.w
+ 1245 0cc2 43FA F960 		lea getln,%a1
+ 1246 0cc6 4E91      		jsr (%a1)
+ 1247 0cc8 49FA F44C 		lea toUppercaseBuffer,%a4
+ 1248 0ccc 4E94      		jsr (%a4)
+ 1249 0cce 2039 0000 		move.l program_end,%d0
+ 1249      0000 
+ 1250 0cd4 5480      		addq.l #2,%d0
+ 1251 0cd6 23C0 0000 		move.l %d0,txtpos
+ 1251      0000 
+ 1252 0cdc 4E96      		jsr (%a6)
+ 1253 0cde 4239 0000 		clr.b expression_error
+ 1253      0000 
+ 1254 0ce4 4EBA F788 		jsr expression
+ 1255 0ce8 588F      		addq.l #4,%sp
+ 1256 0cea 4A39 0000 		tst.b expression_error.l
+ 1256      0000 
+ 1257 0cf0 66C2      		jne .L221
+ 1258 0cf2 0282 0000 		and.l #255,%d2
+ 1258      00FF 
+ 1259 0cf8 0682 7FFF 		add.l #2147483583,%d2
+ 1259      FFBF 
+ 1260 0cfe D482      		add.l %d2,%d2
+ 1261 0d00 2079 0000 		move.l variables_begin,%a0
+ 1261      0000 
+ 1262 0d06 3180 2800 		move.w %d0,(%a0,%d2.l)
+ 1263 0d0a 23F9 0000 		move.l tmptxtpos,txtpos
+ 1263      0000 0000 
  1263      0000 
- 1264 0d3a 6000 FBF2 		jra .L148
- 1265               	.L187:
- 1266 0d3e 4239 0000 		clr.b expression_error
+ 1264 0d14 6000 FDCA 		jra .L208
+ 1265               	.L192:
+ 1266 0d18 2079 0000 		move.l txtpos,%a0
  1266      0000 
- 1267 0d44 4EBA F716 		jsr expression
- 1268 0d48 4A39 0000 		tst.b expression_error.l
- 1268      0000 
- 1269 0d4e 6600 FE74 		jne .L203
- 1270 0d52 3A40      		move.w %d0,%a5
- 1271 0d54 23CD 0000 		move.l %a5,rand_seed
+ 1267 0d1e 1010      		move.b (%a0),%d0
+ 1268 0d20 0C00 003A 		cmp.b #58,%d0
+ 1269 0d24 6600 032E 		jne .L329
+ 1270 0d28 4EBA F452 		jsr line_terminator
+ 1271 0d2c 52B9 0000 		addq.l #1,txtpos
  1271      0000 
- 1272 0d5a 6000 FD0E 		jra .L205
- 1273               	.L322:
- 1274 0d5e 5280      		addq.l #1,%d0
- 1275 0d60 23C0 0000 		move.l %d0,txtpos
- 1275      0000 
- 1276 0d66 41FA F298 		lea ignore_blanks,%a0
- 1277 0d6a 4E90      		jsr (%a0)
- 1278 0d6c 2039 0000 		move.l txtpos,%d0
- 1278      0000 
- 1279 0d72 2240      		move.l %d0,%a1
- 1280 0d74 0C11 003D 		cmp.b #61,(%a1)
- 1281 0d78 6600 FE4A 		jne .L203
- 1282 0d7c 5280      		addq.l #1,%d0
- 1283 0d7e 23C0 0000 		move.l %d0,txtpos
- 1283      0000 
- 1284 0d84 4BFA F27A 		lea ignore_blanks,%a5
- 1285 0d88 4E95      		jsr (%a5)
- 1286 0d8a 4239 0000 		clr.b expression_error
+ 1272 0d32 6000 FDAC 		jra .L208
+ 1273               	.L195:
+ 1274 0d36 4239 0000 		clr.b expression_error
+ 1274      0000 
+ 1275 0d3c 4EBA F730 		jsr expression
+ 1276 0d40 2C40      		move.l %d0,%a6
+ 1277 0d42 4A39 0000 		tst.b expression_error.l
+ 1277      0000 
+ 1278 0d48 6600 FEF0 		jne .L206
+ 1279 0d4c 41FA F2B2 		lea ignore_blanks,%a0
+ 1280 0d50 4E90      		jsr (%a0)
+ 1281 0d52 2039 0000 		move.l txtpos,%d0
+ 1281      0000 
+ 1282 0d58 2240      		move.l %d0,%a1
+ 1283 0d5a 0C11 002C 		cmp.b #44,(%a1)
+ 1284 0d5e 6600 FEDA 		jne .L206
+ 1285 0d62 5280      		addq.l #1,%d0
+ 1286 0d64 23C0 0000 		move.l %d0,txtpos
  1286      0000 
- 1287 0d90 4BFA F6CA 		lea expression,%a5
- 1288 0d94 4E95      		jsr (%a5)
- 1289 0d96 3C40      		move.w %d0,%a6
- 1290 0d98 4A39 0000 		tst.b expression_error.l
- 1290      0000 
- 1291 0d9e 6600 FE24 		jne .L203
- 1292 0da2 4879 0000 		pea to_tab
- 1292      0000 
- 1293 0da8 4E94      		jsr (%a4)
- 1294 0daa 588F      		addq.l #4,%sp
- 1295 0dac 4A39 0000 		tst.b table_index.l
- 1295      0000 
- 1296 0db2 6600 FE10 		jne .L203
- 1297 0db6 4E95      		jsr (%a5)
- 1298 0db8 3F40 0022 		move.w %d0,34(%sp)
- 1299 0dbc 4A39 0000 		tst.b expression_error.l
+ 1287 0d6a 49FA F294 		lea ignore_blanks,%a4
+ 1288 0d6e 4E94      		jsr (%a4)
+ 1289 0d70 4239 0000 		clr.b expression_error
+ 1289      0000 
+ 1290 0d76 4EBA F6F6 		jsr expression
+ 1291 0d7a 4A39 0000 		tst.b expression_error.l
+ 1291      0000 
+ 1292 0d80 6600 FEB8 		jne .L206
+ 1293 0d84 1C80      		move.b %d0,(%a6)
+ 1294 0d86 7200      		moveq #0,%d1
+ 1295 0d88 4601      		not.b %d1
+ 1296 0d8a C280      		and.l %d0,%d1
+ 1297 0d8c 2F01      		move.l %d1,-(%sp)
+ 1298 0d8e 2F0E      		move.l %a6,-(%sp)
+ 1299 0d90 4879 0000 		pea .LC5
  1299      0000 
- 1300 0dc2 6600 FE00 		jne .L203
- 1301 0dc6 4879 0000 		pea step_tab
+ 1300 0d96 4E93      		jsr (%a3)
+ 1301 0d98 2079 0000 		move.l txtpos,%a0
  1301      0000 
- 1302 0dcc 4E94      		jsr (%a4)
- 1303 0dce 588F      		addq.l #4,%sp
- 1304 0dd0 4A39 0000 		tst.b table_index.l
- 1304      0000 
- 1305 0dd6 6600 0098 		jne .L253
- 1306 0dda 4E95      		jsr (%a5)
- 1307 0ddc 3800      		move.w %d0,%d4
- 1308 0dde 4A39 0000 		tst.b expression_error.l
- 1308      0000 
- 1309 0de4 6600 FDDE 		jne .L203
- 1310               	.L219:
- 1311 0de8 41FA F216 		lea ignore_blanks,%a0
- 1312 0dec 4E90      		jsr (%a0)
- 1313 0dee 2639 0000 		move.l txtpos,%d3
+ 1302 0d9e 1010      		move.b (%a0),%d0
+ 1303 0da0 4FEF 000C 		lea (12,%sp),%sp
+ 1304 0da4 0C00 000A 		cmp.b #10,%d0
+ 1305 0da8 6700 FD36 		jeq .L208
+ 1306 0dac 0C00 003A 		cmp.b #58,%d0
+ 1307 0db0 6700 FD2E 		jeq .L208
+ 1308 0db4 6000 FE84 		jra .L206
+ 1309               	.L191:
+ 1310 0db8 2079 0000 		move.l txtpos,%a0
+ 1310      0000 
+ 1311 0dbe 0C10 000A 		cmp.b #10,(%a0)
+ 1312 0dc2 6600 FE76 		jne .L206
+ 1313 0dc6 2039 0000 		move.l program_end,%d0
  1313      0000 
- 1314 0df4 2243      		move.l %d3,%a1
- 1315 0df6 1211      		move.b (%a1),%d1
- 1316 0df8 0C01 000A 		cmp.b #10,%d1
- 1317 0dfc 6708      		jeq .L220
- 1318 0dfe 0C01 003A 		cmp.b #58,%d1
- 1319 0e02 6600 FDC0 		jne .L203
- 1320               	.L220:
- 1321 0e06 4A39 0000 		tst.b expression_error.l
+ 1314 0dcc 6000 FBD2 		jra .L151
+ 1315               	.L190:
+ 1316 0dd0 4239 0000 		clr.b expression_error
+ 1316      0000 
+ 1317 0dd6 4EBA F696 		jsr expression
+ 1318 0dda 4A39 0000 		tst.b expression_error.l
+ 1318      0000 
+ 1319 0de0 6600 FE58 		jne .L206
+ 1320 0de4 3240      		move.w %d0,%a1
+ 1321 0de6 23C9 0000 		move.l %a1,rand_seed
  1321      0000 
- 1322 0e0c 6600 FCE2 		jne .L157
- 1323 0e10 0C01 000A 		cmp.b #10,%d1
- 1324 0e14 6600 FCDA 		jne .L157
- 1325 0e18 2079 0000 		move.l sp,%a0
+ 1322 0dec 6000 FCF2 		jra .L208
+ 1323               	.L327:
+ 1324 0df0 5280      		addq.l #1,%d0
+ 1325 0df2 23C0 0000 		move.l %d0,txtpos
  1325      0000 
- 1326 0e1e 43E8 000E 		lea (14,%a0),%a1
- 1327 0e22 B3F9 0000 		cmp.l stack_limit.l,%a1
- 1327      0000 
- 1328 0e28 6500 FB9E 		jcs .L221
- 1329 0e2c 4BE8 FFF2 		lea (-14,%a0),%a5
- 1330 0e30 23CD 0000 		move.l %a5,sp
- 1330      0000 
- 1331 0e36 7200      		moveq #0,%d1
- 1332 0e38 1202      		move.b %d2,%d1
- 1333 0e3a 0681 7FFF 		add.l #2147483583,%d1
- 1333      FFBF 
- 1334 0e40 D281      		add.l %d1,%d1
- 1335 0e42 2279 0000 		move.l variables_begin,%a1
- 1335      0000 
- 1336 0e48 338E 1800 		move.w %a6,(%a1,%d1.l)
- 1337 0e4c 117C 0046 		move.b #70,-14(%a0)
- 1337      FFF2 
- 1338 0e52 1142 FFF3 		move.b %d2,-13(%a0)
- 1339 0e56 316F 0022 		move.w 34(%sp),-12(%a0)
- 1339      FFF4 
- 1340 0e5c 3144 FFF6 		move.w %d4,-10(%a0)
- 1341 0e60 2143 FFFC 		move.l %d3,-4(%a0)
- 1342 0e64 2179 0000 		move.l current_line,-8(%a0)
- 1342      0000 FFF8 
- 1343 0e6c 6000 FBFC 		jra .L205
- 1344               	.L253:
- 1345 0e70 7801      		moveq #1,%d4
- 1346 0e72 6000 FF74 		jra .L219
- 1347               	.L233:
- 1348 0e76 1010      		move.b (%a0),%d0
- 1349 0e78 0C00 0046 		cmp.b #70,%d0
- 1350 0e7c 6740      		jeq .L223
- 1351 0e7e 0C00 0047 		cmp.b #71,%d0
- 1352 0e82 6600 F926 		jne .L224
- 1353 0e86 0C02 000A 		cmp.b #10,%d2
- 1354 0e8a 6628      		jne .L225
- 1355 0e8c 4A01      		tst.b %d1
- 1356 0e8e 6706      		jeq .L226
- 1357 0e90 23C8 0000 		move.l %a0,tempsp
+ 1326 0df8 43FA F206 		lea ignore_blanks,%a1
+ 1327 0dfc 4E91      		jsr (%a1)
+ 1328 0dfe 2039 0000 		move.l txtpos,%d0
+ 1328      0000 
+ 1329 0e04 2840      		move.l %d0,%a4
+ 1330 0e06 0C14 003D 		cmp.b #61,(%a4)
+ 1331 0e0a 6600 FE2E 		jne .L206
+ 1332 0e0e 5280      		addq.l #1,%d0
+ 1333 0e10 23C0 0000 		move.l %d0,txtpos
+ 1333      0000 
+ 1334 0e16 41FA F1E8 		lea ignore_blanks,%a0
+ 1335 0e1a 4E90      		jsr (%a0)
+ 1336 0e1c 4239 0000 		clr.b expression_error
+ 1336      0000 
+ 1337 0e22 4DFA F64A 		lea expression,%a6
+ 1338 0e26 4E96      		jsr (%a6)
+ 1339 0e28 2A00      		move.l %d0,%d5
+ 1340 0e2a 4A39 0000 		tst.b expression_error.l
+ 1340      0000 
+ 1341 0e30 6600 FE08 		jne .L206
+ 1342 0e34 4879 0000 		pea to_tab
+ 1342      0000 
+ 1343 0e3a 4E95      		jsr (%a5)
+ 1344 0e3c 588F      		addq.l #4,%sp
+ 1345 0e3e 4A39 0000 		tst.b table_index.l
+ 1345      0000 
+ 1346 0e44 6600 FDF4 		jne .L206
+ 1347 0e48 4E96      		jsr (%a6)
+ 1348 0e4a 2840      		move.l %d0,%a4
+ 1349 0e4c 4A39 0000 		tst.b expression_error.l
+ 1349      0000 
+ 1350 0e52 6600 FDE6 		jne .L206
+ 1351 0e56 4879 0000 		pea step_tab
+ 1351      0000 
+ 1352 0e5c 4E95      		jsr (%a5)
+ 1353 0e5e 588F      		addq.l #4,%sp
+ 1354 0e60 4A39 0000 		tst.b table_index.l
+ 1354      0000 
+ 1355 0e66 6600 0096 		jne .L255
+ 1356 0e6a 4E96      		jsr (%a6)
+ 1357 0e6c 4A39 0000 		tst.b expression_error.l
  1357      0000 
- 1358               	.L226:
- 1359 0e96 23E8 0002 		move.l 2(%a0),current_line
- 1359      0000 0000 
- 1360 0e9e 23E8 0006 		move.l 6(%a0),txtpos
- 1360      0000 0000 
- 1361 0ea6 700A      		moveq #10,%d0
- 1362 0ea8 D083      		add.l %d3,%d0
- 1363 0eaa 23C0 0000 		move.l %d0,sp
+ 1358 0e72 6600 FDC6 		jne .L206
+ 1359 0e76 3800      		move.w %d0,%d4
+ 1360               	.L222:
+ 1361 0e78 43FA F186 		lea ignore_blanks,%a1
+ 1362 0e7c 4E91      		jsr (%a1)
+ 1363 0e7e 2039 0000 		move.l txtpos,%d0
  1363      0000 
- 1364 0eb0 6000 FBB8 		jra .L205
- 1365               	.L225:
- 1366 0eb4 41E8 000A 		lea (10,%a0),%a0
- 1367               	.L227:
- 1368 0eb8 7201      		moveq #1,%d1
- 1369 0eba 6000 FC20 		jra .L222
+ 1364 0e84 2040      		move.l %d0,%a0
+ 1365 0e86 1210      		move.b (%a0),%d1
+ 1366 0e88 0C01 000A 		cmp.b #10,%d1
+ 1367 0e8c 6708      		jeq .L223
+ 1368 0e8e 0C01 003A 		cmp.b #58,%d1
+ 1369 0e92 6600 FDA6 		jne .L206
  1370               	.L223:
- 1371 0ebe 0C02 0005 		cmp.b #5,%d2
- 1372 0ec2 6672      		jne .L228
- 1373 0ec4 2279 0000 		move.l txtpos,%a1
- 1373      0000 
- 1374 0eca 7000      		moveq #0,%d0
- 1375 0ecc 1029 FFFF 		move.b -1(%a1),%d0
- 1376 0ed0 1828 0001 		move.b 1(%a0),%d4
- 1377 0ed4 4884      		ext.w %d4
- 1378 0ed6 3244      		move.w %d4,%a1
- 1379 0ed8 B3C0      		cmp.l %d0,%a1
- 1380 0eda 665A      		jne .L228
- 1381 0edc 4A01      		tst.b %d1
- 1382 0ede 6706      		jeq .L229
- 1383 0ee0 23C8 0000 		move.l %a0,tempsp
- 1383      0000 
- 1384               	.L229:
- 1385 0ee6 2240      		move.l %d0,%a1
- 1386 0ee8 D3FC 7FFF 		add.l #2147483583,%a1
- 1386      FFBF 
- 1387 0eee D3C9      		add.l %a1,%a1
- 1388 0ef0 D3F9 0000 		add.l variables_begin,%a1
- 1388      0000 
- 1389 0ef6 3011      		move.w (%a1),%d0
- 1390 0ef8 D068 0004 		add.w 4(%a0),%d0
- 1391 0efc 3280      		move.w %d0,(%a1)
- 1392 0efe 3228 0004 		move.w 4(%a0),%d1
- 1393 0f02 6F1A      		jle .L230
- 1394 0f04 B068 0002 		cmp.w 2(%a0),%d0
- 1395 0f08 6E1E      		jgt .L232
- 1396               	.L231:
- 1397 0f0a 23E8 000A 		move.l 10(%a0),txtpos
- 1397      0000 0000 
- 1398 0f12 23E8 0006 		move.l 6(%a0),current_line
- 1398      0000 0000 
- 1399 0f1a 6000 FB4E 		jra .L205
- 1400               	.L230:
- 1401 0f1e 4A41      		tst.w %d1
- 1402 0f20 6706      		jeq .L232
- 1403 0f22 B068 0002 		cmp.w 2(%a0),%d0
- 1404 0f26 6CE2      		jge .L231
- 1405               	.L232:
- 1406 0f28 41E8 000E 		lea (14,%a0),%a0
- 1407 0f2c 23C8 0000 		move.l %a0,sp
+ 1371 0e96 4A39 0000 		tst.b expression_error.l
+ 1371      0000 
+ 1372 0e9c 6600 FCC8 		jne .L160
+ 1373 0ea0 0C01 000A 		cmp.b #10,%d1
+ 1374 0ea4 6600 FCC0 		jne .L160
+ 1375 0ea8 2079 0000 		move.l sp,%a0
+ 1375      0000 
+ 1376 0eae 43E8 000E 		lea (14,%a0),%a1
+ 1377 0eb2 B3F9 0000 		cmp.l stack_limit.l,%a1
+ 1377      0000 
+ 1378 0eb8 6500 FB82 		jcs .L224
+ 1379 0ebc 43E8 FFF2 		lea (-14,%a0),%a1
+ 1380 0ec0 23C9 0000 		move.l %a1,sp
+ 1380      0000 
+ 1381 0ec6 7200      		moveq #0,%d1
+ 1382 0ec8 1202      		move.b %d2,%d1
+ 1383 0eca 0681 7FFF 		add.l #2147483583,%d1
+ 1383      FFBF 
+ 1384 0ed0 D281      		add.l %d1,%d1
+ 1385 0ed2 2279 0000 		move.l variables_begin,%a1
+ 1385      0000 
+ 1386 0ed8 3385 1800 		move.w %d5,(%a1,%d1.l)
+ 1387 0edc 117C 0046 		move.b #70,-14(%a0)
+ 1387      FFF2 
+ 1388 0ee2 1142 FFF3 		move.b %d2,-13(%a0)
+ 1389 0ee6 314C FFF4 		move.w %a4,-12(%a0)
+ 1390 0eea 3144 FFF6 		move.w %d4,-10(%a0)
+ 1391 0eee 2140 FFFC 		move.l %d0,-4(%a0)
+ 1392 0ef2 2179 0000 		move.l current_line,-8(%a0)
+ 1392      0000 FFF8 
+ 1393 0efa 6000 FBE4 		jra .L208
+ 1394               	.L255:
+ 1395 0efe 7801      		moveq #1,%d4
+ 1396 0f00 6000 FF76 		jra .L222
+ 1397               	.L236:
+ 1398 0f04 1010      		move.b (%a0),%d0
+ 1399 0f06 0C00 0046 		cmp.b #70,%d0
+ 1400 0f0a 6740      		jeq .L226
+ 1401 0f0c 0C00 0047 		cmp.b #71,%d0
+ 1402 0f10 6600 F8E6 		jne .L227
+ 1403 0f14 0C02 000A 		cmp.b #10,%d2
+ 1404 0f18 6628      		jne .L228
+ 1405 0f1a 4A01      		tst.b %d1
+ 1406 0f1c 6706      		jeq .L229
+ 1407 0f1e 23C8 0000 		move.l %a0,tempsp
  1407      0000 
- 1408 0f32 6000 FB36 		jra .L205
- 1409               	.L228:
- 1410 0f36 41E8 000E 		lea (14,%a0),%a0
- 1411 0f3a 6000 FF7C 		jra .L227
- 1412               	.L184:
- 1413 0f3e 2039 0000 		move.l txtpos,%d0
+ 1408               	.L229:
+ 1409 0f24 23E8 0002 		move.l 2(%a0),current_line
+ 1409      0000 0000 
+ 1410 0f2c 23E8 0006 		move.l 6(%a0),txtpos
+ 1410      0000 0000 
+ 1411 0f34 700A      		moveq #10,%d0
+ 1412 0f36 D083      		add.l %d3,%d0
+ 1413 0f38 23C0 0000 		move.l %d0,sp
  1413      0000 
- 1414 0f44 2040      		move.l %d0,%a0
- 1415 0f46 1410      		move.b (%a0),%d2
- 1416 0f48 1202      		move.b %d2,%d1
- 1417 0f4a 0601 FFBF 		add.b #-65,%d1
- 1418 0f4e 0C01 0019 		cmp.b #25,%d1
- 1419 0f52 6200 FB9C 		jhi .L157
- 1420 0f56 2C79 0000 		move.l variables_begin,%a6
- 1420      0000 
- 1421 0f5c 5280      		addq.l #1,%d0
- 1422 0f5e 23C0 0000 		move.l %d0,txtpos
- 1422      0000 
- 1423 0f64 4BFA F09A 		lea ignore_blanks,%a5
- 1424 0f68 4E95      		jsr (%a5)
- 1425 0f6a 2039 0000 		move.l txtpos,%d0
- 1425      0000 
- 1426 0f70 2240      		move.l %d0,%a1
- 1427 0f72 0C11 003D 		cmp.b #61,(%a1)
- 1428 0f76 6600 FC4C 		jne .L203
- 1429 0f7a 5280      		addq.l #1,%d0
- 1430 0f7c 23C0 0000 		move.l %d0,txtpos
- 1430      0000 
- 1431 0f82 4E95      		jsr (%a5)
- 1432 0f84 4239 0000 		clr.b expression_error
- 1432      0000 
- 1433 0f8a 4EBA F4D0 		jsr expression
- 1434 0f8e 4A39 0000 		tst.b expression_error.l
- 1434      0000 
- 1435 0f94 6600 FC2E 		jne .L203
- 1436 0f98 2079 0000 		move.l txtpos,%a0
- 1436      0000 
- 1437 0f9e 1210      		move.b (%a0),%d1
- 1438 0fa0 0C01 000A 		cmp.b #10,%d1
- 1439 0fa4 6708      		jeq .L235
- 1440 0fa6 0C01 003A 		cmp.b #58,%d1
- 1441 0faa 6600 FC18 		jne .L203
- 1442               	.L235:
- 1443 0fae 0282 0000 		and.l #255,%d2
- 1443      00FF 
- 1444 0fb4 0682 7FFF 		add.l #2147483583,%d2
- 1444      FFBF 
- 1445 0fba D482      		add.l %d2,%d2
- 1446 0fbc 3D80 2800 		move.w %d0,(%a6,%d2.l)
- 1447 0fc0 6000 FAA8 		jra .L205
- 1448               	.L324:
- 1449 0fc4 0C00 000A 		cmp.b #10,%d0
- 1450 0fc8 6700 FA34 		jeq .L183
- 1451 0fcc 4BFA F032 		lea ignore_blanks,%a5
- 1452 0fd0 4DFA F48A 		lea expression,%a6
- 1453               	.L246:
- 1454 0fd4 4E95      		jsr (%a5)
- 1455 0fd6 2079 0000 		move.l txtpos,%a0
- 1455      0000 
- 1456 0fdc 1610      		move.b (%a0),%d3
- 1457 0fde 0C03 0022 		cmp.b #34,%d3
- 1458 0fe2 6706      		jeq .L238
- 1459 0fe4 0C03 0027 		cmp.b #39,%d3
- 1460 0fe8 6640      		jne .L239
- 1461               	.L238:
- 1462 0fea 5288      		addq.l #1,%a0
- 1463 0fec 23C8 0000 		move.l %a0,txtpos
+ 1414 0f3e 6000 FBA0 		jra .L208
+ 1415               	.L228:
+ 1416 0f42 41E8 000A 		lea (10,%a0),%a0
+ 1417               	.L230:
+ 1418 0f46 7201      		moveq #1,%d1
+ 1419 0f48 6000 FC08 		jra .L225
+ 1420               	.L226:
+ 1421 0f4c 0C02 0005 		cmp.b #5,%d2
+ 1422 0f50 6672      		jne .L231
+ 1423 0f52 2279 0000 		move.l txtpos,%a1
+ 1423      0000 
+ 1424 0f58 7000      		moveq #0,%d0
+ 1425 0f5a 1029 FFFF 		move.b -1(%a1),%d0
+ 1426 0f5e 1828 0001 		move.b 1(%a0),%d4
+ 1427 0f62 4884      		ext.w %d4
+ 1428 0f64 3244      		move.w %d4,%a1
+ 1429 0f66 B3C0      		cmp.l %d0,%a1
+ 1430 0f68 665A      		jne .L231
+ 1431 0f6a 4A01      		tst.b %d1
+ 1432 0f6c 6706      		jeq .L232
+ 1433 0f6e 23C8 0000 		move.l %a0,tempsp
+ 1433      0000 
+ 1434               	.L232:
+ 1435 0f74 2240      		move.l %d0,%a1
+ 1436 0f76 D3FC 7FFF 		add.l #2147483583,%a1
+ 1436      FFBF 
+ 1437 0f7c D3C9      		add.l %a1,%a1
+ 1438 0f7e D3F9 0000 		add.l variables_begin,%a1
+ 1438      0000 
+ 1439 0f84 3011      		move.w (%a1),%d0
+ 1440 0f86 D068 0004 		add.w 4(%a0),%d0
+ 1441 0f8a 3280      		move.w %d0,(%a1)
+ 1442 0f8c 3228 0004 		move.w 4(%a0),%d1
+ 1443 0f90 6F1A      		jle .L233
+ 1444 0f92 B068 0002 		cmp.w 2(%a0),%d0
+ 1445 0f96 6E1E      		jgt .L235
+ 1446               	.L234:
+ 1447 0f98 23E8 000A 		move.l 10(%a0),txtpos
+ 1447      0000 0000 
+ 1448 0fa0 23E8 0006 		move.l 6(%a0),current_line
+ 1448      0000 0000 
+ 1449 0fa8 6000 FB36 		jra .L208
+ 1450               	.L233:
+ 1451 0fac 4A41      		tst.w %d1
+ 1452 0fae 6706      		jeq .L235
+ 1453 0fb0 B068 0002 		cmp.w 2(%a0),%d0
+ 1454 0fb4 6CE2      		jge .L234
+ 1455               	.L235:
+ 1456 0fb6 41E8 000E 		lea (14,%a0),%a0
+ 1457 0fba 23C8 0000 		move.l %a0,sp
+ 1457      0000 
+ 1458 0fc0 6000 FB1E 		jra .L208
+ 1459               	.L231:
+ 1460 0fc4 41E8 000E 		lea (14,%a0),%a0
+ 1461 0fc8 6000 FF7C 		jra .L230
+ 1462               	.L187:
+ 1463 0fcc 2039 0000 		move.l txtpos,%d0
  1463      0000 
- 1464 0ff2 2248      		move.l %a0,%a1
- 1465               	.L240:
- 1466 0ff4 1011      		move.b (%a1),%d0
- 1467 0ff6 B003      		cmp.b %d3,%d0
- 1468 0ff8 6628      		jne .L241
- 1469               	.L242:
- 1470 0ffa 1010      		move.b (%a0),%d0
- 1471 0ffc B003      		cmp.b %d3,%d0
- 1472 0ffe 6658      		jne .L243
- 1473 1000 5288      		addq.l #1,%a0
- 1474 1002 23C8 0000 		move.l %a0,txtpos
- 1474      0000 
- 1475               	.L244:
- 1476 1008 2239 0000 		move.l txtpos,%d1
- 1476      0000 
- 1477 100e 2041      		move.l %d1,%a0
- 1478 1010 1010      		move.b (%a0),%d0
- 1479 1012 0C00 002C 		cmp.b #44,%d0
- 1480 1016 6660      		jne .L245
- 1481 1018 5281      		addq.l #1,%d1
- 1482 101a 23C1 0000 		move.l %d1,txtpos
+ 1464 0fd2 2040      		move.l %d0,%a0
+ 1465 0fd4 1410      		move.b (%a0),%d2
+ 1466 0fd6 1202      		move.b %d2,%d1
+ 1467 0fd8 0601 FFBF 		add.b #-65,%d1
+ 1468 0fdc 0C01 0019 		cmp.b #25,%d1
+ 1469 0fe0 6200 FB84 		jhi .L160
+ 1470 0fe4 2639 0000 		move.l variables_begin,%d3
+ 1470      0000 
+ 1471 0fea 5280      		addq.l #1,%d0
+ 1472 0fec 23C0 0000 		move.l %d0,txtpos
+ 1472      0000 
+ 1473 0ff2 4DFA F00C 		lea ignore_blanks,%a6
+ 1474 0ff6 4E96      		jsr (%a6)
+ 1475 0ff8 2039 0000 		move.l txtpos,%d0
+ 1475      0000 
+ 1476 0ffe 2240      		move.l %d0,%a1
+ 1477 1000 0C11 003D 		cmp.b #61,(%a1)
+ 1478 1004 6600 FC34 		jne .L206
+ 1479 1008 5280      		addq.l #1,%d0
+ 1480 100a 23C0 0000 		move.l %d0,txtpos
+ 1480      0000 
+ 1481 1010 4E96      		jsr (%a6)
+ 1482 1012 4239 0000 		clr.b expression_error
  1482      0000 
- 1483 1020 60B2      		jra .L246
- 1484               	.L241:
- 1485 1022 5289      		addq.l #1,%a1
- 1486 1024 0C00 000A 		cmp.b #10,%d0
- 1487 1028 66CA      		jne .L240
- 1488               	.L239:
- 1489 102a 1010      		move.b (%a0),%d0
- 1490 102c 0C00 0022 		cmp.b #34,%d0
- 1491 1030 6700 FB92 		jeq .L203
- 1492 1034 0C00 0027 		cmp.b #39,%d0
- 1493 1038 6700 FB8A 		jeq .L203
- 1494 103c 4239 0000 		clr.b expression_error
- 1494      0000 
- 1495 1042 4E96      		jsr (%a6)
- 1496 1044 4A39 0000 		tst.b expression_error.l
- 1496      0000 
- 1497 104a 6600 FB78 		jne .L203
- 1498 104e 3240      		move.w %d0,%a1
- 1499 1050 2F09      		move.l %a1,-(%sp)
- 1500 1052 4E93      		jsr (%a3)
- 1501 1054 588F      		addq.l #4,%sp
- 1502 1056 60B0      		jra .L244
- 1503               	.L243:
- 1504 1058 0280 0000 		and.l #255,%d0
- 1504      00FF 
- 1505 105e 2F00      		move.l %d0,-(%sp)
- 1506 1060 41FA F0FE 		lea outchar,%a0
- 1507 1064 4E90      		jsr (%a0)
- 1508 1066 2079 0000 		move.l txtpos,%a0
- 1508      0000 
- 1509 106c 5288      		addq.l #1,%a0
- 1510 106e 23C8 0000 		move.l %a0,txtpos
- 1510      0000 
- 1511 1074 588F      		addq.l #4,%sp
- 1512 1076 6082      		jra .L242
- 1513               	.L245:
- 1514 1078 0C00 003B 		cmp.b #59,%d0
- 1515 107c 661E      		jne .L247
- 1516 107e 1028 0001 		move.b 1(%a0),%d0
- 1517 1082 0C00 000A 		cmp.b #10,%d0
- 1518 1086 6708      		jeq .L248
- 1519 1088 0C00 003A 		cmp.b #58,%d0
- 1520 108c 6600 FB36 		jne .L203
- 1521               	.L248:
- 1522 1090 5281      		addq.l #1,%d1
- 1523 1092 23C1 0000 		move.l %d1,txtpos
- 1523      0000 
- 1524 1098 6000 F9D0 		jra .L205
+ 1483 1018 4EBA F454 		jsr expression
+ 1484 101c 4A39 0000 		tst.b expression_error.l
+ 1484      0000 
+ 1485 1022 6600 FC16 		jne .L206
+ 1486 1026 2079 0000 		move.l txtpos,%a0
+ 1486      0000 
+ 1487 102c 1210      		move.b (%a0),%d1
+ 1488 102e 0C01 000A 		cmp.b #10,%d1
+ 1489 1032 6708      		jeq .L238
+ 1490 1034 0C01 003A 		cmp.b #58,%d1
+ 1491 1038 6600 FC00 		jne .L206
+ 1492               	.L238:
+ 1493 103c 0282 0000 		and.l #255,%d2
+ 1493      00FF 
+ 1494 1042 0682 7FFF 		add.l #2147483583,%d2
+ 1494      FFBF 
+ 1495 1048 D482      		add.l %d2,%d2
+ 1496 104a 2842      		move.l %d2,%a4
+ 1497 104c 3980 3800 		move.w %d0,(%a4,%d3.l)
+ 1498 1050 6000 FA8E 		jra .L208
+ 1499               	.L329:
+ 1500 1054 0C00 000A 		cmp.b #10,%d0
+ 1501 1058 6700 FA18 		jeq .L186
+ 1502 105c 4DFA EFA2 		lea ignore_blanks,%a6
+ 1503               	.L249:
+ 1504 1060 4E96      		jsr (%a6)
+ 1505 1062 2079 0000 		move.l txtpos,%a0
+ 1505      0000 
+ 1506 1068 1810      		move.b (%a0),%d4
+ 1507 106a 0C04 0022 		cmp.b #34,%d4
+ 1508 106e 6706      		jeq .L241
+ 1509 1070 0C04 0027 		cmp.b #39,%d4
+ 1510 1074 6640      		jne .L242
+ 1511               	.L241:
+ 1512 1076 5288      		addq.l #1,%a0
+ 1513 1078 23C8 0000 		move.l %a0,txtpos
+ 1513      0000 
+ 1514 107e 2248      		move.l %a0,%a1
+ 1515               	.L243:
+ 1516 1080 1011      		move.b (%a1),%d0
+ 1517 1082 B004      		cmp.b %d4,%d0
+ 1518 1084 6628      		jne .L244
+ 1519               	.L245:
+ 1520 1086 1010      		move.b (%a0),%d0
+ 1521 1088 B004      		cmp.b %d4,%d0
+ 1522 108a 665C      		jne .L246
+ 1523 108c 5288      		addq.l #1,%a0
+ 1524 108e 23C8 0000 		move.l %a0,txtpos
+ 1524      0000 
  1525               	.L247:
- 1526 109c 0C00 000A 		cmp.b #10,%d0
- 1527 10a0 6708      		jeq .L249
- 1528 10a2 0C00 003A 		cmp.b #58,%d0
- 1529 10a6 6600 FB1C 		jne .L203
- 1530               	.L249:
- 1531 10aa 4EBA F0D0 		jsr line_terminator
- 1532 10ae 6000 F9BA 		jra .L205
- 1533               	.L186:
- 1534 10b2 23F9 0000 		move.l program_start,program_end
- 1534      0000 0000 
- 1534      0000 
- 1535               	.L175:
- 1536               	.L176:
- 1537 10bc 4879 0000 		pea unimplimentedmsg
- 1537      0000 
- 1538 10c2 6000 F6DE 		jra .L328
- 1539               	.L139:
- 1540 10c6 4CDF 7C1C 		movem.l (%sp)+,#31772
- 1541 10ca 588F      		addq.l #4,%sp
- 1542 10cc 4E75      		rts
- 1544               		.align	2
- 1545               		.globl	filenameWord
- 1547               	filenameWord:
- 1548 10ce 48E7 3038 		movem.l #12344,-(%sp)
- 1549 10d2 4239 0000 		clr.b expression_error
- 1549      0000 
- 1550 10d8 2479 0000 		move.l txtpos,%a2
- 1550      0000 
- 1551 10de 97CB      		sub.l %a3,%a3
- 1552 10e0 49FA F0B2 		lea isValidFnChar,%a4
- 1553               	.L331:
- 1554 10e4 240A      		move.l %a2,%d2
- 1555 10e6 161A      		move.b (%a2)+,%d3
- 1556 10e8 1003      		move.b %d3,%d0
- 1557 10ea 4880      		ext.w %d0
- 1558 10ec 3040      		move.w %d0,%a0
- 1559 10ee 2F08      		move.l %a0,-(%sp)
- 1560 10f0 4E94      		jsr (%a4)
- 1561 10f2 588F      		addq.l #4,%sp
- 1562 10f4 4A80      		tst.l %d0
- 1563 10f6 6720      		jeq .L340
- 1564 10f8 300B      		move.w %a3,%d0
- 1565 10fa 4A00      		tst.b %d0
- 1566 10fc 6706      		jeq .L332
- 1567 10fe 23C2 0000 		move.l %d2,txtpos
- 1567      0000 
- 1568               	.L332:
- 1569 1104 4A03      		tst.b %d3
- 1570 1106 6616      		jne .L333
- 1571               	.L338:
- 1572 1108 13FC 0001 		move.b #1,expression_error
- 1572      0000 0000 
- 1573               	.L330:
- 1574 1110 2002      		move.l %d2,%d0
- 1575 1112 4CDF 1C0C 		movem.l (%sp)+,#7180
- 1576 1116 4E75      		rts
- 1577               	.L340:
- 1578 1118 367C 0001 		move.w #1,%a3
- 1579 111c 60C6      		jra .L331
- 1580               	.L333:
- 1581 111e 2002      		move.l %d2,%d0
- 1582 1120 5280      		addq.l #1,%d0
- 1583 1122 23C0 0000 		move.l %d0,txtpos
- 1583      0000 
- 1584 1128 4203      		clr.b %d3
- 1585               	.L335:
- 1586 112a 264A      		move.l %a2,%a3
- 1587 112c 101A      		move.b (%a2)+,%d0
- 1588 112e 4880      		ext.w %d0
- 1589 1130 3040      		move.w %d0,%a0
- 1590 1132 2F08      		move.l %a0,-(%sp)
- 1591 1134 4E94      		jsr (%a4)
- 1592 1136 588F      		addq.l #4,%sp
- 1593 1138 4A80      		tst.l %d0
- 1594 113a 6618      		jne .L341
- 1595 113c 4A03      		tst.b %d3
- 1596 113e 6706      		jeq .L336
- 1597 1140 23CB 0000 		move.l %a3,txtpos
- 1597      0000 
- 1598               	.L336:
- 1599 1146 B48B      		cmp.l %a3,%d2
- 1600 1148 67C6      		jeq .L330
- 1601 114a 4213      		clr.b (%a3)
- 1602 114c 2042      		move.l %d2,%a0
- 1603 114e 4A10      		tst.b (%a0)
- 1604 1150 67B6      		jeq .L338
- 1605 1152 60BC      		jra .L330
- 1606               	.L341:
- 1607 1154 7601      		moveq #1,%d3
- 1608 1156 60D2      		jra .L335
- 1610               		.align	2
- 1611               		.globl	setup
- 1613               	setup:
- 1614 1158 4E75      		rts
- 1616               		.data
- 1617               		.align	2
- 1620               	rand_seed:
- 1621 0000 0000 0001 		.long	1
- 1622               		.section	.rodata
- 1625               	backspacemsg:
- 1626 0000 0820 0800 		.string	"\b \b"
- 1629               	unimplimentedmsg:
- 1630 0004 556E 696D 		.string	"Unimplemented"
- 1630      706C 656D 
- 1630      656E 7465 
- 1630      6400 
- 1633               	memorymsg:
- 1634 0012 2062 7974 		.string	" bytes free."
- 1634      6573 2066 
- 1634      7265 652E 
- 1634      00
- 1637               	sorrymsg:
- 1638 001f 536F 7272 		.string	"Sorry!"
- 1638      7921 00
- 1641               	howmsg:
- 1642 0026 486F 773F 		.string	"How?"
- 1642      00
- 1645               	whatmsg:
- 1646 002b 5768 6174 		.string	"What? "
- 1646      3F20 00
- 1649               	okmsg:
- 1650 0032 4F4B 00   		.string	"OK"
- 1651               		.local	linenum
- 1652               		.comm	linenum,2,2
- 1653               		.local	table_index
- 1654               		.comm	table_index,1,1
- 1655               		.local	sp
- 1656               		.comm	sp,4,2
- 1657               		.local	current_line
- 1658               		.comm	current_line,4,2
- 1659               		.local	variables_begin
- 1660               		.comm	variables_begin,4,2
- 1661               		.local	program_end
- 1662               		.comm	program_end,4,2
- 1663               		.local	program_start
- 1664               		.comm	program_start,4,2
- 1665               		.local	stack_limit
- 1666               		.comm	stack_limit,4,2
- 1669               	relop_tab:
- 1670 0035 3EBD 3CBE 		.base64	"Pr08vr69PL28Ib0A"
- 1670      BEBD 3CBD 
- 1670      BC21 BD00 
- 1673               	step_tab:
- 1674 0041 5354 45D0 		.string	"STE\320"
- 1674      00
- 1677               	to_tab:
- 1678 0046 54CF 00   		.base64	"VM8A"
- 1681               	func_tab:
- 1682 0049 5045 45CB 		.base64	"UEVFy0FC00FSRUHERFJFQcRSTsQA"
- 1682      4142 D341 
- 1682      5245 41C4 
- 1682      4452 4541 
- 1682      C452 4EC4 
- 1685               	keywords:
- 1686 005e 4C49 53D4 		.base64	"TElT1ExPQcRORddSVc5TQVbFTkVY1ExF1EnGR09Uz0dPU1XCUkVUVVLOUkXNRk/SSU5QVdRQUklO1FBPS8VTVE/QQ
- 1686      4C4F 41C4 
- 1686      4E45 D752 
- 1686      55CE 5341 
- 1686      56C5 4E45 
- 1687               		.local	tempsp
- 1688               		.comm	tempsp,4,2
- 1689               		.local	expression_error
- 1690               		.comm	expression_error,1,1
- 1691               		.local	tmptxtpos
- 1692               		.comm	tmptxtpos,4,2
- 1693               		.local	list_line
- 1694               		.comm	list_line,4,2
- 1695               		.local	txtpos
- 1696               		.comm	txtpos,4,2
- 1697               		.local	program
- 1698               		.comm	program,65536,1
- 1699               		.local	triggerRun
- 1700               		.comm	triggerRun,4,2
- 1701               		.globl	inhibitOutput
- 1702               		.section	.bss
- 1703               		.align	2
- 1706               	inhibitOutput:
- 1707 0000 0000 0000 		.zero	4
- 1708               		.globl	eliminateCompileErrors
- 1709               		.data
- 1712               	eliminateCompileErrors:
- 1713 0004 01        		.byte	1
- 1714               		.globl	__udivsi3
- 1715               		.globl	__umodsi3
- 1716               		.globl	__divsi3
- 1717               		.globl	__modsi3
- 1718               		.globl	__mulsi3
- 1719               		.ident	"GCC: (GNU) 15.1.0"
+ 1526 1094 2239 0000 		move.l txtpos,%d1
+ 1526      0000 
+ 1527 109a 2841      		move.l %d1,%a4
+ 1528 109c 1014      		move.b (%a4),%d0
+ 1529 109e 0C00 002C 		cmp.b #44,%d0
+ 1530 10a2 6666      		jne .L248
+ 1531 10a4 5281      		addq.l #1,%d1
+ 1532 10a6 23C1 0000 		move.l %d1,txtpos
+ 1532      0000 
+ 1533 10ac 60B2      		jra .L249
+ 1534               	.L244:
+ 1535 10ae 5289      		addq.l #1,%a1
+ 1536 10b0 0C00 000A 		cmp.b #10,%d0
+ 1537 10b4 66CA      		jne .L243
+ 1538               	.L242:
+ 1539 10b6 1010      		move.b (%a0),%d0
+ 1540 10b8 0C00 0022 		cmp.b #34,%d0
+ 1541 10bc 6700 FB7C 		jeq .L206
+ 1542 10c0 0C00 0027 		cmp.b #39,%d0
+ 1543 10c4 6700 FB74 		jeq .L206
+ 1544 10c8 4239 0000 		clr.b expression_error
+ 1544      0000 
+ 1545 10ce 4EBA F39E 		jsr expression
+ 1546 10d2 4A39 0000 		tst.b expression_error.l
+ 1546      0000 
+ 1547 10d8 6600 FB60 		jne .L206
+ 1548 10dc 3040      		move.w %d0,%a0
+ 1549 10de 2F08      		move.l %a0,-(%sp)
+ 1550 10e0 2246      		move.l %d6,%a1
+ 1551 10e2 4E91      		jsr (%a1)
+ 1552 10e4 588F      		addq.l #4,%sp
+ 1553 10e6 60AC      		jra .L247
+ 1554               	.L246:
+ 1555 10e8 0280 0000 		and.l #255,%d0
+ 1555      00FF 
+ 1556 10ee 2F00      		move.l %d0,-(%sp)
+ 1557 10f0 43FA F06E 		lea outchar,%a1
+ 1558 10f4 4E91      		jsr (%a1)
+ 1559 10f6 2079 0000 		move.l txtpos,%a0
+ 1559      0000 
+ 1560 10fc 5288      		addq.l #1,%a0
+ 1561 10fe 23C8 0000 		move.l %a0,txtpos
+ 1561      0000 
+ 1562 1104 588F      		addq.l #4,%sp
+ 1563 1106 6000 FF7E 		jra .L245
+ 1564               	.L248:
+ 1565 110a 0C00 003B 		cmp.b #59,%d0
+ 1566 110e 661E      		jne .L250
+ 1567 1110 102C 0001 		move.b 1(%a4),%d0
+ 1568 1114 0C00 000A 		cmp.b #10,%d0
+ 1569 1118 6708      		jeq .L251
+ 1570 111a 0C00 003A 		cmp.b #58,%d0
+ 1571 111e 6600 FB1A 		jne .L206
+ 1572               	.L251:
+ 1573 1122 5281      		addq.l #1,%d1
+ 1574 1124 23C1 0000 		move.l %d1,txtpos
+ 1574      0000 
+ 1575 112a 6000 F9B4 		jra .L208
+ 1576               	.L250:
+ 1577 112e 0C00 000A 		cmp.b #10,%d0
+ 1578 1132 6708      		jeq .L252
+ 1579 1134 0C00 003A 		cmp.b #58,%d0
+ 1580 1138 6600 FB00 		jne .L206
+ 1581               	.L252:
+ 1582 113c 4EBA F03E 		jsr line_terminator
+ 1583 1140 6000 F99E 		jra .L208
+ 1584               	.L189:
+ 1585 1144 23F9 0000 		move.l program_start,program_end
+ 1585      0000 0000 
+ 1585      0000 
+ 1586               	.L178:
+ 1587               	.L179:
+ 1588 114e 4879 0000 		pea unimplimentedmsg
+ 1588      0000 
+ 1589 1154 6000 F69A 		jra .L333
+ 1590               	.L142:
+ 1591 1158 4CDF 7C7C 		movem.l (%sp)+,#31868
+ 1592 115c 588F      		addq.l #4,%sp
+ 1593 115e 4E75      		rts
+ 1595               		.align	2
+ 1596               		.globl	filenameWord
+ 1598               	filenameWord:
+ 1599 1160 48E7 3038 		movem.l #12344,-(%sp)
+ 1600 1164 4239 0000 		clr.b expression_error
+ 1600      0000 
+ 1601 116a 2479 0000 		move.l txtpos,%a2
+ 1601      0000 
+ 1602 1170 97CB      		sub.l %a3,%a3
+ 1603 1172 49FA F020 		lea isValidFnChar,%a4
+ 1604               	.L336:
+ 1605 1176 240A      		move.l %a2,%d2
+ 1606 1178 161A      		move.b (%a2)+,%d3
+ 1607 117a 1003      		move.b %d3,%d0
+ 1608 117c 4880      		ext.w %d0
+ 1609 117e 3040      		move.w %d0,%a0
+ 1610 1180 2F08      		move.l %a0,-(%sp)
+ 1611 1182 4E94      		jsr (%a4)
+ 1612 1184 588F      		addq.l #4,%sp
+ 1613 1186 4A80      		tst.l %d0
+ 1614 1188 6720      		jeq .L345
+ 1615 118a 300B      		move.w %a3,%d0
+ 1616 118c 4A00      		tst.b %d0
+ 1617 118e 6706      		jeq .L337
+ 1618 1190 23C2 0000 		move.l %d2,txtpos
+ 1618      0000 
+ 1619               	.L337:
+ 1620 1196 4A03      		tst.b %d3
+ 1621 1198 6616      		jne .L338
+ 1622               	.L343:
+ 1623 119a 13FC 0001 		move.b #1,expression_error
+ 1623      0000 0000 
+ 1624               	.L335:
+ 1625 11a2 2002      		move.l %d2,%d0
+ 1626 11a4 4CDF 1C0C 		movem.l (%sp)+,#7180
+ 1627 11a8 4E75      		rts
+ 1628               	.L345:
+ 1629 11aa 367C 0001 		move.w #1,%a3
+ 1630 11ae 60C6      		jra .L336
+ 1631               	.L338:
+ 1632 11b0 2002      		move.l %d2,%d0
+ 1633 11b2 5280      		addq.l #1,%d0
+ 1634 11b4 23C0 0000 		move.l %d0,txtpos
+ 1634      0000 
+ 1635 11ba 4203      		clr.b %d3
+ 1636               	.L340:
+ 1637 11bc 264A      		move.l %a2,%a3
+ 1638 11be 101A      		move.b (%a2)+,%d0
+ 1639 11c0 4880      		ext.w %d0
+ 1640 11c2 3040      		move.w %d0,%a0
+ 1641 11c4 2F08      		move.l %a0,-(%sp)
+ 1642 11c6 4E94      		jsr (%a4)
+ 1643 11c8 588F      		addq.l #4,%sp
+ 1644 11ca 4A80      		tst.l %d0
+ 1645 11cc 6618      		jne .L346
+ 1646 11ce 4A03      		tst.b %d3
+ 1647 11d0 6706      		jeq .L341
+ 1648 11d2 23CB 0000 		move.l %a3,txtpos
+ 1648      0000 
+ 1649               	.L341:
+ 1650 11d8 B48B      		cmp.l %a3,%d2
+ 1651 11da 67C6      		jeq .L335
+ 1652 11dc 4213      		clr.b (%a3)
+ 1653 11de 2042      		move.l %d2,%a0
+ 1654 11e0 4A10      		tst.b (%a0)
+ 1655 11e2 67B6      		jeq .L343
+ 1656 11e4 60BC      		jra .L335
+ 1657               	.L346:
+ 1658 11e6 7601      		moveq #1,%d3
+ 1659 11e8 60D2      		jra .L340
+ 1661               		.align	2
+ 1662               		.globl	setup
+ 1664               	setup:
+ 1665 11ea 4E75      		rts
+ 1667               		.data
+ 1668               		.align	2
+ 1671               	rand_seed:
+ 1672 0000 0000 0001 		.long	1
+ 1673               		.section	.rodata
+ 1676               	backspacemsg:
+ 1677 0000 0820 0800 		.string	"\b \b"
+ 1680               	unimplimentedmsg:
+ 1681 0004 556E 696D 		.string	"Unimplemented"
+ 1681      706C 656D 
+ 1681      656E 7465 
+ 1681      6400 
+ 1684               	memorymsg:
+ 1685 0012 2062 7974 		.string	" bytes free."
+ 1685      6573 2066 
+ 1685      7265 652E 
+ 1685      00
+ 1688               	sorrymsg:
+ 1689 001f 536F 7272 		.string	"Sorry!"
+ 1689      7921 00
+ 1692               	howmsg:
+ 1693 0026 486F 773F 		.string	"How?"
+ 1693      00
+ 1696               	whatmsg:
+ 1697 002b 5768 6174 		.string	"What? "
+ 1697      3F20 00
+ 1700               	okmsg:
+ 1701 0032 4F4B 00   		.string	"OK"
+ 1702               		.local	linenum
+ 1703               		.comm	linenum,2,2
+ 1704               		.local	table_index
+ 1705               		.comm	table_index,1,1
+ 1706               		.local	sp
+ 1707               		.comm	sp,4,2
+ 1708               		.local	current_line
+ 1709               		.comm	current_line,4,2
+ 1710               		.local	variables_begin
+ 1711               		.comm	variables_begin,4,2
+ 1712               		.local	program_end
+ 1713               		.comm	program_end,4,2
+ 1714               		.local	program_start
+ 1715               		.comm	program_start,4,2
+ 1716               		.local	stack_limit
+ 1717               		.comm	stack_limit,4,2
+ 1720               	relop_tab:
+ 1721 0035 3EBD 3CBE 		.base64	"Pr08vr69PL28Ib0A"
+ 1721      BEBD 3CBD 
+ 1721      BC21 BD00 
+ 1724               	step_tab:
+ 1725 0041 5354 45D0 		.string	"STE\320"
+ 1725      00
+ 1728               	to_tab:
+ 1729 0046 54CF 00   		.base64	"VM8A"
+ 1732               	func_tab:
+ 1733 0049 5045 45CB 		.base64	"UEVFy0FC00FSRUHERFJFQcRSTsQA"
+ 1733      4142 D341 
+ 1733      5245 41C4 
+ 1733      4452 4541 
+ 1733      C452 4EC4 
+ 1736               	keywords:
+ 1737 005e 4C49 53D4 		.base64	"TElT1ExPQcRORddSVc5TQVbFTkVY1ExF1EnGR09Uz0dPU1XCUkVUVVLOUkXNRk/SSU5QVdRQUklO1FBPS8VTVE/QQ
+ 1737      4C4F 41C4 
+ 1737      4E45 D752 
+ 1737      55CE 5341 
+ 1737      56C5 4E45 
+ 1738               		.local	tempsp
+ 1739               		.comm	tempsp,4,2
+ 1740               		.local	expression_error
+ 1741               		.comm	expression_error,1,1
+ 1742               		.local	tmptxtpos
+ 1743               		.comm	tmptxtpos,4,2
+ 1744               		.local	list_line
+ 1745               		.comm	list_line,4,2
+ 1746               		.local	txtpos
+ 1747               		.comm	txtpos,4,2
+ 1748               		.local	program
+ 1749               		.comm	program,65536,1
+ 1750               		.local	triggerRun
+ 1751               		.comm	triggerRun,4,2
+ 1752               		.globl	inhibitOutput
+ 1753               		.section	.bss
+ 1754               		.align	2
+ 1757               	inhibitOutput:
+ 1758 0000 0000 0000 		.zero	4
+ 1759               		.globl	eliminateCompileErrors
+ 1760               		.data
+ 1763               	eliminateCompileErrors:
+ 1764 0004 01        		.byte	1
+ 1765               		.globl	__divsi3
+ 1766               		.globl	__modsi3
+ 1767               		.globl	__udivsi3
+ 1768               		.globl	__umodsi3
+ 1769               		.globl	__mulsi3
+ 1770               		.ident	"GCC: (GNU) 15.1.0"
