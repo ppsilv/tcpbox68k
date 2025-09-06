@@ -64,9 +64,9 @@
             SECTION .jumptable
             ORG     $0400
 ROM_JUMPTABLE:
-            BRA     UART_Init          ;
-            BRA     UART_WriteChar     ;
-            BRA     UART_ReadChar      ;
+            BRA     UART_Init          ;        0x400
+            BRA     UART_WriteChar     ;        0x404
+            BRA     UART_ReadChar      ;        0x408
             BRA     UART_Select        ;
             BRA     UART_Setbaudrate   ;
             BRA     DELAY_MS           ;
@@ -75,6 +75,8 @@ ROM_JUMPTABLE:
             BRA     _start
             BRA     warm_start
             BRA     MenuLoop
+            BRA     new_line
+            BRA     UART_WriteString
 
             SECTION .text
             ORG $00001000
@@ -1406,6 +1408,187 @@ ROM_START   EQU     $00000000   ; Início da ROM
 ROM_END     EQU     $00003FFF   ; Fim da ROM (8KB)
 ROM_SIZE    EQU     ROM_END-ROM_START+1  ; Tamanho total (16384 bytes)
 
+;;;EXCEPTIONS**********************************************************
+;**********************************************************************
+; --- MENSAGENS DE DEBUG ---
+debug_msg:      DC.B "Exception - PC: ",0
+sr_msg:         DC.B "Status Reg: ",0
+sp_msg:         DC.B "Stack Reg: ",0
+spu_msg:         DC.B "StackU Reg: ",0
+vector_msg:     DC.B "Vector offset: ",0
+vector_num_msg: DC.B "Vector number: ",0
+bus_error_msg:  DC.B "Bus Error!",0
+address_error_msg: DC.B "Address Error!",0
+illegal_msg:    DC.B "Illegal Instruction!",0
+trap_msg:       DC.B "TRAP Instruction!",0
+unknown_msg:    DC.B "Unknown Exception!",0
+
+
+
+
+INT1_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D100,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT2_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D200,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT3_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D300,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT4_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D400,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT5_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        MOVE.W  #$D500,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT6_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+
+        ADDQ.L  #1,system_tick
+
+        MOVE.W  #$D600,D0
+        MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+INT7_HANDLER:
+        MOVEM.L D0-D7/A0-A6,-(A7)
+        ; Seu código de tratamento aqui
+        ADDQ.L  #1,system_tick
+        ;MOVE.W  #$D700,D0
+        ;MOVE.W  D0,LED_ADDRESS
+
+        MOVEM.L (A7)+,D0-D7/A0-A6
+        RTE
+
+SERVICE_BUS_ERR:
+        MOVE.W  #$C100,LED_ADDRESS
+        RTE
+SERVICE_ADDR_ERR:
+        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
+        MOVE.W  6(SP),D1        ; SR na época
+        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
+
+        MOVE.L  D0,-(SP)
+        LEA     debug_msg,A0
+        JSR     UART_WriteString
+
+        MOVE.L  (SP)+,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D1,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D2,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+        MOVE.W  #$C200,LED_ADDRESS
+        RTE
+SERVICE_ILLEGAL:
+        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
+        MOVE.W  6(SP),D1        ; SR na época
+        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
+
+        MOVE.L  D0,-(SP)
+        LEA     debug_msg,A0
+        JSR     UART_WriteString
+
+        MOVE.L  (SP)+,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D1,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  D2,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        JSR     new_line
+
+        LEA     sr_msg,A0
+        JSR     UART_WriteString
+        CLR.L   D0
+        MOVE.W  SR,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        ;JSR     new_line
+
+        LEA     sp_msg,A0
+        JSR     UART_WriteString
+        MOVE.L  SP,D0
+        JSR     PrintHexAddress  ; Deve mostrar endereço válido
+        ;JSR     new_line
+        MOVE.W  #$C300,LED_ADDRESS
+
+        JMP MenuLoop
+        RTE
+
+SERVICE_DIV0:
+        MOVE.W  #$C400,LED_ADDRESS
+        RTE
+SERVICE_CHECK:
+        MOVE.W  #$C500,LED_ADDRESS
+        RTE
+SERVICE_TRAPV:
+        MOVE.W  #$C600,LED_ADDRESS
+        RTE
+SERVICE_PRIV:
+        MOVE.W  #$C700,LED_ADDRESS
+        RTE
+SERVICE_TRACE:
+        MOVE.W  #$C800,LED_ADDRESS
+        RTE
+SERVICE_LINE_A:
+        MOVE.W  #$C900,LED_ADDRESS
+        RTE
+SERVICE_LINE_F:
+        MOVE.W  #$CA00,LED_ADDRESS
+        RTE
+TRAP0_HANDLER:
+    ; Manipula o endereço de retorno na pilha
+    MOVE.L  monitor_stack,A0
+    MOVE.L  A0,SP
+    JSR PrintHexAddress
+    BRA MenuLoop ; Substitui na pilha
+    rte
 SPURIOUS_HANDLER:
     MOVE.W  #$CB00,LED_ADDRESS  ; Indica spurious
     RTE
@@ -1483,188 +1666,11 @@ DEFAULT_HANDLER:
     BNE     .DELAY
 
     MOVEM.L (SP)+,D0-D7/A0-A6
+    MOVE.W  #$CC00,LED_ADDRESS  ; Indica spurious
     RTE
     JMP MenuLoop
 
-; --- MENSAGENS DE DEBUG ---
-debug_msg:      DC.B "Exception - PC: ",0
-sr_msg:         DC.B "Status Reg: ",0
-sp_msg:         DC.B "Stack Reg: ",0
-spu_msg:         DC.B "StackU Reg: ",0
-vector_msg:     DC.B "Vector offset: ",0
-vector_num_msg: DC.B "Vector number: ",0
-bus_error_msg:  DC.B "Bus Error!",0
-address_error_msg: DC.B "Address Error!",0
-illegal_msg:    DC.B "Illegal Instruction!",0
-trap_msg:       DC.B "TRAP Instruction!",0
-unknown_msg:    DC.B "Unknown Exception!",0
 
-
-
-
-INT1_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$D100,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT2_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$D200,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT3_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$D300,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT4_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$D400,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT5_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        MOVE.W  #$D500,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT6_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-
-        ADDQ.L  #1,system_tick
-
-        MOVE.W  #$D600,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-INT7_HANDLER:
-        MOVEM.L D0-D7/A0-A6,-(A7)
-        ; Seu código de tratamento aqui
-        ADDQ.L  #1,system_tick
-        MOVE.W  #$D700,D0
-        MOVE.W  D0,LED_ADDRESS
-
-        MOVEM.L (A7)+,D0-D7/A0-A6
-        RTE
-
-SERVICE_BUS_ERR:
-        MOVE.W  #$C100,LED_ADDRESS
-        RTE
-SERVICE_ADDR_ERR:
-        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
-        MOVE.W  6(SP),D1        ; SR na época
-        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
-
-        MOVE.L  D0,-(SP)
-        LEA     debug_msg,A0
-        JSR     UART_WriteString
-
-        MOVE.L  (SP)+,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sr_msg,A0
-        JSR     UART_WriteString
-        CLR.L   D0
-        MOVE.W  D1,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sp_msg,A0
-        JSR     UART_WriteString
-        CLR.L   D0
-        MOVE.W  D2,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-        MOVE.W  #$C200,LED_ADDRESS
-        RTE
-SERVICE_ILLEGAL:
-        MOVE.L  2(SP),D0        ; PC onde ocorreu a exceção
-        MOVE.W  6(SP),D1        ; SR na época
-        MOVE.W  8(SP),D2        ; Vector offset (FORMATO 68000!)
-
-        MOVE.L  D0,-(SP)
-        LEA     debug_msg,A0
-        JSR     UART_WriteString
-
-        MOVE.L  (SP)+,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sr_msg,A0
-        JSR     UART_WriteString
-        CLR.L   D0
-        MOVE.W  D1,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sp_msg,A0
-        JSR     UART_WriteString
-        CLR.L   D0
-        MOVE.W  D2,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sr_msg,A0
-        JSR     UART_WriteString
-        CLR.L   D0
-        MOVE.W  SR,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-
-        LEA     sp_msg,A0
-        JSR     UART_WriteString
-        MOVE.L  SP,D0
-        JSR     PrintHexAddress  ; Deve mostrar endereço válido
-        JSR     new_line
-        MOVE.W  #$C300,LED_ADDRESS
-
-        JMP MenuLoop
-        RTE
-
-SERVICE_DIV0:
-        MOVE.W  #$C400,LED_ADDRESS
-        RTE
-SERVICE_CHECK:
-        MOVE.W  #$C500,LED_ADDRESS
-        RTE
-SERVICE_TRAPV:
-        MOVE.W  #$C600,LED_ADDRESS
-        RTE
-SERVICE_PRIV:
-        MOVE.W  #$C700,LED_ADDRESS
-        RTE
-SERVICE_TRACE:
-        MOVE.W  #$C800,LED_ADDRESS
-        RTE
-SERVICE_LINE_A:
-        MOVE.W  #$C900,LED_ADDRESS
-        RTE
-SERVICE_LINE_F:
-        MOVE.W  #$CA00,LED_ADDRESS
-        RTE
-TRAP0_HANDLER:
-    ; Manipula o endereço de retorno na pilha
-    MOVE.L  monitor_stack,A0
-    MOVE.L  A0,SP
-    JSR PrintHexAddress
-    BRA MenuLoop ; Substitui na pilha
-    rte
 TRAP2_HANDLER:
 TRAP3_HANDLER:
 TRAP4_HANDLER:
@@ -1751,7 +1757,6 @@ hardware_exit:
     ; Exemplo simples: loop infinito
     BRA     hardware_exit
     RTS
-
 
     ALIGN 2
 ; =====================================================================

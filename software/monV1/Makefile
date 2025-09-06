@@ -53,7 +53,7 @@ compile:
 
 # Compilação segura que detecta TODOS os erros
 compile_linker:
-	@echo "Compiler..."
+	@echo "Compiler compile_linker..."
 	@build_date.sh
 	#vasmm68k_mot -Felf -quiet -L listing.txt -o test_ram2.o test_ram2.asm
 	@$(ASSEMBLER) $(ELF_FLAGS) -L $(TARGET).lst -o $(TARGET_OBJ) $(SOURCE)
