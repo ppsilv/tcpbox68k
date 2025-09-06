@@ -1571,14 +1571,14 @@ assignment:
 poke:
   {
     unsigned long value;
-    unsigned char *address;  // Mude para ponteiro de byte
+    unsigned long *address;
 
     // Work out where to put it
     expression_error = 0;
     value = expression();
     if(expression_error)
       goto qwhat;
-    address = (unsigned char *)value;  // Cast para ponteiro de byte
+    address = (unsigned long *)value;
 
     // check for a comma
     ignore_blanks();
@@ -1592,8 +1592,8 @@ poke:
     value = expression();
     if(expression_error)
       goto qwhat;
-    *address = (unsigned char)value;  // Agora escreve apenas 1 byte
-    printf("Poke %X value %x\n", (unsigned long)address, (unsigned char)value);
+    *address = (unsigned char)value
+    printf("Poke %X value %x\n",address, (unsigned char)value);
     // Check that we are at the end of the statement
     if(*txtpos != NL && *txtpos != ':')
       goto qwhat;
