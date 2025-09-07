@@ -64,19 +64,20 @@
             SECTION .jumptable
             ORG     $0400
 ROM_JUMPTABLE:
-            BRA     UART_Init          ;        0x400
-            BRA     UART_WriteChar     ;        0x404
-            BRA     UART_ReadChar      ;        0x408
-            BRA     UART_Select        ;
-            BRA     UART_Setbaudrate   ;
-            BRA     DELAY_MS           ;
-            BRA     MEMDUMP            ;
-            BRA     UART_ReadCharNonEcho
-            BRA     _start
-            BRA     warm_start
-            BRA     MenuLoop
-            BRA     new_line
-            BRA     UART_WriteString
+                BRA     UART_Init          ;        0x400
+                BRA     UART_WriteChar     ;        0x404
+                BRA     UART_ReadChar      ;        0x408
+                BRA     UART_Select        ;        0x40C
+                BRA     UART_Setbaudrate   ;        0x410
+                BRA     DELAY_MS           ;        0x414
+                BRA     MEMDUMP            ;        0x418
+                BRA     UART_ReadCharNonEcho;       0x41C
+                BRA     _start              ;       0x420
+                BRA     warm_start          ;       0x424
+                BRA     MenuLoop            ;       0x428
+                BRA     new_line            ;       0x42C
+                BRA     UART_WriteString    ;       0x430
+                BRA     UART_INIT1          ;       0x434
 
             SECTION .text
             ORG $00001000
@@ -109,8 +110,18 @@ UART_BASE   equ     $4000
 TIMER_BASE  equ     $4600
 BAUD_RATE   equ     9600
 BAUD_DIV    equ     (((F_CPU*10)/(16*BAUD_RATE))+5)/10 ; compute one extra decimal place and round
-BAUD_DIV_L  equ     (BAUD_DIV&$FF)
-BAUD_DIV_U  equ     ((BAUD_DIV>>8)&$FF)
+BAUD_DIV_L  equ     $08 ;(BAUD_DIV&$FF)
+BAUD_DIV_U  equ     $00 ;((BAUD_DIV>>8)&$FF)
+
+;14.745.600hz
+;9600   0060h
+;19.2K  0030h
+;38.4K  0018h
+;57.6K  0010h
+;115.2K 0008h
+;230.4K 0004h
+;460.8K 0002h
+;921.6K 0001h
 
 ;=== Uart receiver ================= CONSTANTES =================
 SOH         EQU     $01        ; Start Of Header
@@ -187,8 +198,8 @@ CLEARRAM:
         MOVE.W  #BAUD_DIV_U,BaudDivH
         MOVE.L  #TIMER_BASE,CurrentTimer
 
-
-        JSR     UART_INIT
+        MOVE.W  #$0008,D0
+        JSR     UART_INIT1
         LEA     cls_str,A0
         JSR     UART_WriteString
 
@@ -260,13 +271,13 @@ MenuLoop:
         BEQ     StrViaTrap1
         BRA     MenuLoop            ; Opção inválida, repete menu
 RdViaTrap1:
-        MOVE.W  #1,D0              ; Função CCONOUT
+        MOVE.W  #1,D0
         TRAP    #1
         JSR     UART_WriteChar
         BRA     MenuLoop
 StrViaTrap1:
         LEA     Msg_via_trap1,A0
-        MOVE.W  #3,D0              ; Função CCONOUT
+        MOVE.W  #3,D0
         TRAP    #1
 .imprimir_fim:
         BRA     MenuLoop
@@ -286,6 +297,72 @@ MsgViaTrap1:
 ; * Saída: Nenhuma                                                 *
 ; * Destrói: D0                                                    *
 ; ******************************************************************
+
+;------------------------------------------------------------------
+; Função: get_value
+; Entrada: D0 - índice (1 a 8)
+; Saída: D0 - valor correspondente do array
+; Preserva: Todos os registradores exceto D0
+; Para 230400 baud:
+; Divisor = 14745600 / (16 × 230400) = 4 (Formula correta)
+;------------------------------------------------------------------
+valores:
+    dc.w    $0060, $0030, $0018, $0010, $0008, $0004, $0002, $0001
+UART_Get_Value:
+    cmp.b   #1,D0           ; Verifica se índice >= 1
+    blt.s   .invalid_index
+    cmp.b   #8,D0           ; Verifica se índice <= 8
+    bgt.s   .invalid_index
+
+    subq.b  #1,D0           ; Converte índice de 1-8 para 0-7
+    add.b   D0,D0           ; Multiplica por 2 (cada elemento é word)
+    move.w  valores(pc,D0.w),D0  ; Pega o valor do array
+    rts
+
+.invalid_index:
+    moveq   #0,D0           ; Retorna 0 para índice inválido
+    rts
+
+; Exemplo de uso:
+;   moveq   #3,D0           ; Pega o terceiro valor
+;   bsr     get_value       ; D0 agora contém $0018
+
+
+
+; Array de ponteiros para rotinas (endereços de 32 bits)
+tabela_rotinas:
+    dc.l    rotina1, rotina2, rotina3
+
+; Função que chama uma rotina baseada no índice em D0
+chamar_rotina:
+    cmp.b   #1,D0           ; Verifica se índice >= 1
+    blt.s   indice_invalido
+    cmp.b   #8,D0           ; Verifica se índice <= 8
+    bgt.s   indice_invalido
+
+    subq.b  #1,D0           ; Converte índice de 1-8 para 0-7
+    lsl.l   #2,D0           ; Multiplica por 4 (cada ponteiro = 4 bytes)
+    move.l  tabela_rotinas(pc,D0.l),A0  ; Pega o endereço da rotina
+    jsr     (A0)            ; Chama a rotina
+    rts
+
+indice_invalido:
+    moveq   #-1,D0          ; Retorna erro
+    rts
+
+; Exemplos de rotinas
+rotina1:
+    moveq   #1,D0
+    rts
+
+rotina2:
+    moveq   #2,D0
+    rts
+
+rotina3:
+    moveq   #3,D0
+    rts
+
 
 INIT_8253:
     ;MOVEM.L D0-D1/A0,-(SP)
@@ -437,6 +514,21 @@ UART_INIT:
         clr.b   SCR(a1)                 ; clear the scratch register
         RTS
 
+; ----------------------------------------------------------------------
+; UART_INIT1:
+; Parametros: D0 tem o byte a ser gravado em DLM e DLL divisor baud rate
+; ----------------------------------------------------------------------
+UART_INIT1:
+        move.l   CurrentUART,a1
+        move.b  #%00001101,FCR(a1)      ; enable FIFO
+        move.b  #%10000011,LCR(a1)      ; 8 data bits, no parity, 1 stop bit, DLAB=1
+        move.b  D0,DLL(A1)              ; Byte 0 (LSB) -> DLL
+        lsr.l   #8,D0                   ; Shift right 8 bits
+        move.b  D0,DLM(A1)              ; Byte 1 (agora no LSB) -> DLM
+        bclr.b  #7,LCR(a1)              ; disable divisor latch
+        clr.b   SCR(a1)                 ; clear the scratch register
+        RTS
+
     ; Escreve caractere (D0.B)
 UART_WriteChar:
         MOVE.L  A0,-(SP)        ; Preserva A0
@@ -478,6 +570,7 @@ UART_ReadCharNonEcho:
         MOVE.L  (SP)+,A0        ;Restaura A0
 
         RTS
+
 
 ; ----------------------------------------------------------------------
 ; UART_WriteString - Envia string terminada em null para UART
@@ -878,14 +971,25 @@ SELECTUART:
 ; 2. Configura Baud Rate
 UART_Setbaudrate:
 SETBAUDRATE:
-        LEA     PromptNotImplemented,A0
+        LEA     BaudPrompt,A0
         JSR     UART_WriteString
-        ;LEA     BaudPrompt,A0
-        ;JSR     UART_WriteString
-        ;JSR     UART_ReadHex        ; Lê valor do baud rate
-        ;MOVE.L  CurrentUART,A0
-        ;MOVE.B  D0,(UART_BAUD,A0)   ; Configura registrador
+        JSR     UART_ReadChar
+        CMP.B   #'0',D0
+        BEQ     .FIM
+        ANDI.L  #$000000FF,D0
+        SUB.B   #'0',D0
+        JSR     UART_Get_Value
+        ;JSR     SafePrintHexAddress
+        JSR     UART_INIT1
+.FIM:
         BRA     MenuLoop
+
+SafePrintHexAddress:
+        MOVE.L  D0,-(SP)
+        JSR     PrintHexAddress
+        MOVE.L  (SP)+,D0
+        JSR     new_line
+        RTS
 
 ; 3. Carrega programa via serial
 LOADPROGRAM:
@@ -1261,11 +1365,11 @@ Receive_Loop:
        BNE     Receive_Loop        ; Ignora bytes inválidos
 
        ;SINALIZA leds
-       MOVE.W  #$0C00,D0
+       MOVE.W  #$0100,D0
        JSR     __write_leds
 
        ; ---- 3. RECEBE HEADER ----
-       JSR     UART_ReadCharNonEcho       ; Block number
+       JSR     UART_ReadCharNonEchoTimeout       ; Block number
        MOVE.B  D0,block_number
 
        JSR     UART_ReadCharNonEcho       ; ~Block number (complemento)
@@ -1290,18 +1394,12 @@ Read_Loop:
        SUBQ.L  #1,D1
        BNE     Read_Loop
 
-       MOVE.W  #$0600,D0
+       MOVE.W  #$0200,D0
        JSR     __write_leds
 
        ; ---- 5. VERIFICA CHECKSUM ----
        JSR     UART_ReadCharNonEcho       ; Checksum
        MOVE.B  D0,D2
-
-
-;******************************************************************************************
-                ;SEM CHECKSUM NESSE MOMENTO SEM COPIAR DADOS SO TESTANDO ENVIO
-           ;     BRA     Send_ACK
-;******************************************************************************************
 
         ; Calcula checksum local
         LEA     xmodem_buffer,A1
@@ -1346,11 +1444,15 @@ Send_ACK:
         BRA     Receive_Loop
 
 Send_NAK:
+        MOVE.W  #$0800,D0
+        JSR     __write_leds
         MOVE.B  #NAK,D0
         JSR     UART_WriteChar
         BRA     Receive_Loop
 
 Transfer_Complete:
+        MOVE.W  #$1000,D0
+        JSR     __write_leds
         MOVE.B  #ACK,D0             ; Confirma EOT
         JSR     UART_WriteChar
 
@@ -1360,6 +1462,29 @@ Transfer_Complete:
 
         MOVEM.L (SP)+,D2-D7/A0-A6
         RTS
+
+; Lê caractere (retorna em D0)
+UART_ReadCharNonEchoTimeout:
+        MOVE.L  A0,-(SP)        ; Preserva A0
+        MOVE.L  D1,-(SP)        ; Preserva A0
+        MOVE.L  #10000,D1
+        MOVE.L  CurrentUART,A0
+.WaitRx:
+        CMP.L   #0,D1
+        SUB     #1,D1
+        BEQ     .Fim
+        BTST    #0,LSR(A0)        ; RX ready?
+        BEQ     .WaitRx
+
+        MOVE.B  RHR(A0),D0
+        MOVE.L  (SP)+,D1        ;Restaura A0
+        MOVE.L  (SP)+,A0        ;Restaura A0
+        RTS
+.Fim:
+        MOVE.L  (SP)+,D1        ;Restaura A0
+        MOVE.L  (SP)+,A0        ;Restaura A0
+        MOVEM.L (SP)+,D2-D7/A0-A6
+        BRA     MenuLoop
 ; ========================================================
 ; Validador de Checksum para ROM (MC68000)
 ; Assume:
@@ -1422,8 +1547,6 @@ address_error_msg: DC.B "Address Error!",0
 illegal_msg:    DC.B "Illegal Instruction!",0
 trap_msg:       DC.B "TRAP Instruction!",0
 unknown_msg:    DC.B "Unknown Exception!",0
-
-
 
 
 INT1_HANDLER:
@@ -1770,6 +1893,9 @@ hardware_exit:
     SECTION .data
     DC.B "Valores",0
 cls_str:   dc.b    27,'[2J',0   ; \x1b = 27 (ASCII para ESC)
+                        ; Array de valores
+
+
 ; ----------------------------------------------------------------------
 ; Strings do Sistema
 ; ----------------------------------------------------------------------
@@ -1799,7 +1925,16 @@ MenuText:
 UARTPrompt:
     DC.B    "UART Address (2000/2100/2200/2300): ",0
 BaudPrompt:
-    DC.B    "Baud Rate Value: ",0
+    DC.B 13,10,"1 - 9600   ",13,10
+    DC.B "2 - 19.2K  ",13,10
+    DC.B "3 - 38.4K  ",13,10
+    DC.B "4 - 57.6K  ",13,10
+    DC.B "5 - 115.2K ",13,10
+    DC.B "6 - 230.4K ",13,10
+    DC.B "7 - 460.8K ",13,10
+    DC.B "8 - 921.6K ",13,10
+    DC.B "0 - Terminar ",13,10
+    DC.B "Select Baud Rate Value: ",0
 LoadPrompt:
     DC.B    "Aguardando 68ksender to initiate: ",0
 LoadPromptReady:

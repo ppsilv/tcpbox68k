@@ -3,7 +3,7 @@
 ; Compilado para RAM, mas acessa funções na ROM
 ; ================================================
 
-    ORG     $00081530
+    ORG     $00082000
 
 ; --- Endereços absolutos das rotinas na ROM ---
 ; (Substitua pelos endereços reais do seu hardware)
@@ -19,8 +19,11 @@ MEMDUMP                 EQU $00000418
 UART_ReadCharNonEcho    EQU $0000041C
 _start                  EQU $00000420
 warm_start              EQU $00000424
-new_line                EQU $000013A8
-UART_WriteString        EQU $00001308
+MenuLoop                EQU $00000428
+new_line                EQU $0000042C
+UART_WriteString        EQU $00000430
+UART_INIT1              EQU $00000434
+
 
 ; --- Macros para chamar as rotinas ---
 ; (Facilitam o uso sem precisar lembrar dos endereços)
