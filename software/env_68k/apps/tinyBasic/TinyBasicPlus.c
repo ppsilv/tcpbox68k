@@ -1,24 +1,4 @@
-////////////////////////////////////////////////////////////////////////////////
-// TinyBasic Plus
-////////////////////////////////////////////////////////////////////////////////
-//
-// Authors: 
-//    Gordon Brandly (Tiny Basic for 68000)
-//    Mike Field <hamster@snap.net.nz> (Arduino Basic) (port to Arduino)
-//    Scott Lawrence <yorgle@gmail.com> (TinyBasic Plus) (features, etc)
-//
-// Contributors:
-//          Brian O'Dell <megamemnon@megamemnon.com> (INPUT)
-//    (full list tbd)
-
-//  For full history of Tiny Basic, please see the wikipedia entry here:
-//    https://en.wikipedia.org/wiki/Tiny_BASIC
-
-// LICENSING NOTES:
-//    Mike Field based his C port of Tiny Basic on the 68000 
-//    Tiny BASIC which carried the following license:
-/*
-******************************************************************
+/******************************************************************
 *                                                                *
 *               Tiny BASIC for the Motorola MC68000              *
 *                                                                *
@@ -36,185 +16,20 @@
 *    Copyright (C) 1984 by Gordon Brandly. This program may be   *
 *    freely distributed for personal use only. All commercial    *
 *                      rights are reserved.                      *
-******************************************************************
-*/
-//    ref: http://members.shaw.ca:80/gbrandly/68ktinyb.html
-//
-//    However, Mike did not include a license of his own for his
-//    version of this.  
-//    ref: http://hamsterworks.co.nz/mediawiki/index.php/Arduino_Basic
-//
-//    From discussions with him, I felt that the MIT license is
-//    the most applicable to his intent.
-//
-//    I am in the process of further determining what should be
-//    done wrt licensing further.  This entire header will likely
-//    change with the next version 0.16, which will hopefully nail
-//    down the whole thing so we can get back to implementing
-//    features instead of licenses.  Thank you for your time.
+******************************************************************/
+#include <stdio.h>
+#include <stdlib.h>
 
-#define kVersion "v0.15"
-
-// v0.15: 2018-06-23
-//      Integrating some contributions
-//      Corrected some of the #ifdef nesting atop this page
-//      Licensing issues beginning to be addressed
-
-// v0.14: 2013-11-07
-//      Modified Input command to accept an expression using getn()
-//      Syntax is "input x" where x is any variable
-//      NOTE: This only works for numbers, expressions. not strings.
-//
-// v0.13: 2013-03-04
-//      Support for Arduino 1.5 (SPI.h included, additional changes for DUE support)
-//
-// v0.12: 2013-03-01
-//      EEPROM load and save routines added: EFORMAT, ELIST, ELOAD, ESAVE, ECHAIN
-//      added EAUTORUN option (chains to EEProm saved program on startup)
-//      Bugfixes to build properly on non-arduino systems (PROGMEM #define workaround)
-//      cleaned up a bit of the #define options wrt TONE
-//
-// v0.11: 2013-02-20
-//      all display strings and tables moved to PROGMEM to save space
-//      removed second serial
-//      removed pinMode completely, autoconf is explicit
-//      beginnings of EEPROM related functionality (new,load,save,list)
-//
-// v0.10: 2012-10-15
-//      added kAutoConf, which eliminates the "PINMODE" statement.
-//      now, DWRITE,DREAD,AWRITE,AREAD automatically set the PINMODE appropriately themselves.
-//      should save a few bytes in your programs.
-//
-// v0.09: 2012-10-12
-//      Fixed directory listings.  FILES now always works. (bug in the SD library)
-//      ref: http://arduino.cc/forum/index.php/topic,124739.0.html
-//      fixed filesize printouts (added printUnum for unsigned numbers)
-//      #defineable baud rate for slow connection throttling
-//e
-// v0.08: 2012-10-02
-//      Tone generation through piezo added (TONE, TONEW, NOTONE)
-//
-// v0.07: 2012-09-30
-//      Autorun buildtime configuration feature
-//
-// v0.06: 2012-09-27
-//      Added optional second serial input, used for an external keyboard
-//
-// v0.05: 2012-09-21
-//      CHAIN to load and run a second file
-//      RND,RSEED for random stuff
-//      Added "!=" for "<>" synonym
-//      Added "END" for "STOP" synonym (proper name for the functionality anyway)
-//
-// v0.04: 2012-09-20
-//      DELAY ms   - for delaying
-//      PINMODE <pin>, INPUT|IN|I|OUTPUT|OUT|O
-//      DWRITE <pin>, HIGH|HI|1|LOW|LO|0
-//      AWRITE <pin>, [0..255]
-//      fixed "save" appending to existing files instead of overwriting
-// 	Updated for building desktop command line app (incomplete)
-//
-// v0.03: 2012-09-19
-//	Integrated Jurg Wullschleger whitespace,unary fix
-//	Now available through github
-//	Project renamed from "Tiny Basic in C" to "TinyBasic Plus"
-//	   
-// v0.02b: 2012-09-17  Scott Lawrence <yorgle@gmail.com>
-// 	Better FILES listings
-//
-// v0.02a: 2012-09-17  Scott Lawrence <yorgle@gmail.com>
-// 	Support for SD Library
-// 	Added: SAVE, FILES (mostly works), LOAD (mostly works) (redirects IO)
-// 	Added: MEM, ? (PRINT)
-// 	Quirk:  "10 LET A=B+C" is ok "10 LET A = B + C" is not.
-// 	Quirk:  INPUT seems broken?
-
-// IF testing with Visual C, this needs to be the first thing in the file.
-//#include "stdafx.h"
-
-char eliminateCompileErrors = 1;  // fix to suppress arduino build errors
-
-#define FORCE_DESKTOP
-#undef ENABLE_EEPROM
-// hack to let makefiles work with this file unchanged
-#ifdef FORCE_DESKTOP
-#undef ARDUINO
-#include "desktop.h"
-#else
-#define ARDUINO 1
-#endif
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Feature option configuration...
-
-// This enables LOAD, SAVE, FILES commands through the Arduino SD Library
-// it adds 9k of usage as well.
-//#define ENABLE_FILEIO 1
-#undef ENABLE_FILEIO
-#undef ARDUINO
 #define pgm_read_byte( A ) *(A)
 
-// this turns on "autorun".  if there's FileIO, and a file "autorun.bas",
-// then it will load it and run it when starting up
-//#define ENABLE_AUTORUN 1
-#undef ENABLE_AUTORUN
-// and this is the file that gets run
-#define kAutorunFilename  "autorun.bas"
-
-// this is the alternate autorun.  Autorun the program in the eeprom.
-// it will load whatever is in the EEProm and run it
-#define ENABLE_EAUTORUN 1
-//#undef ENABLE_EAUTORUN
-
-// this will enable the "TONE", "NOTONE" command using a piezo
-// element on the specified pin.  Wire the red/positive/piezo to the kPiezoPin,
-// and the black/negative/metal disc to ground.
-// it adds 1.5k of usage as well.
-//#define ENABLE_TONES 1
-#undef ENABLE_TONES
-#define kPiezoPin 5
-
-// Sometimes, we connect with a slower device as the console.
-// Set your console D0/D1 baud rate here (9600 baud default)
-#define kConsoleBaud 9600
-
-
-// Uses up to one extra byte per program line of memory
-#define ALIGN_MEMORY 1
-
-
-
-// set up file includes for things we need, or desktop specific stuff.
-
-  #include <stdio.h>
-  #include <stdlib.h>
-  #undef ENABLE_TONES
-
-  // size of our program ram
-  #define kRamSize   64*1024 /* arbitrary - not dependant on libraries */
-
-  #ifdef ENABLE_FILEIO
-    FILE * fp;
-  #endif
-
-
-////////////////////
+// size of our program ram
+#define kRamSize   64*1024 /* arbitrary - not dependant on libraries */
 
 // memory alignment
-//  necessary for some esp8266-based devices
-#ifdef ALIGN_MEMORY
-  // Align memory addess x to an even page
-  #define ALIGN_UP(x) ((unsigned char*)(((unsigned int)(x + 1) >> 1) << 1))
-  #define ALIGN_DOWN(x) ((unsigned char*)(((unsigned int)x >> 1) << 1))
-#else
-  #define ALIGN_UP(x) x
-  #define ALIGN_DOWN(x) x
-#endif
+// Align memory addess x to an even page
+#define ALIGN_UP(x) ((unsigned char*)(((unsigned int)(x + 1) >> 1) << 1))
+#define ALIGN_DOWN(x) ((unsigned char*)(((unsigned int)x >> 1) << 1))
 
-
-////////////////////
-// various other desktop-tweaks and such.
 
 #ifndef boolean 
   #define boolean int
@@ -222,35 +37,8 @@ char eliminateCompileErrors = 1;  // fix to suppress arduino build errors
   #define false 0
 #endif
 
-#ifndef byte
-  typedef unsigned char byte;
-#endif
-
-
-////////////////////
-
-#ifdef ENABLE_FILEIO
-  // functions defined elsehwere
-  void cmd_Files( void );
-  unsigned char * filenameWord(void);
-  static boolean sd_is_initialized = false;
-#endif
-
-// some settings based things
-
-boolean inhibitOutput = false;
-static boolean runAfterLoad = false;
+//static boolean runAfterLoad = false;
 static boolean triggerRun = false;
-
-// these will select, at runtime, where IO happens through for load/save
-enum {
-  kStreamSerial = 0,
-  kStreamEEProm,
-  kStreamFile
-};
-static unsigned char inStream = kStreamSerial;
-static unsigned char outStream = kStreamSerial;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // ASCII Characters
@@ -441,7 +229,7 @@ static const unsigned char okmsg[]            PROGMEM = "OK";
 static const unsigned char whatmsg[]          PROGMEM = "What? ";
 static const unsigned char howmsg[]           PROGMEM =	"How?";
 static const unsigned char sorrymsg[]         PROGMEM = "Sorry!";
-static const unsigned char initmsg[]          PROGMEM = "TinyBasic m68000 V1.0 2025 " kVersion;
+static const unsigned char initmsg[]          PROGMEM = "TinyBasic m68000 V1.0 2025 ";
 static const unsigned char memorymsg[]        PROGMEM = " bytes free.";
 #ifdef ARDUINO
 #ifdef ENABLE_EEPROM
@@ -1195,31 +983,31 @@ interperateAtTxtpos:
   {
   case KW_DELAY:
       goto unimplemented;
-  case KW_FILES:
-    goto files;
-  case KW_LIST:
+//  case KW_FILES:
+//    goto files;
+  case KW_LIST:         //  ✔️
     goto list;
-  case KW_CHAIN:
-    goto chain;
-  case KW_LOAD:
-    goto load;
-  case KW_MEM:
+//  case KW_CHAIN:
+//    goto chain;
+//  case KW_LOAD:
+//    goto load;
+  case KW_MEM:         //  ✔️
     goto mem;
-  case KW_NEW:
+  case KW_NEW:         //  ✔️
     if(txtpos[0] != NL)
       goto qwhat;
     program_end = program_start;
     goto prompt;
-  case KW_RUN:
+  case KW_RUN:         //  ✔️
     current_line = program_start;
     goto execline;
-  case KW_SAVE:
-    goto save;
-  case KW_NEXT:
+//  case KW_SAVE:
+//    goto save;
+  case KW_NEXT:         //  ✔️
     goto next;
-  case KW_LET:
+  case KW_LET:         //  ✔️
     goto assignment;
-  case KW_IF:
+  case KW_IF:         //  ✔️
     short int val;
     expression_error = 0;
     val = expression();
@@ -1229,7 +1017,7 @@ interperateAtTxtpos:
       goto interperateAtTxtpos;
     goto execnextline;
 
-  case KW_GOTO:
+  case KW_GOTO:         //  ✔️
     expression_error = 0;
     linenum = expression();
     if(expression_error || *txtpos != NL)
@@ -1237,25 +1025,25 @@ interperateAtTxtpos:
     current_line = findline();
     goto execline;
 
-  case KW_GOSUB:
+  case KW_GOSUB:         //  ✔️
     goto gosub;
-  case KW_RETURN:
+  case KW_RETURN:         //  ✔️
     goto gosub_return; 
   case KW_REM:
   case KW_QUOTE:
     goto execnextline;	// Ignore line completely
-  case KW_WHILE:
+  case KW_WHILE:         //  ✔️
     goto whileloop;
-  case KW_WEND:
+  case KW_WEND:         //  ✔️
     goto wend;
-  case KW_FOR:
-    goto forloop; 
+  case KW_FOR:         //  ✔️
+    goto forloop;
   case KW_INPUT:
     goto input; 
-  case KW_PRINT:
+  case KW_PRINT:         //  ✔️
   case KW_QMARK:
     goto print;
-  case KW_POKE:
+  case KW_POKE:         //  ✔️
     goto poke;
   case KW_END:
   case KW_STOP:
@@ -1264,19 +1052,19 @@ interperateAtTxtpos:
       goto qwhat;
     current_line = program_end;
     goto execline;
-  case KW_BYE:
+  case KW_BYE:         //  ✔️
     // Leave the basic interperater
     return;
 
-  case KW_AWRITE:  // AWRITE <pin>, HIGH|LOW
-    isDigital = false;
-    goto awrite;
-  case KW_DWRITE:  // DWRITE <pin>, HIGH|LOW
-    isDigital = true;
-    goto dwrite;
+//  case KW_AWRITE:  // AWRITE <pin>, HIGH|LOW
+//    isDigital = false;
+//    goto awrite;
+//  case KW_DWRITE:  // DWRITE <pin>, HIGH|LOW
+//    isDigital = true;
+//    goto dwrite;
   case KW_RSEED:
     goto rseed;
-  case KW_HEX:  // Adicione HEX$ como keyword
+  case KW_HEX:           //  ✔️
     {
       expression_error = 0;
       unsigned long value = expression();
@@ -1291,7 +1079,7 @@ interperateAtTxtpos:
     }
     break;
     // Implementação:
-  case KW_HEXPEEK:
+  case KW_HEXPEEK:         //  ✔️
     {
         ignore_blanks();
         if(*txtpos != '(') goto qwhat;
@@ -1353,73 +1141,8 @@ inputagain:
 
     goto run_next_statement;
   }
-/*
-// Função para encontrar o WEND correspondente
-short find_wend(void) {
-    unsigned char *original_txtpos = txtpos;
-    unsigned short original_line = current_line;
-    int while_count = 1;
 
-    while(while_count > 0) {
-        // Avança para próximo statement
-        if(*txtpos == NL) {
-            current_line = findline(current_line + 1);
-            if(current_line == 0) {
-                // Restaura posição original e retorna erro
-                txtpos = original_txtpos;
-                current_line = original_line;
-                return 0;
-            }
-            txtpos = program_start + current_line + 2;
-        }
 
-        ignore_blanks();
-        if(*txtpos == ':') {
-            txtpos++;
-            ignore_blanks();
-        }
-
-        // Verifica se é WHILE ou WEND
-        scantable(keywords);
-        if(table_index == KW_WHILE) {
-            while_count++;
-            // Avança além do "WHILE"
-            while(*txtpos != ' ' && *txtpos != ':' && *txtpos != NL)
-                txtpos++;
-        } else if(table_index == KW_WEND) {
-            while_count--;
-            if(while_count == 0) {
-                // Encontrou WEND correspondente
-                txtpos += 4;  // Avança além do "WEND"
-                return 1;
-            }
-            // Avança além do "WEND"
-            while(*txtpos != ' ' && *txtpos != ':' && *txtpos != NL)
-                txtpos++;
-        } else {
-            // Avança para próximo token
-            while(*txtpos != ':' && *txtpos != NL && *txtpos != '\0')
-                txtpos++;
-        }
-    }
-
-    // Restaura posição original
-    txtpos = original_txtpos;
-    current_line = original_line;
-    return 1;
-}
-*/
-short find_wend1(void) {
-    // Versão simplificada - avança até encontrar WEND
-    while(*txtpos != '\0') {
-        scantable(keywords);
-        if(table_index == KW_WEND) {
-            return 1;
-        }
-        txtpos++;
-    }
-    return 0;
-}
 #include  <string.h>
 short find_wend(void) {
     unsigned char *saved_txtpos = txtpos;      // SALVA estado global
@@ -1894,17 +1617,17 @@ dwrite:
   goto unimplemented;
 
   /*************************************************/
-files:
+//files:
   // display a listing of files on the device.
   // version 1: no support for subdirectories
-   goto run_next_statement;
+//   goto run_next_statement;
 
 
 
-chain:
-  runAfterLoad = true;
-    goto run_next_statement;
-
+//chain:
+//  runAfterLoad = true;
+//    goto run_next_statement;
+/*
 load:
   // clear the program
   program_end = program_start;
@@ -1916,7 +1639,7 @@ load:
 
 save:
   // save from memory out to a file
-
+*/
 rseed:
   {
     short int value;
@@ -1985,115 +1708,26 @@ static void line_terminator(void)
 /***********************************************************/
 void setup()
 {
-#ifdef ARDUINO
-  Serial.begin(kConsoleBaud);	// opens serial port
-  while( !Serial ); // for Leonardo
 
-  Serial.println( sentinel );
-  printmsg(initmsg);
-
-#ifdef ENABLE_FILEIO
-  initSD();
-
-#ifdef ENABLE_AUTORUN
-  if( SD.exists( kAutorunFilename )) {
-    program_end = program_start;
-    fp = SD.open( kAutorunFilename );
-    inStream = kStreamFile;
-    inhibitOutput = true;
-    runAfterLoad = true;
-  }
-#endif /* ENABLE_AUTORUN */
-
-#endif /* ENABLE_FILEIO */
-
-#ifdef ENABLE_EEPROM
-#ifdef ENABLE_EAUTORUN
-  // read the first byte of the eeprom. if it's a number, assume it's a program we can load
-  int val = EEPROM.read(0);
-  if( val >= '0' && val <= '9' ) {
-    program_end = program_start;
-    inStream = kStreamEEProm;
-    eepos = 0;
-    inhibitOutput = true;
-    runAfterLoad = true;
-  }
-#endif /* ENABLE_EAUTORUN */
-#endif /* ENABLE_EEPROM */
-
-#endif /* ARDUINO */
 }
 
 
 /***********************************************************/
 static unsigned char breakcheck(void)
 {
-#ifdef ARDUINO
-  if(Serial.available())
-    return Serial.read() == CTRLC;
-  return 0;
-#else
+
 #ifdef __CONIO__
   if(kbhit())
     return getch() == CTRLC;
   else
+    return getchar();
 #endif
     return 0;
-#endif
+
 }
 /***********************************************************/
 static int inchar()
 {
-  int v;
-#ifdef ARDUINO
-
-  switch( inStream ) {
-  case( kStreamFile ):
-#ifdef ENABLE_FILEIO
-    v = fp.read();
-    if( v == NL ) v=CR; // file translate
-    if( !fp.available() ) {
-      fp.close();
-      goto inchar_loadfinish;
-    }
-    return v;
-#else
-#endif
-     break;
-  case( kStreamEEProm ):
-#ifdef ENABLE_EEPROM
-#ifdef ARDUINO
-    v = EEPROM.read( eepos++ );
-    if( v == '\0' ) {
-      goto inchar_loadfinish;
-    }
-    return v;
-#endif
-#else
-    inStream = kStreamSerial;
-    return NL;
-#endif
-     break;
-  case( kStreamSerial ):
-  default:
-    while(1)
-    {
-      if(Serial.available())
-        return Serial.read();
-    }
-  }
-
-inchar_loadfinish:
-  inStream = kStreamSerial;
-  inhibitOutput = false;
-
-  if( runAfterLoad ) {
-    runAfterLoad = false;
-    triggerRun = true;
-  }
-  return NL; // trigger a prompt.
-
-#else
   // otherwise. desktop!
   int got = getchar();
 
@@ -2101,108 +1735,13 @@ inchar_loadfinish:
   if( got == LF ) got = CR;
 
   return got;
-#endif
 }
 
+
 /***********************************************************/
-static void outchar(unsigned char c)
+static void outchar1(unsigned char c)
 {
-  if( inhibitOutput ) return;
-
-#ifdef ARDUINO
-  #ifdef ENABLE_FILEIO
-    if( outStream == kStreamFile ) {
-      // output to a file
-      fp.write( c );
-    }
-    else
-  #endif
-  #ifdef ARDUINO
-  #ifdef ENABLE_EEPROM
-    if( outStream == kStreamEEProm ) {
-      EEPROM.write( eepos++, c );
-    }
-    else
-  #endif /* ENABLE_EEPROM */
-  #endif /* ARDUINO */
-    Serial.write(c);
-
-#else
   putchar(c);
-#endif
+
 }
 
-/***********************************************************/
-/* SD Card helpers */
-
-#if ARDUINO && ENABLE_FILEIO
-
-static int initSD( void )
-{
-  // if the card is already initialized, we just go with it.
-  // there is no support (yet?) for hot-swap of SD Cards. if you need to
-  // swap, pop the card, reset the arduino.)
-
-  if( sd_is_initialized == true ) return kSD_OK;
-
-  // due to the way the SD Library works, pin 10 always needs to be
-  // an output, even when your shield uses another line for CS
-  pinMode(10, OUTPUT); // change this to 53 on a mega
-
-  if( !SD.begin( kSD_CS )) {
-    // failed
-    printmsg( sderrormsg );
-    return kSD_Fail;
-  }
-  // success - quietly return 0
-  sd_is_initialized = true;
-
-  // and our file redirection flags
-  outStream = kStreamSerial;
-  inStream = kStreamSerial;
-  inhibitOutput = false;
-
-  return kSD_OK;
-}
-#endif
-
-#if ENABLE_FILEIO
-void cmd_Files( void )
-{
-  File dir = SD.open( "/" );
-  dir.seek(0);
-
-  while( true ) {
-    File entry = dir.openNextFile();
-    if( !entry ) {
-      entry.close();
-      break;
-    }
-
-    // common header
-    printmsgNoNL( indentmsg );
-    printmsgNoNL( (const unsigned char *)entry.name() );
-    if( entry.isDirectory() ) {
-      printmsgNoNL( slashmsg );
-    }
-
-    if( entry.isDirectory() ) {
-      // directory ending
-      for( int i=strlen( entry.name()) ; i<16 ; i++ ) {
-        printmsgNoNL( spacemsg );
-      }
-      printmsgNoNL( dirextmsg );
-    }
-    else {
-      // file ending
-      for( int i=strlen( entry.name()) ; i<17 ; i++ ) {
-        printmsgNoNL( spacemsg );
-      }
-      printUnum( entry.size() );
-    }
-    line_terminator();
-    entry.close();
-  }
-  dir.close();
-}
-#endif
