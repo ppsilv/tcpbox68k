@@ -271,6 +271,16 @@ typedef short unsigned LINENUM;
 
 #define PROGMEM
 
+//IMPLEMENTACAO WHILE
+#define STACK_WHILE_FLAG 0x57  // 'W'
+
+struct stack_while_frame {
+    unsigned char frame_type;
+    unsigned char *condition_pos;
+    unsigned char *txtpos;
+    unsigned char *current_line;
+};
+
 static unsigned char program[kRamSize];
 static const char *  sentinel = "HELLO";
 static unsigned char *txtpos,*list_line, *tmptxtpos;
@@ -308,6 +318,8 @@ const static unsigned char keywords[]  = {
   'E','N','D'+0x80,
   'R','S','E','E','D'+0x80,
   'C','H','A','I','N'+0x80,
+  'W','H','I','L','E'+0x80,  // <--- ADICIONE AQUI
+  'W','E','N','D'+0x80,      // <--- ADICIONE AQUI
   'H','E','X'+0x80,
   'H','E','X','P','E','E','K'+0x80,
   0
@@ -333,7 +345,8 @@ enum {
   KW_END,
   KW_RSEED,
   KW_CHAIN,
-
+  KW_WHILE,  // <--- ADICIONE AQUI
+  KW_WEND,   // <--- ADICIONE AQUI
   KW_HEX,  // Adicione HEX$ como keyword
   KW_HEXPEEK,
   KW_DEFAULT /* always the final one*/
@@ -445,6 +458,11 @@ static const unsigned char sdfilemsg[]        PROGMEM = "SD file error.";
 static const unsigned char dirextmsg[]        PROGMEM = "(dir)";
 static const unsigned char slashmsg[]         PROGMEM = "/";
 static const unsigned char spacemsg[]         PROGMEM = " ";
+
+const unsigned char stackmsg[] = "STACK FULL";
+// E também adicione estas para o WHILE:
+const unsigned char nowhile_msg[] = "NO WHILE";
+const unsigned char nowend_msg[] = "NO WEND";
 
 static int inchar(void);
 static void outchar(unsigned char c);
@@ -1226,6 +1244,10 @@ interperateAtTxtpos:
   case KW_REM:
   case KW_QUOTE:
     goto execnextline;	// Ignore line completely
+  case KW_WHILE:
+    goto whileloop;
+  case KW_WEND:
+    goto wend;
   case KW_FOR:
     goto forloop; 
   case KW_INPUT:
@@ -1331,6 +1353,263 @@ inputagain:
 
     goto run_next_statement;
   }
+/*
+// Função para encontrar o WEND correspondente
+short find_wend(void) {
+    unsigned char *original_txtpos = txtpos;
+    unsigned short original_line = current_line;
+    int while_count = 1;
+
+    while(while_count > 0) {
+        // Avança para próximo statement
+        if(*txtpos == NL) {
+            current_line = findline(current_line + 1);
+            if(current_line == 0) {
+                // Restaura posição original e retorna erro
+                txtpos = original_txtpos;
+                current_line = original_line;
+                return 0;
+            }
+            txtpos = program_start + current_line + 2;
+        }
+
+        ignore_blanks();
+        if(*txtpos == ':') {
+            txtpos++;
+            ignore_blanks();
+        }
+
+        // Verifica se é WHILE ou WEND
+        scantable(keywords);
+        if(table_index == KW_WHILE) {
+            while_count++;
+            // Avança além do "WHILE"
+            while(*txtpos != ' ' && *txtpos != ':' && *txtpos != NL)
+                txtpos++;
+        } else if(table_index == KW_WEND) {
+            while_count--;
+            if(while_count == 0) {
+                // Encontrou WEND correspondente
+                txtpos += 4;  // Avança além do "WEND"
+                return 1;
+            }
+            // Avança além do "WEND"
+            while(*txtpos != ' ' && *txtpos != ':' && *txtpos != NL)
+                txtpos++;
+        } else {
+            // Avança para próximo token
+            while(*txtpos != ':' && *txtpos != NL && *txtpos != '\0')
+                txtpos++;
+        }
+    }
+
+    // Restaura posição original
+    txtpos = original_txtpos;
+    current_line = original_line;
+    return 1;
+}
+*/
+short find_wend1(void) {
+    // Versão simplificada - avança até encontrar WEND
+    while(*txtpos != '\0') {
+        scantable(keywords);
+        if(table_index == KW_WEND) {
+            return 1;
+        }
+        txtpos++;
+    }
+    return 0;
+}
+#include  <string.h>
+short find_wend(void) {
+    unsigned char *saved_txtpos = txtpos;      // SALVA estado global
+    unsigned char *saved_line = current_line;
+    unsigned char *search_pos = txtpos;
+    int while_count = 1;
+    int safety = 0;
+
+    while(while_count > 0 && safety++ < 1000) {  // Prevenção loop infinito
+        // Avança até fim de linha ou do programa
+        while(*search_pos != NL && *search_pos != '\0') {
+            // Verifica se é WHILE
+            if(strncmp(search_pos, "WHILE", 5) == 0) {
+                while_count++;
+                search_pos += 4;  // Avança "WHILE"
+            }
+            // Verifica se é WEND
+            else if(strncmp(search_pos, "WEND", 4) == 0) {
+                while_count--;
+                if(while_count == 0) {
+                    txtpos = saved_txtpos;      // RESTAURA estado global
+                    current_line = saved_line;
+                    return 1;                   // WEND encontrado!
+                }
+                search_pos += 3;  // Avança "WEND"
+            }
+            search_pos++;
+        }
+
+        // Fim de linha, vai para próxima
+        if(*search_pos == NL) {
+            search_pos++;  // Pula o NL
+        }
+        else if(*search_pos == '\0') {
+            break;  // Fim do programa
+        }
+    }
+
+    txtpos = saved_txtpos;      // RESTAURA estado global
+    current_line = saved_line;
+    return 0;  // WEND não encontrado
+}
+
+whileloop:
+{
+    // Salva a posição da condição
+    unsigned char *condition_start = txtpos;
+
+    // Avalia a condição
+    expression_error = 0;
+    short condition = expression();
+    if(expression_error)
+        goto qwhat;
+
+    // Verifica sintaxe
+    ignore_blanks();
+    if(*txtpos != NL && *txtpos != ':')
+        goto qwhat;
+
+    // Verifica espaço na pilha
+    if(sp - sizeof(struct stack_while_frame) < stack_limit) {
+        printmsg(stackmsg);
+        goto run_next_statement;
+    }
+    // DEBUG: Verifique se esta condição está bloqueando
+    //printf("Espaço na pilha? sp=%lX, limit=%lX, diff=%ld\n",    (unsigned long)sp, (unsigned long)stack_limit, sp - stack_limit);
+
+    if(sp - sizeof(struct stack_while_frame) < stack_limit) {
+        //printf("PILHA CHEIA! Não pode criar frame.\n");
+        printmsg(stackmsg);
+        goto run_next_statement;
+    }
+    // Cria stack frame
+        // DEBUG: Mostra sp antes e depois
+
+    sp -= sizeof(struct stack_while_frame);
+
+    struct stack_while_frame *w = (struct stack_while_frame *)sp;
+    w->frame_type = STACK_WHILE_FLAG;
+    w->condition_pos = condition_start;
+    w->txtpos = txtpos;
+    w->current_line = current_line;
+
+    // Se condição falsa, pula para o WEND
+    if(condition == 0) {
+        if(!find_wend()) {
+            printmsg(nowend_msg);
+            goto run_next_statement;
+        }
+    }
+    // DEBUG
+    //printf("WHILE: cond=%d, sp=%lX, frame=%lX\n",   condition, (unsigned long)sp, (unsigned long)w);
+
+    // Se condição falsa, pula para o WEND
+    if(condition == 0) {
+        //printf("WHILE FALSE - buscando WEND\n");
+        if(!find_wend()) {
+            printmsg(nowend_msg);
+            goto run_next_statement;
+        }
+    }
+    //else {
+    //    printf("WHILE TRUE - entrando no loop\n");
+    //}
+}
+goto run_next_statement;
+
+
+wend:
+{
+
+    struct stack_while_frame *w = NULL;
+    unsigned char *stack_ptr = sp;
+    int count = 0;
+
+
+    // CORREÇÃO: Inverta a condição!
+    while(stack_ptr >= stack_limit) {  // ← AGORA CORRETO!
+        //printf("Buscando em %lX: valor=%02X\n", (unsigned long)stack_ptr, *stack_ptr);
+
+        if(*stack_ptr == STACK_WHILE_FLAG) {
+            w = (struct stack_while_frame *)stack_ptr;
+            //printf("FRAME ENCONTRADO em %lX!\n", (unsigned long)w);
+            break;
+        }
+        stack_ptr += sizeof(struct stack_while_frame);
+        count++;
+
+        if(count > 10) break;
+    }
+
+// Salva posição atual para debug
+unsigned char *debug_before = txtpos;
+
+// Volta para reavaliar a condição
+txtpos = w->condition_pos;
+
+// Mostra O QUE será avaliado
+/*
+unsigned char *temp = txtpos;
+while(*temp != NL && *temp != ':') {
+    putchar(*temp);
+    temp++;
+}
+*/
+// Reavalia a condição
+expression_error = 0;
+short condition = expression();
+
+
+
+// Restaura para continuar (se necessário)
+txtpos = debug_before;
+
+    if(w == NULL) {
+  //      printf("WEND: Nenhum frame após %d tentativas\n", count);
+        printmsg(nowhile_msg);
+        goto run_next_statement;
+    }
+
+
+    while(stack_ptr < stack_limit) {
+        if(*stack_ptr == STACK_WHILE_FLAG) {
+            w = (struct stack_while_frame *)stack_ptr;
+            break;
+        }
+        stack_ptr++;  // Ajuste conforme sua estrutura de stack
+    }
+
+    if(w == NULL) {
+        printmsg(nowhile_msg);
+        goto run_next_statement;
+    }
+
+    // Reavalia a condição
+    txtpos = w->condition_pos;
+    expression_error = 0;
+     condition = expression();
+
+    if(condition != 0) {
+        // Volta para o loop
+        txtpos = w->txtpos;
+        current_line = w->current_line;
+    } else {
+        // Sai do loop
+        sp += sizeof(struct stack_while_frame);
+    }
+
+}
+goto run_next_statement;
 
 forloop:
   {
