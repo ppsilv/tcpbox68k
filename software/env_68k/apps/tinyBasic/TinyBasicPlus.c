@@ -797,7 +797,7 @@ static unsigned long expr4(void)
     // Is it a variable reference (single alpha)
     if(txtpos[1] < 'A' || txtpos[1] > 'Z')
     {
-      a = ((unsigned long *)variables_begin)[*txtpos - 'A'];
+      a = ((short int *)variables_begin)[*txtpos - 'A'];
       txtpos++;
       return a;
     }
@@ -1000,7 +1000,7 @@ prompt:
   toUppercaseBuffer();
 
   txtpos = program_end+sizeof(unsigned short);
-  printf("txtpos.........: [%08X]\n",txtpos);
+
 
   // Find the end of the freshly entered line
   while(*txtpos != NL)
@@ -1513,7 +1513,7 @@ poke:
     value = expression();
     if(expression_error)
       goto qwhat;
-    address = (unsigned long *)value;
+    address = (unsigned char *)value;
 
     // check for a comma
     ignore_blanks();
