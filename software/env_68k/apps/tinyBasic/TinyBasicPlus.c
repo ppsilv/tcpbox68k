@@ -20,16 +20,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define pgm_read_byte( A ) *(A)
-
 // size of our program ram
-#define kRamSize   64*1024 /* arbitrary - not dependant on libraries */
+#define BasicRamSize   64*1024 /* arbitrary - not dependant on libraries */
 
 // memory alignment
 // Align memory addess x to an even page
 #define ALIGN_UP(x) ((unsigned char*)(((unsigned int)(x + 1) >> 1) << 1))
 #define ALIGN_DOWN(x) ((unsigned char*)(((unsigned int)x >> 1) << 1))
-
 
 #ifndef boolean 
   #define boolean int
@@ -69,7 +66,7 @@ struct stack_while_frame {
     unsigned char *current_line;
 };
 
-static unsigned char program[kRamSize];
+static unsigned char program[BasicRamSize];
 static const char *  sentinel = "HELLO";
 static unsigned char *txtpos,*list_line, *tmptxtpos;
 static unsigned char expression_error;
@@ -298,11 +295,11 @@ static void scantable(const unsigned char *table)
   while(1)
   {
     // Run out of table entries?
-    if(pgm_read_byte( table ) == 0)
+    if( *table  == 0)
       return;
 
     // Do we match this character?
-    if(txtpos[i] == pgm_read_byte( table ))
+    if(txtpos[i] ==  *table )
     {
       i++;
       table++;
@@ -310,7 +307,7 @@ static void scantable(const unsigned char *table)
     else
     {
       // do we match the last character of keywork (with 0x80 added)? If so, return
-      if(txtpos[i]+0x80 == pgm_read_byte( table ))
+      if(txtpos[i]+0x80 == *table )
       {
         txtpos += i+1;  // Advance the pointer to following the keyword
         ignore_blanks();
@@ -318,7 +315,7 @@ static void scantable(const unsigned char *table)
       }
 
       // Forward to the end of this keyword
-      while((pgm_read_byte( table ) & 0x80) == 0)
+      while((*table  & 0x80) == 0)
         table++;
 
       // Now move on to the first character of the next word, and reset the position index
@@ -441,8 +438,8 @@ static unsigned char print_quoted_string(void)
 /***************************************************************************/
 void printmsgNoNL(const unsigned char *msg)
 {
-  while( pgm_read_byte( msg ) != 0 ) {
-    outchar( pgm_read_byte( msg++ ) );
+  while( *msg != 0 ) {
+    outchar( *msg++ );
   };
 }
 
@@ -801,7 +798,7 @@ prompt:
     current_line = program_start;
     goto execline;
   }
-  printf("\n");
+
   getln( '>' );
   toUppercaseBuffer();
 
@@ -1702,13 +1699,7 @@ unsigned char * filenameWord(void)
 static void line_terminator(void)
 {
   outchar(NL);
-  outchar(CR);
-}
-
-/***********************************************************/
-void setup()
-{
-
+  //outchar(CR);
 }
 
 
