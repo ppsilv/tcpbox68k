@@ -308,6 +308,8 @@ const static unsigned char keywords[]  = {
   'E','N','D'+0x80,
   'R','S','E','E','D'+0x80,
   'C','H','A','I','N'+0x80,
+  'H','E','X'+0x80,
+  'H','E','X','P','E','E','K'+0x80,
   0
 };
 
@@ -331,14 +333,9 @@ enum {
   KW_END,
   KW_RSEED,
   KW_CHAIN,
-#ifdef ENABLE_TONES
-  KW_TONEW, KW_TONE, KW_NOTONE,
-#endif
-#ifdef ARDUINO
-#ifdef ENABLE_EEPROM
-  KW_ECHAIN, KW_ELIST, KW_ELOAD, KW_EFORMAT, KW_ESAVE,
-#endif
-#endif
+
+  KW_HEX,  // Adicione HEX$ como keyword
+  KW_HEXPEEK,
   KW_DEFAULT /* always the final one*/
 };
 
@@ -452,9 +449,12 @@ static const unsigned char spacemsg[]         PROGMEM = " ";
 static int inchar(void);
 static void outchar(unsigned char c);
 static void line_terminator(void);
-static unsigned long expression(void);
+
+//static short int expression(void);
 static unsigned char breakcheck(void);
 static unsigned char peek(unsigned long a);
+static unsigned long expression(void);
+
 
 #include <stdint.h>
 
@@ -739,12 +739,25 @@ void printline()
     list_line++;
   }
   list_line++;
-#ifdef ALIGN_MEMORY
+
   // Start looking for next line on even page
   if (ALIGN_UP(list_line) != list_line)
     list_line++;
-#endif
+
   line_terminator();
+}
+
+static unsigned char peek(unsigned long a)
+{
+    unsigned long *p;
+    unsigned char b;
+    p = (unsigned long *)a;
+
+    // Pega byte específico (0 = primeiro, 1 = segundo, etc)
+    b = ((*p) >> (3 * 8)) & 0xFF;
+
+    //printf("Voce chamou honoravel peek a = [%lu]  p = [%lu] result [%x]\n", a, (unsigned long)p, b);
+    return b;
 }
 
 /***************************************************************************/
@@ -800,6 +813,7 @@ static unsigned long expr4(void)
       goto expr4_error;
 
     txtpos++;
+
     a = expression();
     if(*txtpos != ')')
       goto expr4_error;
@@ -810,13 +824,14 @@ static unsigned long expr4(void)
       return peek(a);
       
     case FUNC_ABS:
-      if(a < 0) 
+      if(a < 0)
         return -a;
       return a;
 
 
     case FUNC_RND:
       return( rand() % a );
+
     }
   }
 
@@ -838,23 +853,11 @@ expr4_error:
 
 }
 
-static unsigned char peek(unsigned long a)
-{
-    unsigned long *p;
-    unsigned char b;
-    p = (unsigned long *)a;
-
-    // Pega byte específico (0 = primeiro, 1 = segundo, etc)
-    b = ((*p) >> (3 * 8)) & 0xFF;
-
-    printf("Voce chamou honoravel peek a = [%lu]  p = [%lu] result [%x]\n", a, (unsigned long)p, b);
-    return b;
-}
 
 /***************************************************************************/
-static unsigned long  expr3(void)
+static unsigned long expr3(void)
 {
-  unsigned long  a,b;
+  unsigned long a,b;
 
   a = expr4();
 
@@ -885,7 +888,8 @@ static unsigned long  expr3(void)
 /***************************************************************************/
 static unsigned long expr2(void)
 {
-  unsigned long  a,b;
+
+  unsigned long a,b;
 
   if(*txtpos == '-' || *txtpos == '+')
     a = 0;
@@ -910,6 +914,7 @@ static unsigned long expr2(void)
       return a;
   }
 }
+
 /***************************************************************************/
 static unsigned long expression(void)
 {
@@ -965,11 +970,6 @@ void loop()
   boolean alsoWait = false;
   int val;
 
-#ifdef ARDUINO
-#ifdef ENABLE_TONES
-  noTone( kPiezoPin );
-#endif
-#endif
 
   program_start = program;
   program_end = program_start;
@@ -978,9 +978,6 @@ void loop()
   // Ensure these memory blocks start on even pages
   stack_limit = ALIGN_DOWN(program+sizeof(program)-STACK_SIZE);
   variables_begin = ALIGN_DOWN(stack_limit - 27*VAR_SIZE);
-  printf("program_start..: [%08x]\n",program);
-  printf("stack_limit....: [%08X]\n",stack_limit);
-  printf("variables_begin: [%08X]\n",variables_begin);
 
   // memory free
   printnum(variables_begin-program_end);
@@ -998,7 +995,7 @@ prompt:
     current_line = program_start;
     goto execline;
   }
-
+  printf("\n");
   getln( '>' );
   toUppercaseBuffer();
 
@@ -1043,7 +1040,6 @@ prompt:
   // Now we have the number, add the line header.
   txtpos -= 3;
 
-#ifdef ALIGN_MEMORY
   // Line starts should always be on 16-bit pages
   if (ALIGN_DOWN(txtpos) != txtpos)
   {
@@ -1058,7 +1054,6 @@ prompt:
       tomove++;
     }
   }
-#endif
 
   *((unsigned short *)txtpos) = linenum;
   txtpos[sizeof(LINENUM)] = linelen;
@@ -1257,34 +1252,40 @@ interperateAtTxtpos:
   case KW_DWRITE:  // DWRITE <pin>, HIGH|LOW
     isDigital = true;
     goto dwrite;
-
   case KW_RSEED:
     goto rseed;
+  case KW_HEX:  // Adicione HEX$ como keyword
+    {
+      expression_error = 0;
+      unsigned long value = expression();
+      char hex_str[9];
+      if( 0xFF > value )
+        printf("%02X", value);
+      else if ( 0xFFFF > value )
+        printf("%4X", value);
+      else
+        printf("%8X", value);
+      //push_string(hex_str);
+    }
+    break;
+    // Implementação:
+  case KW_HEXPEEK:
+    {
+        ignore_blanks();
+        if(*txtpos != '(') goto qwhat;
+        txtpos++;
+        expression_error = 0;
+        unsigned long addr = expression();
+        if(expression_error) goto qwhat;
 
-#ifdef ENABLE_TONES
-  case KW_TONEW:
-    alsoWait = true;
-  case KW_TONE:
-    goto tonegen;
-  case KW_NOTONE:
-    goto tonestop;
-#endif
+        ignore_blanks();
+        if(*txtpos != ')') goto qwhat;
+        txtpos++;
 
-#ifdef ARDUINO
-#ifdef ENABLE_EEPROM
-  case KW_EFORMAT:
-    goto eformat;
-  case KW_ESAVE:
-    goto esave;
-  case KW_ELOAD:
-    goto eload;
-  case KW_ELIST:
-    goto elist;
-  case KW_ECHAIN:
-    goto echain;
-#endif
-#endif
-
+        unsigned char val = peek(addr);
+        printf("%02X\n", val);
+    }
+    break;
   case KW_DEFAULT:
     goto assignment;
   default:
@@ -1302,73 +1303,6 @@ execline:
   txtpos = current_line+sizeof(LINENUM)+sizeof(char);
   goto interperateAtTxtpos;
 
-#ifdef ARDUINO
-#ifdef ENABLE_EEPROM
-elist:
-  {
-    int i;
-    for( i = 0 ; i < (E2END +1) ; i++ )
-    {
-      val = EEPROM.read( i );
-
-      if( val == '\0' ) {
-        goto execnextline;
-      }
-
-      if( ((val < ' ') || (val  > '~')) && (val != NL) && (val != CR))  {
-        outchar( '?' );
-      }
-      else {
-        outchar( val );
-      }
-    }
-  }
-  goto execnextline;
-
-eformat:
-  {
-    for( int i = 0 ; i < E2END ; i++ )
-    {
-      if( (i & 0x03f) == 0x20 ) outchar( '.' );
-      EEPROM.write( i, 0 );
-    }
-    outchar( LF );
-  }
-  goto execnextline;
-
-esave:
-  {
-    outStream = kStreamEEProm;
-    eepos = 0;
-
-    // copied from "List"
-    list_line = findline();
-    while(list_line != program_end) {
-      printline();
-    }
-    outchar('\0');
-
-    // go back to standard output, close the file
-    outStream = kStreamSerial;
-
-    goto warmstart;
-  }
-
-
-echain:
-  runAfterLoad = true;
-
-eload:
-  // clear the program
-  program_end = program_start;
-
-  // load from a file into memory
-  eepos = 0;
-  inStream = kStreamEEProm;
-  inhibitOutput = true;
-  goto warmstart;
-#endif /* ENABLE_EEPROM */
-#endif
 
 input:
   {
@@ -1570,8 +1504,9 @@ assignment:
   goto run_next_statement;
 poke:
   {
+    short int data;
     unsigned long value;
-    unsigned long *address;
+    unsigned char *address;
 
     // Work out where to put it
     expression_error = 0;
@@ -1587,13 +1522,15 @@ poke:
     txtpos++;
     ignore_blanks();
 
-    // Now get the value to assign
+    // Now get the data to assign
     expression_error = 0;
-    value = expression();
+    data = expression();
     if(expression_error)
       goto qwhat;
-    *address = (unsigned char)value
-    printf("Poke %X value %x\n",address, (unsigned char)value);
+
+    printf("Poke %x data %i\n",address, (unsigned char)data);
+    *address=(unsigned char)data;
+
     // Check that we are at the end of the statement
     if(*txtpos != NL && *txtpos != ':')
       goto qwhat;
@@ -1667,182 +1604,39 @@ mem:
   // memory free
   printnum(variables_begin-program_end);
   printmsg(memorymsg);
-#ifdef ARDUINO
-#ifdef ENABLE_EEPROM
-  {
-    // eprom size
-    printnum( E2END+1 );
-    printmsg( eeprommsg );
-
-    // figure out the memory usage;
-    val = ' ';
-    int i;
-    for( i=0 ; (i<(E2END+1)) && (val != '\0') ; i++ ) {
-      val = EEPROM.read( i );
-    }
-    printnum( (E2END +1) - (i-1) );
-
-    printmsg( eepromamsg );
-  }
-#endif /* ENABLE_EEPROM */
-#endif /* ARDUINO */
   goto run_next_statement;
 
 
   /*************************************************/
 
-#ifdef ARDUINO
-awrite: // AWRITE <pin>,val
-dwrite:
-  {
-    short int pinNo;
-    short int value;
-    unsigned char *txtposBak;
-
-    // Get the pin number
-    expression_error = 0;
-    pinNo = expression();
-    if(expression_error)
-      goto qwhat;
-
-    // check for a comma
-    ignore_blanks();
-    if (*txtpos != ',')
-      goto qwhat;
-    txtpos++;
-    ignore_blanks();
-
-
-    txtposBak = txtpos;
-    scantable(highlow_tab);
-    if(table_index != HIGHLOW_UNKNOWN)
-    {
-      if( table_index <= HIGHLOW_HIGH ) {
-        value = 1;
-      }
-      else {
-        value = 0;
-      }
-    }
-    else {
-
-      // and the value (numerical)
-      expression_error = 0;
-      value = expression();
-      if(expression_error)
-        goto qwhat;
-    }
-    pinMode( pinNo, OUTPUT );
-    if( isDigital ) {
-      digitalWrite( pinNo, value );
-    }
-    else {
-      analogWrite( pinNo, value );
-    }
-  }
-  goto run_next_statement;
-#else
 pinmode: // PINMODE <pin>, I/O
 awrite: // AWRITE <pin>,val
 dwrite:
   goto unimplemented;
-#endif
 
   /*************************************************/
 files:
   // display a listing of files on the device.
   // version 1: no support for subdirectories
+   goto run_next_statement;
 
-#ifdef ENABLE_FILEIO
-    cmd_Files();
-  goto warmstart;
-#else
-  goto unimplemented;
-#endif // ENABLE_FILEIO
 
 
 chain:
   runAfterLoad = true;
+    goto run_next_statement;
 
 load:
   // clear the program
   program_end = program_start;
 
   // load from a file into memory
-#ifdef ENABLE_FILEIO
-  {
-    unsigned char *filename;
-
-    // Work out the filename
-    expression_error = 0;
-    filename = filenameWord();
-    if(expression_error)
-      goto qwhat;
-
-#ifdef ARDUINO
-    // Arduino specific
-    if( !SD.exists( (char *)filename ))
-    {
-      printmsg( sdfilemsg );
-    }
-    else {
-
-      fp = SD.open( (const char *)filename );
-      inStream = kStreamFile;
-      inhibitOutput = true;
-    }
-#else // ARDUINO
-    // Desktop specific
-#endif // ARDUINO
-    // this will kickstart a series of events to read in from the file.
-
-  }
-  goto warmstart;
-#else // ENABLE_FILEIO
-  goto unimplemented;
-#endif // ENABLE_FILEIO
+  goto run_next_statement;
 
 
 
 save:
   // save from memory out to a file
-#ifdef ENABLE_FILEIO
-  {
-    unsigned char *filename;
-
-    // Work out the filename
-    expression_error = 0;
-    filename = filenameWord();
-    if(expression_error)
-      goto qwhat;
-
-#ifdef ARDUINO
-    // remove the old file if it exists
-    if( SD.exists( (char *)filename )) {
-      SD.remove( (char *)filename );
-    }
-
-    // open the file, switch over to file output
-    fp = SD.open( (const char *)filename, FILE_WRITE );
-    outStream = kStreamFile;
-
-    // copied from "List"
-    list_line = findline();
-    while(list_line != program_end)
-      printline();
-
-    // go back to standard output, close the file
-    outStream = kStreamSerial;
-
-    fp.close();
-#else // ARDUINO
-    // desktop
-#endif // ARDUINO
-    goto warmstart;
-  }
-#else // ENABLE_FILEIO
-  goto unimplemented;
-#endif // ENABLE_FILEIO
 
 rseed:
   {
@@ -1854,56 +1648,9 @@ rseed:
     if(expression_error)
       goto qwhat;
 
-#ifdef ARDUINO
-    randomSeed( value );
-#else // ARDUINO
-    srand( value );
-#endif // ARDUINO
     goto run_next_statement;
   }
 
-#ifdef ENABLE_TONES
-tonestop:
-  noTone( kPiezoPin );
-  goto run_next_statement;
-
-tonegen:
-  {
-    // TONE freq, duration
-    // if either are 0, tones turned off
-    short int freq;
-    short int duration;
-
-    //Get the frequency
-    expression_error = 0;
-    freq = expression();
-    if(expression_error)
-      goto qwhat;
-
-    ignore_blanks();
-    if (*txtpos != ',')
-      goto qwhat;
-    txtpos++;
-    ignore_blanks();
-
-
-    //Get the duration
-    expression_error = 0;
-    duration = expression();
-    if(expression_error)
-      goto qwhat;
-
-    if( freq == 0 || duration == 0 )
-      goto tonestop;
-
-    tone( kPiezoPin, freq, duration );
-    if( alsoWait ) {
-      delay( duration );
-      alsoWait = false;
-    }
-    goto run_next_statement;
-  }
-#endif /* ENABLE_TONES */
 }
 
 // returns 1 if the character is valid in a filename
