@@ -1,118 +1,286 @@
-(kicad_sch (version 20230121) (generator eeschema)
-
-  (uuid 99c9748a-87b3-41bd-bdc2-3a5f137c7a40)
-
-  (paper "A3")
-
-  (lib_symbols
-  )
-
-
-  (text "ROM 16kBytes\nRAM 1MBytes\n" (at 27.94 73.66 0)
-    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
-    (uuid 5570c11b-890f-4a5d-abaf-1a4c84a2dd12)
-  )
-  (text "CPU MC68000 \nCLOCK 16MHZ\nDATA AND ADDRESS BUFFERS\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
-    (at 27.94 52.07 0)
-    (effects (font (size 2.54 2.54) (thickness 0.254) bold) (justify left bottom))
-    (uuid 80bb59c6-c5c3-4e0b-9abc-953afbae5d6e)
-  )
-  (text "CPU MC68000 \nCLOCK 16MHZ\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
-    (at 27.94 161.29 0)
-    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
-    (uuid 954e2856-0c86-49f3-ba8d-6df86096466d)
-  )
-  (text "TG16C554\n4 UARTS.\n" (at 27.94 113.03 0)
-    (effects (font (size 2.54 2.54) (thickness 0.508) bold) (justify left bottom))
-    (uuid 96aacee7-8ad9-4784-8eb3-878addb92c13)
-  )
-
-  (sheet (at 25.4 63.5) (size 80.01 30.48) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 46851f42-1a1d-4f27-b9e4-631920caffce)
-    (property "Sheetname" "MEMORY" (at 25.4 62.1534 0) (show_name)
-      (effects (font (size 2.54 2.54) bold) (justify left bottom))
-    )
-    (property "Sheetfile" "memory.kicad_sch" (at 25.4 94.5646 0)
-      (effects (font (size 1.27 1.27)) (justify left top) hide)
-    )
-    (instances
-      (project "MC68000"
-        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "3"))
-      )
-    )
-  )
-
-  (sheet (at 25.4 101.6) (size 80.01 26.67) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 743e43ef-105d-41ce-864e-753e6edb9a06)
-    (property "Sheetname" "FOUR UARTS" (at 25.4 100.2534 0) (show_name)
-      (effects (font (size 2.54 2.54) bold) (justify left bottom))
-    )
-    (property "Sheetfile" "fourUarts.kicad_sch" (at 25.4 128.8546 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "MC68000"
-        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "4"))
-      )
-    )
-  )
-
-  (sheet (at 25.4 25.4) (size 80.01 30.48) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 769e212f-4950-4bc7-87dd-856b7f7fe64d)
-    (property "Sheetname" "CPU" (at 25.4 24.0534 0) (show_name)
-      (effects (font (size 2.54 2.54) bold) (justify left bottom))
-    )
-    (property "Sheetfile" "cpu.kicad_sch" (at 25.4 56.4646 0)
-      (effects (font (size 1.27 1.27)) (justify left top) hide)
-    )
-    (instances
-      (project "MC68000"
-        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "2"))
-      )
-    )
-  )
-
-  (sheet (at 25.4 179.07) (size 77.47 25.4) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid 95e583b5-cf01-4f04-acea-05f9c8e809c6)
-    (property "Sheetname" "UART CONTROL" (at 25.4 178.3584 0)
-      (effects (font (size 1.27 1.27)) (justify left bottom))
-    )
-    (property "Sheetfile" "uart_control.kicad_sch" (at 25.4 205.0546 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "MC68000"
-        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "6"))
-      )
-    )
-  )
-
-  (sheet (at 25.4 139.7) (size 80.01 26.67) (fields_autoplaced)
-    (stroke (width 0.1524) (type solid))
-    (fill (color 0 0 0 0.0000))
-    (uuid cb1c4173-bc78-475d-9381-bcb9d50be77b)
-    (property "Sheetname" "cpuNoBuffer" (at 25.4 138.3534 0) (show_name)
-      (effects (font (size 2.54 2.54) bold) (justify left bottom))
-    )
-    (property "Sheetfile" "cpuNoBuffer.kicad_sch" (at 25.4 166.9546 0)
-      (effects (font (size 1.27 1.27)) (justify left top))
-    )
-    (instances
-      (project "MC68000"
-        (path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40" (page "5"))
-      )
-    )
-  )
-
-  (sheet_instances
-    (path "/" (page "1"))
-  )
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "99c9748a-87b3-41bd-bdc2-3a5f137c7a40")
+	(paper "A3")
+	(lib_symbols)
+	(text "ROM 16kBytes\nRAM 1MBytes\n"
+		(exclude_from_sim no)
+		(at 27.94 73.66 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "5570c11b-890f-4a5d-abaf-1a4c84a2dd12")
+	)
+	(text "CPU MC68000 \nCLOCK 16MHZ\nDATA AND ADDRESS BUFFERS\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
+		(exclude_from_sim no)
+		(at 27.94 52.07 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.254)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "80bb59c6-c5c3-4e0b-9abc-953afbae5d6e")
+	)
+	(text "CPU MC68000 \nCLOCK 16MHZ\nHALT AND RESET\nDTACK GLUE LOGIC\nINTERRUPT "
+		(exclude_from_sim no)
+		(at 27.94 161.29 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "954e2856-0c86-49f3-ba8d-6df86096466d")
+	)
+	(text "TG16C554\n4 UARTS.\n"
+		(exclude_from_sim no)
+		(at 27.94 113.03 0)
+		(effects
+			(font
+				(size 2.54 2.54)
+				(thickness 0.508)
+				(bold yes)
+			)
+			(justify left bottom)
+		)
+		(uuid "96aacee7-8ad9-4784-8eb3-878addb92c13")
+	)
+	(sheet
+		(at 25.4 63.5)
+		(size 80.01 30.48)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "46851f42-1a1d-4f27-b9e4-631920caffce")
+		(property "Sheetname" "MEMORY"
+			(at 25.4 62.1534 0)
+			(show_name yes)
+			(effects
+				(font
+					(size 2.54 2.54)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "memory.kicad_sch"
+			(at 25.4 94.5646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25.4 101.6)
+		(size 80.01 26.67)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "743e43ef-105d-41ce-864e-753e6edb9a06")
+		(property "Sheetname" "FOUR UARTS"
+			(at 25.4 100.2534 0)
+			(show_name yes)
+			(effects
+				(font
+					(size 2.54 2.54)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "fourUarts.kicad_sch"
+			(at 25.4 128.8546 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25.4 25.4)
+		(size 80.01 30.48)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "769e212f-4950-4bc7-87dd-856b7f7fe64d")
+		(property "Sheetname" "CPU"
+			(at 25.4 24.0534 0)
+			(show_name yes)
+			(effects
+				(font
+					(size 2.54 2.54)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "cpu.kicad_sch"
+			(at 25.4 56.4646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+				(hide yes)
+			)
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25.4 179.07)
+		(size 77.47 25.4)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "95e583b5-cf01-4f04-acea-05f9c8e809c6")
+		(property "Sheetname" "UART CONTROL"
+			(at 25.4 178.3584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "uart_control.kicad_sch"
+			(at 25.4 205.0546 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 25.4 139.7)
+		(size 80.01 26.67)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "cb1c4173-bc78-475d-9381-bcb9d50be77b")
+		(property "Sheetname" "cpuNoBuffer"
+			(at 25.4 138.3534 0)
+			(show_name yes)
+			(effects
+				(font
+					(size 2.54 2.54)
+					(bold yes)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "cpuNoBuffer.kicad_sch"
+			(at 25.4 166.9546 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
 )
