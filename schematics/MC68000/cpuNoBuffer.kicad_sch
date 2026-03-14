@@ -10516,12 +10516,6 @@
 		(uuid "ed45ffde-73a9-4f61-8313-2c26a5f5584c")
 	)
 	(junction
-		(at 276.86 182.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ee4a2903-ddac-445e-be65-1cc8c3481e60")
-	)
-	(junction
 		(at 130.81 279.4)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -10544,6 +10538,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "fd7c9c25-d13c-4325-b001-4aac488b7f44")
+	)
+	(junction
+		(at 276.86 185.42)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "fd93e488-ca8e-4b0a-9f81-7feb9eb39bde")
 	)
 	(junction
 		(at 30.48 127)
@@ -13479,16 +13479,6 @@
 	)
 	(wire
 		(pts
-			(xy 260.35 182.88) (xy 276.86 182.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "53ed446e-5aca-42fc-abe3-7a855102a198")
-	)
-	(wire
-		(pts
 			(xy 53.34 55.88) (xy 71.12 55.88)
 		)
 		(stroke
@@ -13516,6 +13506,16 @@
 			(type default)
 		)
 		(uuid "543369f9-4ee3-4732-84fa-584a5cb11883")
+	)
+	(wire
+		(pts
+			(xy 295.91 193.04) (xy 295.91 196.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "54ca7050-1f8f-457c-999c-bed3cd1ab65f")
 	)
 	(bus
 		(pts
@@ -14776,6 +14776,16 @@
 			(type default)
 		)
 		(uuid "8d54bc95-891c-4e74-87bc-34b795f849ef")
+	)
+	(wire
+		(pts
+			(xy 276.86 196.85) (xy 276.86 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8d8f7c1f-9c55-476f-87d3-f76daafdfd4b")
 	)
 	(wire
 		(pts
@@ -17057,6 +17067,16 @@
 		)
 		(uuid "ed2940ca-738a-4c83-953d-9f7d4a04ac98")
 	)
+	(wire
+		(pts
+			(xy 295.91 196.85) (xy 276.86 196.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ed6b8db0-9475-4542-9ae8-75c0d6e0c205")
+	)
 	(bus
 		(pts
 			(xy 275.59 87.63) (xy 275.59 90.17)
@@ -18409,7 +18429,7 @@
 		)
 		(uuid "3f31f683-b97e-4e15-b484-e4eab7bdb830")
 	)
-	(label "C.{slash}VPA"
+	(label "{slash}VPA"
 		(at 163.83 92.71 0)
 		(effects
 			(font
@@ -19678,16 +19698,6 @@
 			(justify left bottom)
 		)
 		(uuid "ee74b290-1e57-4258-aa87-c77d98af9a32")
-	)
-	(label "C.{slash}AS"
-		(at 274.32 182.88 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "efb07cbd-6e13-4b1d-a195-3cb724b8558f")
 	)
 	(label "D3"
 		(at 283.21 105.41 0)
