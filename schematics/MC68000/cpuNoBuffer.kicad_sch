@@ -11839,6 +11839,16 @@
 	)
 	(wire
 		(pts
+			(xy 374.65 176.53) (xy 393.7 176.53)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05c3fa13-51f3-41ab-bb1e-fee740f189f9")
+	)
+	(wire
+		(pts
 			(xy 389.89 67.31) (xy 392.43 67.31)
 		)
 		(stroke
@@ -12807,6 +12817,16 @@
 		)
 		(uuid "2fbf9e80-0d30-4384-8346-9328cc9fc432")
 	)
+	(wire
+		(pts
+			(xy 400.05 167.64) (xy 400.05 171.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2fd0f59c-9657-4d50-b1f8-e74ae2d9d8f6")
+	)
 	(bus
 		(pts
 			(xy 257.81 77.47) (xy 257.81 80.01)
@@ -13517,6 +13537,16 @@
 		)
 		(uuid "54ca7050-1f8f-457c-999c-bed3cd1ab65f")
 	)
+	(wire
+		(pts
+			(xy 393.7 179.07) (xy 400.05 179.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "54d91806-0360-4c8f-938d-d6ded30824e2")
+	)
 	(bus
 		(pts
 			(xy 326.39 19.05) (xy 326.39 41.91)
@@ -13726,6 +13756,16 @@
 			(type default)
 		)
 		(uuid "5ca9c94d-81dd-4c11-830f-354a70235ddb")
+	)
+	(wire
+		(pts
+			(xy 359.41 156.21) (xy 359.41 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5cf6ba13-160f-4426-8cc1-514eadea941d")
 	)
 	(wire
 		(pts
@@ -15499,6 +15539,16 @@
 	)
 	(wire
 		(pts
+			(xy 393.7 176.53) (xy 393.7 179.07)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "aecf1a38-5acf-4043-96a1-229889821c44")
+	)
+	(wire
+		(pts
 			(xy 46.99 184.15) (xy 54.61 184.15)
 		)
 		(stroke
@@ -16829,6 +16879,16 @@
 	)
 	(wire
 		(pts
+			(xy 359.41 149.86) (xy 400.05 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e406026d-3c57-4fe8-aab3-ebd94832b6c4")
+	)
+	(wire
+		(pts
 			(xy 307.34 49.53) (xy 323.85 49.53)
 		)
 		(stroke
@@ -17166,6 +17226,16 @@
 			(type default)
 		)
 		(uuid "eff06f57-66cb-4fca-b20b-687ba7ea2cf6")
+	)
+	(wire
+		(pts
+			(xy 400.05 149.86) (xy 400.05 160.02)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f0270558-fb9d-4520-8bfb-be7b97f9a177")
 	)
 	(wire
 		(pts
@@ -23719,6 +23789,74 @@
 		)
 	)
 	(symbol
+		(lib_id "Device:LED")
+		(at 400.05 175.26 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "5a2a4dcc-2419-4cc5-b716-de9d2768f9d1")
+		(property "Reference" "D10"
+			(at 402.59 172.4024 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "Sys Alive"
+			(at 396.748 180.848 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_THT:D_DO-34_SOD68_P5.08mm_Vertical_AnodeUp"
+			(at 400.05 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 400.05 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 400.05 175.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "577c6530-dc43-4389-b15c-1db74a65e883")
+		)
+		(pin "2"
+			(uuid "39c3bf40-c970-41d5-b398-4a6df42d4884")
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40/cb1c4173-bc78-475d-9381-bcb9d50be77b"
+					(reference "D10")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:+5V")
 		(at 39.37 114.3 0)
 		(unit 1)
@@ -27395,6 +27533,74 @@
 				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40/cb1c4173-bc78-475d-9381-bcb9d50be77b"
 					(reference "U2.6")
 					(unit 5)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 400.05 163.83 180)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "ce3893f1-f537-4d7c-98e8-1fc21f7bcb98")
+		(property "Reference" "R59"
+			(at 403.86 167.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "470R"
+			(at 402.59 161.29 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal"
+			(at 401.828 163.83 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 400.05 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 400.05 163.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d7b3f83e-e6ba-4a0e-8e82-b1e9a3d2e3d8")
+		)
+		(pin "2"
+			(uuid "b80a1011-302c-4d06-8379-16369fc910ef")
+		)
+		(instances
+			(project "MC68000"
+				(path "/99c9748a-87b3-41bd-bdc2-3a5f137c7a40/cb1c4173-bc78-475d-9381-bcb9d50be77b"
+					(reference "R59")
+					(unit 1)
 				)
 			)
 		)
