@@ -1,0 +1,6 @@
+22/03/2026
+Tested D_RUN_CMD D_REG_X_LOW D_REG_Y_LOW CMD_SET_CUR_POS 
+
+
+
+TODO: Verificar porque no posicionamento do cursor fica um caractere estranho antes do cursor.

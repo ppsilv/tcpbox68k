@@ -146,7 +146,7 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                         break;
                 case D_REG_X_LOW:
                         cursor_x = data;// | cursor_x;
-                        sprintf(buf,"X-L data:%02X cursor_x:%02X\n\n\n",data,cursor_x);
+                        sprintf(buf,"X-L data:%02X cursor_x:%02X\n",data,cursor_x);
                         vga->printString(buf);
                         break;
                 case D_REG_Y_HIGH:
@@ -154,7 +154,7 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                         break;
                 case D_REG_Y_LOW:
                         cursor_y = data;// | cursor_y;
-                        sprintf(buf,"Y-L data:%02X cursor_y:%02X\n\n\n",data,cursor_y);
+                        sprintf(buf,"Y-L data:%02X cursor_y:%02X\n",data,cursor_y);
                         vga->printString(buf);
                         break;
                 case D_CHANGE_BUFFER: 

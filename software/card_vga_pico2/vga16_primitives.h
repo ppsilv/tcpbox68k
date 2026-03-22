@@ -52,7 +52,7 @@ struct vga16_text {
   void (*set_blink_interval)(uint16_t interval);
   void (*setTextCursorVisible)(bool v);
   void (*setTextCursorBlink)(bool b);
-  void (*pchar)(char c);
+  void (*pchar)(unsigned char c);
   void (*set_vga_data_array)(unsigned char video_data_array[]);
 
   void * _private;

@@ -14,9 +14,6 @@
 // 5x7 font
 void writeStringBold(char* str);
 
-
-
-
 struct font{
     uint8_t *name;
     uint8_t width ;
@@ -72,9 +69,10 @@ void clrscr(){
   priv->cursor->y = 0 ;
 }
 
+/*
 static void pchar(char c){
     tft_write(c);
-}
+}*/
 
 
 void drawPixel(short x, short y, color_t color) {
@@ -222,7 +220,8 @@ void tft_write(unsigned char c){
   vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
 
   if (c == '\n') {
-    priv->cursor->y += priv->font.size*8;
+//    priv->cursor->y += priv->font.size*8;
+    priv->cursor->y += priv->font.height;
     priv->cursor->x  = 0;
   } else if (c == '\r') {
     // skip em
@@ -427,7 +426,7 @@ vga16_text_t* create_screen(screenMode_t mode,unsigned char vga_data_array[],uns
   vga->setTextCursorBlink = setTextCursorBlink;
   vga->get_blink_interval = get_blink_interval;
   vga->set_blink_interval = set_blink_interval;
-  vga->pchar = pchar;
+  vga->pchar = tft_write;
   vga->set_vga_data_array = set_vga_data_array;
 
   return vga;
