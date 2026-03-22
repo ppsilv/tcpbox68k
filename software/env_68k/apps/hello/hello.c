@@ -165,8 +165,8 @@ void show_menu(){
         printf("\n--- TCPBOX68K VIDEO TEST ---\n");
         printf("1 - Clear Screen\n");
         printf("2 - Set X Position\n");
-        printf("3 - Set y Position\n");
-        printf("4 - Posiciona cursor\n");
+        //printf("3 - Set y Position\n");
+        //printf("4 - Posiciona cursor\n");
         printf("5 - Imprime tbl ascii\n");
         printf("6 - Imprime um caractere\n");
         printf("7 - sai do programa\n");

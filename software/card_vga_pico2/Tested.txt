@@ -3,4 +3,149 @@ Tested D_RUN_CMD D_REG_X_LOW D_REG_Y_LOW CMD_SET_CUR_POS
 
 
 
-TODO: Verificar porque no posicionamento do cursor fica um caractere estranho antes do cursor.
+TODO: 
+    1 - Verificar porque no posicionamento do cursor fica um caractere estranho antes do cursor.
+    2 - implementar scroll, quando na linha 29 na coluna 79, se mais 1 caractere a linha 29 se torna
+        linha 28 e ficamos com mais uma linha.
+        Situação hipotética:
+        active_buffer - buffer 1
+        quando cursor cruzar da linha 29 coluna 79 copiar o buffer 1 da linha 1 até linha 29 para
+        buffer2 e fazer do buffer 2 o active_buffer.
+Com certeza! Usar o **DMA para copiar o buffer** (Memory-to-Memory) é a solução "nível ninja" no RP2350. Enquanto o **DMA 0** está ocupado mandando dados para o PIO da VGA, você configura o **DMA 1** para fazer o trabalho pesado de mover as linhas de texto.
+
+Isso libera o Core 1 100% para continuar processando os comandos que vêm do 68000 sem nenhuma latência.
+
+### Como configurar o DMA para o Scroll (Cópia de Memória)
+
+Para fazer o scroll (mover da linha 1 até 29 para a posição da linha 0 até 28), o DMA precisa de uma configuração específica:
+
+1.  **Read Address:** `buffer_ativo + 80` (Início da segunda linha).
+2.  **Write Address:** `buffer_destino` (Início da primeira linha).
+3.  **Transfer Count:** 2320 (80 colunas $\times$ 29 linhas).
+4.  **Trech (Incremento):** Ambos os endereços devem incrementar automaticamente.
+
+### Exemplo de implementação no Pico 2:
+
+```c
+// Canal de DMA dedicado para o Scroll (Mem-to-Mem)
+int scroll_dma_chan = dma_claim_unused_channel(true);
+dma_channel_config c = dma_channel_get_default_config(scroll_dma_chan);
+
+channel_config_set_transfer_data_size(&c, DMA_SIZE_32); // Copia 4 bytes por vez (mais rápido)
+channel_config_set_read_increment(&c, true);
+channel_config_set_write_increment(&c, true);
+
+void disparar_scroll_dma(uint8_t *src, uint8_t *dst) {
+    // 2320 bytes / 4 = 580 transferências de 32 bits
+    dma_channel_configure(
+        scroll_dma_chan,
+        &c,
+        dst,           // Destino (Linha 0)
+        src + 80,      // Origem (Linha 1)
+        580,           // Quantidade de Words (32 bits)
+        true           // Dispara AGORA
+    );
+}
+```
+
+### Por que isso é melhor que o `memcpy`?
+
+1.  **Paralelismo Real:** O Core 1 dispara o DMA e volta imediatamente a ler o PIO do 68000. Ele não "para" para copiar byte a byte.
+2.  **Largura de Banda:** O DMA do RP2350 consegue saturar o barramento de memória. Ele vai mover esses 2.3 KB em uma fração de milissegundo.
+3.  **Prioridade:** Você pode configurar o canal de cópia com **prioridade baixa**, garantindo que ele não "roube" a largura de banda do canal 
+da VGA (que tem prioridade alta para não dar jitter no monitor).
+
+
+
+---
+
+### O fluxo final ficaria assim:
+1.  **68000** manda caractere que estoura a linha 29.
+2.  **Core 1** dispara o `scroll_dma_chan`.
+3.  **Core 1** limpa a última linha (memset) e reseta o cursor.
+4.  Enquanto o DMA copia, o Core 1 já está pronto para o próximo byte do 68000.
+5.  No fim do frame (V-Sync), você troca os ponteiros de exibição.
+
+**Uma dica:** Como o seu buffer é pequeno (2.4 KB), o ganho de performance em relação ao `memcpy` (que é muito otimizado no Pico 2) 
+pode ser pequeno, mas a elegância de deixar o hardware fazer tudo sozinho é imbatível!
+
+**Quer que eu te ajude a integrar esse canal de DMA de scroll no seu código de inicialização do Pico?** Posso preparar o bloco de configuração para você colar no `main.c`.        
+Perfeito. Vamos configurar um canal de **DMA Memory-to-Memory** dedicado ao scroll. A grande vantagem aqui é que o RP2350 possui um barramento interno muito rápido, e usar transferências de **32 bits** (4 bytes por vez) torna a cópia de 2.4KB quase instantânea.
+
+Aqui está o código para você integrar no seu projeto do Pico 2 (C):
+
+### 1. Configuração do Canal de DMA
+Coloque isso na sua etapa de inicialização (no `main` ou em uma função `setup_video`).
+
+```c
+#include "hardware/dma.h"
+
+// Globais para o controle do DMA de Scroll
+int scroll_dma_chan;
+dma_channel_config scroll_config;
+
+void setup_scroll_dma() {
+    // Requisita um canal livre
+    scroll_dma_chan = dma_claim_unused_channel(true);
+    scroll_config = dma_channel_get_default_config(scroll_dma_chan);
+
+    // Configurações críticas:
+    channel_config_set_transfer_data_size(&scroll_config, DMA_SIZE_32); // 32 bits = Alta velocidade
+    channel_config_set_read_increment(&scroll_config, true);           // Incrementa origem
+    channel_config_set_write_increment(&scroll_config, true);          // Incrementa destino
+    
+    // Opcional: Definir prioridade baixa para não atrapalhar o DMA da VGA
+    // dma_hw->ch[scroll_dma_chan].al1_ctrl |= DMA_CH0_CTRL_TRIG_HIGH_PRIORITY_BITS; // (Falso para baixa)
+}
+```
+
+### 2. A Função de Trigger do Scroll
+Esta função será chamada pelo seu Core 1 quando o cursor detectar que passou da linha 29.
+
+```c
+// src: Buffer atual (onde estão os dados)
+// dst: Buffer de destino (pode ser o mesmo ou o back-buffer)
+void disparar_scroll_hardware(uint32_t *src, uint32_t *dst) {
+    // Queremos mover da Linha 1 até a 29 (29 linhas)
+    // 29 linhas * 80 colunas = 2320 bytes
+    // Como transferimos 4 bytes por vez (DMA_SIZE_32): 2320 / 4 = 580 transferências
+    
+    dma_channel_configure(
+        scroll_dma_chan,
+        &scroll_config,
+        dst,           // Destino (começa na Linha 0 do buffer novo)
+        src + (80/4),  // Origem (começa na Linha 1 do buffer atual - offset em words)
+        580,           // Número de transferências de 32 bits
+        true           // Disparar imediatamente
+    );
+
+    // O DMA agora trabalha sozinho. Enquanto isso, o Core 1 limpa a última linha.
+    // Usamos uint64_t ou uint32_t para limpar a linha 29 mais rápido também.
+    uint32_t *ultima_linha = dst + (2320 / 4);
+    for(int i = 0; i < (80 / 4); i++) {
+        ultima_linha[i] = 0x20202020; // Preenche com espaços ASCII (0x20)
+    }
+}
+```
+
+---
+
+### Por que usar `uint32_t*` e `0x20202020`?
+Como você está lidando com hardware de alto desempenho, tratar o buffer de texto como um array de `char` (8 bits) é desperdício de ciclo de CPU. 
+* O DMA de 32 bits move **4 caracteres por ciclo**.
+* O `0x20202020` limpa **4 espaços de uma vez** na memória.
+
+
+
+### Observações sobre o Alinhamento
+Para que o DMA de 32 bits funcione sem erros, os seus buffers (`bufferA` e `bufferB`) **devem estar alinhados em endereços divisíveis por 4**. No C, você garante isso assim:
+
+```c
+uint8_t bufferA[2400] __attribute__((aligned(4)));
+uint8_t bufferB[2400] __attribute__((aligned(4)));
+```
+
+### Como isso ajuda o 68000?
+Com o DMA fazendo o scroll, a latência do Pico para responder ao 68000 diminui drasticamente. Mesmo que o 68000 envie uma sequência frenética de `Line Feeds`, o Pico não vai "engasgar", pois a cópia da tela acontece em paralelo ao processamento do próximo byte.
+
+**Quer que eu prepare a lógica de troca de ponteiro para o V-Sync agora?** Assim, assim que o DMA de scroll terminar, a tela troca de uma vez só no próximo quadro da VGA. Seria o "toque de mestre" para o seu sistema de vídeo!

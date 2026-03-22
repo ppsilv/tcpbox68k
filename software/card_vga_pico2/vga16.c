@@ -89,8 +89,6 @@ static bool system_run;
 uint16_t cursor_x = 0;
 uint16_t cursor_y = 0;
 
-
-
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
     char buf[256]={0};
@@ -133,6 +131,7 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                             vga->clrscr();
                         break;
                     }
+                    break;
                 case D_WRITE_SCREEN:    
                         vga->pchar(data);  
                         idx++;
@@ -146,16 +145,16 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                         break;
                 case D_REG_X_LOW:
                         cursor_x = data;// | cursor_x;
-                        sprintf(buf,"X-L data:%02X cursor_x:%02X\n",data,cursor_x);
-                        vga->printString(buf);
+                        //sprintf(buf,"X-L data:%02X cursor_x:%02X",data,cursor_x);
+                        //vga->printString(buf);
                         break;
                 case D_REG_Y_HIGH:
                         cursor_y = (data <<8)|cursor_y;
                         break;
                 case D_REG_Y_LOW:
                         cursor_y = data;// | cursor_y;
-                        sprintf(buf,"Y-L data:%02X cursor_y:%02X\n",data,cursor_y);
-                        vga->printString(buf);
+                        //sprintf(buf,"Y-L data:%02X cursor_y:%02X",data,cursor_y);
+                        //vga->printString(buf);
                         break;
                 case D_CHANGE_BUFFER: 
                         vga->printString("NOT impl");

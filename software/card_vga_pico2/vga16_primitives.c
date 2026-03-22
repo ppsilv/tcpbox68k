@@ -268,8 +268,29 @@ void put_cursor(unsigned char c){
   }
 }
 
+uint8_t bufferA[2400];
+uint8_t bufferB[2400];
+uint8_t *front_buffer = bufferA;
+uint8_t *back_buffer = bufferB;
 
-static void setTextCursor(short x, short y) {
+void vga_scroll() {
+    // 1. Copia da linha 1 até 29 do front para a linha 0 até 28 do back
+    // (80 colunas * 29 linhas = 2320 bytes)
+    memcpy(back_buffer, front_buffer + 80, 2320);
+
+    // 2. Limpa a nova linha 29 no back buffer
+    memset(back_buffer + 2320, ' ', 80);
+
+    // 3. TROCA OS PONTEIROS (O back vira front e vice-versa)
+    uint8_t *temp = front_buffer;
+    front_buffer = back_buffer;
+    back_buffer = temp;
+
+    // 4. Reposiciona o cursor na última linha
+    vga->setTextCursorPos(0,29);
+}
+
+static void setTextCursor(uint16_t x, uint16_t y) {
   vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
   if((x >= priv->width) || (y >= priv->height)) 
     return;
