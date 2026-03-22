@@ -15,6 +15,7 @@ bit 13    → CS
 #define SET_VERTICAL    0x27
 #define RUN_CMD         0x26
 
+bool system_run = false;
 
 static uint8_t bus_decode(uint8_t * reg, uint32_t v)
 {
@@ -32,6 +33,7 @@ uint8_t bus_wait_event(PIO pio, uint sm)
 bool bus_try_get_event(uint8_t *value,uint8_t *reg,PIO pio, uint sm)
 {
     uint8_t res;
+
     if (!pio_sm_is_rx_fifo_empty(pio, sm)) {
         res = bus_decode( reg, pio_sm_get(pio, sm) );
         *value = res;

@@ -82,6 +82,7 @@ extern uint bus_sm;
 extern bool bus_try_get_event(uint8_t *value,uint8_t *reg,PIO pio, uint sm);
 bool bus_try_get_event32(uint32_t *value,PIO pio, uint sm);
 int total_screen_char=1920;
+extern bool system_run;
 
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
@@ -92,8 +93,21 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
     static int idx = 0;
     PT_BEGIN(pt);
     PT_INTERVAL_INIT() ;
-    uint8_t icor=0;
-
+    // 1. Aguarda um sinal claro do 68000 ou um tempo de estabilização
+    // 2. LIMPEZA CRUCIAL: Antes de começar, esvazie o lixo que o PIO pegou no boot
+    while( system_run == false ){
+        if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
+            //sprintf(buf,"%d-%d ",data,reg);
+            //vga->printString(buf);
+            if(data == 0xA5 && reg == 4 ){
+                system_run = true;
+            }
+        }
+        PT_YIELD_INTERVAL(1) ;
+    }
+    while (!pio_sm_is_rx_fifo_empty(bus_pio1, bus_sm)) {
+        pio_sm_get(bus_pio1, bus_sm); 
+    }    
     vga->clrscr();
 
     while(1) {
