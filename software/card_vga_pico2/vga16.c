@@ -81,24 +81,30 @@ extern uint bus_sm;
 //extern uint8_t bus_wait_event(PIO pio, uint sm);
 extern bool bus_try_get_event(uint8_t *value,PIO pio, uint sm);
 bool bus_try_get_event32(uint32_t *value,PIO pio, uint sm);
+int total_screen_char=1920;
+
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
     char buf[256]={0};
     uint8_t value;
     uint32_t valor=0;
+    static int idx = 0;
     PT_BEGIN(pt);
     PT_INTERVAL_INIT() ;
     uint8_t icor=0;
-    while(1) {
-        PT_YIELD_INTERVAL(1000000) ;
-//        if( bus_try_get_event(&value,bus_pio1, bus_sm) == true ){    
-//            sprintf(buf,"%02X",value);
-//            vga->printString(buf);        
-//        }
 
-        if( bus_try_get_event32(&valor,bus_pio1, bus_sm) == true ){    
-            sprintf(buf,"[%08X]",valor);
-            vga->printString(buf);        
+    vga->clrscr();
+
+    while(1) {
+        PT_YIELD_INTERVAL(1) ;
+
+        if( bus_try_get_event(&value,bus_pio1, bus_sm) == true ){    
+            vga->pchar(value);  
+            idx++;
+            if(idx > 2400){
+                idx = 0;
+                vga->clrscr();
+            }     
         }
 
     } // END WHILE(1)
@@ -195,8 +201,9 @@ int main(){
   // === config threads ========================
   // for core 0
   create_timer(CURSOR_BLINK_ON); //Com o timer para o cursor ele não engasga como quando controlado pela protothread
-  pt_add_thread(protothread_trocatela);
+//  pt_add_thread(protothread_trocatela);
   pt_add_thread(protothread_print_bus_read);
+  //pt_add_thread(protothread_print);
 
 
   // === initalize the scheduler ===============

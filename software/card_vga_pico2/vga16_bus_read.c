@@ -19,7 +19,7 @@ bit 13    → CS
 static uint8_t bus_decode(uint32_t v)
 {
     uint8_t data =  v & 0xFF;          // D0–D7
-    uint8_t addr = (v >> 8) & 0x1F;    // A1–A5 (5 bits)
+    //uint8_t addr = (v >> 8) & 0x1F;    // A1–A5 (5 bits)
 
     return data;
 }
