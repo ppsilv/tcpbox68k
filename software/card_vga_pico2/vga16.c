@@ -79,14 +79,15 @@ static PT_THREAD (protothread_trocatela(struct pt *pt))
 extern PIO bus_pio1;
 extern uint bus_sm;
 //extern uint8_t bus_wait_event(PIO pio, uint sm);
-extern bool bus_try_get_event(uint8_t *value,PIO pio, uint sm);
+extern bool bus_try_get_event(uint8_t *value,uint8_t *reg,PIO pio, uint sm);
 bool bus_try_get_event32(uint32_t *value,PIO pio, uint sm);
 int total_screen_char=1920;
 
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
     char buf[256]={0};
-    uint8_t value;
+    uint8_t data;
+    uint8_t reg;
     uint32_t valor=0;
     static int idx = 0;
     PT_BEGIN(pt);
@@ -97,14 +98,15 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 
     while(1) {
         PT_YIELD_INTERVAL(1) ;
-
-        if( bus_try_get_event(&value,bus_pio1, bus_sm) == true ){    
-            vga->pchar(value);  
-            idx++;
-            if(idx > 2400){
-                idx = 0;
-                vga->clrscr();
-            }     
+        if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
+            if(reg == 0){    
+                vga->pchar(data);  
+                idx++;
+                if(idx > 2400){
+                    idx = 0;
+                    vga->clrscr();
+                }     
+            }
         }
 
     } // END WHILE(1)
@@ -114,6 +116,22 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 void drawPixel(short x, short y, color_t color) ;
 void drawHLine(int x, int y, int w, color_t color) ;
 void fillRect(short x, short y, short w, short h, color_t color);
+
+// Estruturas de controle das threads do Core 1
+static struct pt pt_video, pt_animacao;
+
+void core1_worker_loop() {
+    PT_INIT(&pt_video);
+    PT_INIT(&pt_animacao);
+
+    while (1) {
+        // O escalonador cooperativo do Core 1:
+        protothread_print_bus_read(&pt_video);
+       // protothread_outra_tarefa(&pt_animacao);
+        
+        // No Core 1, evite usar sleeps pesados para não perder o 68000
+    }
+}
 
 int main(){
 
@@ -126,6 +144,11 @@ int main(){
 
     // Initialize the VGA screen
     initVGA(  &active_buffer, TXCOUNT ) ;
+
+    // 2. LANÇA O CORE 1! 
+    // Isso faz o Core 1 começar a executar a função 'core1_entry'
+//    multicore_launch_core1(core1_worker_loop);
+
 
     vga = create_screen( MODE_640x480, active_buffer, TXCOUNT );
     vga->set_vga_data_array(vga_video_data_array0);

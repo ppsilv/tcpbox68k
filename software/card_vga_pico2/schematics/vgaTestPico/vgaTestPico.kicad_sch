@@ -4430,6 +4430,16 @@
 			(embedded_fonts no)
 		)
 	)
+	(text "pino 1 (A0)  = A15 do 68000\npino 2 (A1)  = A16 do 68000\npino 3 (A2)  = A17 do 68000\npino 4 (/E0) = A18 do 68000\npino 5 (/E1) = /LDS R/W /AS do 68000\npino 6 (E2)  = A19 do 68000\n\ncom isso a saida pino 7 /Y7 só deve ser acessada com 0xB8000"
+		(exclude_from_sim no)
+		(at 183.896 37.846 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "53aee9ef-54f9-4b98-949a-96092fb32fe8")
+	)
 	(junction
 		(at 83.82 160.02)
 		(diameter 0)
