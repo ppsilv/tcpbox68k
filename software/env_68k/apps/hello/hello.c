@@ -45,27 +45,186 @@ void led_effects() {
 }
 
 /* Definindo o endereço base da sua Video Card */
-#define SCREEN_REG 0xB8001
+//#define SCREEN_REG 0xB8001
 #define S1_REG 0xB8003
 #define S2_REG 0xB8005
 #define S3_REG 0xB8007
-#define CONFIG_REG 0xB8009
+//#define CONFIG_REG 0xB8009
+
+
+//Register address
+#define WRITE_SCREEN   0xB8001        //Endereço real  3 0x03  o pico enxerga 0x00
+#define REG_02         0xB8003        //Endereço real  3 0x03  o pico enxerga 0x01
+#define REG_03         0xB8005        //Endereço real  5 0x05  o pico enxerga 0x02
+#define REG_04         0xB8007        //Endereço real  7 0x07  o pico enxerga 0x03
+#define CONFIG_REG     0xB8009        //Endereço real  9 0x09  o pico enxerga 0x04
+#define REG_06         0xB800b        //Endereço real 11 0x0b  o pico enxerga 0x05
+#define REG_07         0xB800d        //Endereço real 13 0x0d  o pico enxerga 0x06
+#define REG_08         0xB800f        //Endereço real 15 0x0f  o pico enxerga 0x07
+#define REG_09         0xB8011        //Endereço real 17 0x11  o pico enxerga 0x08
+#define REG_0A         0xB8013        //Endereço real 19 0x13  o pico enxerga 0x09
+#define REG_0B         0xB8015        //Endereço real 21 0x15  o pico enxerga 0x0A
+#define REG_0C         0xB8017        //Endereço real 23 0x17  o pico enxerga 0x0B
+#define REG_0D         0xB8019        //Endereço real 25 0x19  o pico enxerga 0x0C
+#define REG_0E         0xB801b        //Endereço real 27 0x1b  o pico enxerga 0x0D
+#define REG_0F         0xB801d        //Endereço real 29 0x1d  o pico enxerga 0x0E
+#define REG_10         0xB801f        //Endereço real 31 0x1f  o pico enxerga 0x0F
+#define REG_11         0xB8021        //Endereço real 33 0x21  o pico enxerga 0x10
+#define REG_12         0xB8023        //Endereço real 35 0x23  o pico enxerga 0x11
+#define REG_13         0xB8025        //Endereço real 37 0x25  o pico enxerga 0x12
+#define REG_14         0xB8027        //Endereço real 39 0x27  o pico enxerga 0x13
+#define REG_15         0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14
+#define CHANGE_CUR_POS 0xB802b        //Endereço real 43 0x2b  o pico enxerga 0x15
+#define REG_X_HIGH     0xB802d        //Endereço real 45 0x2d  o pico enxerga 0x16
+#define REG_X_LOW      0xB802f        //Endereço real 47 0x2f  o pico enxerga 0x17
+#define REG_Y_HIGH     0xB8031        //Endereço real 49 0x31  o pico enxerga 0x18
+#define REG_Y_LOW      0xB8033        //Endereço real 51 0x33  o pico enxerga 0x19
+#define CHANGE_BUFFER  0xB8035        //Endereço real 53 0x35  o pico enxerga 0x1A
+#define SELECT_SCREEN  0xB8037        //Endereço real 55 0x37  o pico enxerga 0x1B
+#define SET_HORIZONTAL 0xB8039        //Endereço real 57 0x39  o pico enxerga 0x1C
+#define SET_VERTICAL   0xB803b        //Endereço real 59 0x3b  o pico enxerga 0x1D
+#define RUN_CMD        0xB803d        //Endereço real 61 0x3d  o pico enxerga 0x1E
+#define CORINGA        0xB803f        //Endereço real 63 0x3f  o pico enxerga 0x1F
+
+
+
+
+
+//Commands
+#define CMD_SYSTEM_ENABLE   0xA5
+#define CMD_CLEAR_SCREEN    0xA0
+#define CMD_SET_CUR_POS     0xA1
+
+unsigned char *vga_run_cmd = (unsigned char *)RUN_CMD;
+
+void vga_set_x(unsigned short x) {
+    unsigned char *config_reg_x_low = (unsigned char *)REG_X_LOW;
+    unsigned char *config_reg_x_high = (unsigned char *)REG_X_HIGH;
+    if( x < 80 ){
+        *config_reg_x_low  = (unsigned char)x;
+    }else{
+        *config_reg_x_low  = (unsigned char)(x & 0xFF);
+        *config_reg_x_high = (unsigned char)(x >> 8);
+    }
+}
+void vga_set_y(unsigned short y) {
+    unsigned char *config_reg_y_low = (unsigned char *)REG_Y_LOW;
+    unsigned char *config_reg_y_high = (unsigned char *)REG_Y_HIGH;
+    if ( y < 80 ){
+        *config_reg_y_low  = (unsigned char)y;
+    }else{
+        *config_reg_y_low  = (unsigned char)(y & 0xFF);
+        *config_reg_y_high = (unsigned char)(y >> 8);
+    }
+}
+
+unsigned short read_uint() {
+    unsigned short val = 0;
+    char c;
+    while (1) {
+        c = getchar(); // Lê um caractere da serial
+        if (c == '\r' || c == '\n' || c == ' ') break; // Para no Enter ou Espaço
+        if (c >= '0' && c <= '9') {
+            putchar(c); // Ecoa o que você digitou
+            val = val * 10 + (c - '0');
+        }
+    }
+    putchar('\n');
+    return val;
+}
+void clrscr()
+{
+    *vga_run_cmd = CMD_CLEAR_SCREEN;
+}
+
+void imprime_char(char ch)
+{
+    unsigned char *screen_reg = (unsigned char *)WRITE_SCREEN;
+    *screen_reg = ch;
+
+}
+
+void imprime_tbl_ascii()
+{
+    unsigned char *screen_reg = (unsigned char *)WRITE_SCREEN;
+
+    for(unsigned char i=0x20;i<0x80;i++){
+        *screen_reg = i;
+        delay(50);
+    }
+
+}
+
+void show_menu(){
+    int choice;
+    unsigned short pos_x;
+    unsigned short pos_y;
+
+    choice = 'A';
+    while (choice != 1000){
+        printf("\n--- TCPBOX68K VIDEO TEST ---\n");
+        printf("1 - Clear Screen\n");
+        printf("2 - Set X Position\n");
+        printf("3 - Set y Position\n");
+        printf("4 - Posiciona cursor\n");
+        printf("5 - Imprime tbl ascii\n");
+        printf("6 - Imprime um caractere\n");
+        printf("7 - sai do programa\n");
+        printf("\nEscolha: ");
+        choice = getchar();
+        printf("choice [%x04]\n",choice);
+        switch(choice){
+            case '1':
+                printf("Limpando a tela\n");
+                clrscr();
+                break;
+            case '2':
+                printf("Digite a posicao X (0-639): ");
+                pos_x = read_uint();
+                vga_set_x(pos_x);
+                printf("X definido para %d\n", pos_x);
+           //     break;
+           // case '3':
+                printf("Digite a posicao Y (0-319): ");
+                pos_y = read_uint();
+                vga_set_y(pos_y);
+                printf("Y definido para %d\n", pos_y);
+           //     break;
+           // case '4': //Change cursor position.
+                *vga_run_cmd =CMD_SET_CUR_POS;
+                break;
+            case '5':
+                printf("\nVamos imprimir a tabela ascii\n");
+                imprime_tbl_ascii();
+                break;
+            case '6':
+                printf("Digite um caractere: ");
+                char ch = getchar();
+                imprime_char(ch);
+                break;
+            case '7':
+                return;
+
+                break;
+        }
+    }
+}
 
 
 int main() {
     //char str[10]={0};
     check_stack();  // ✅ Verificar stack no início
 /* Criando ponteiros de 8 bits (unsigned char) para os endereços */
-    unsigned char *screen_reg = (unsigned char *)SCREEN_REG;
+    unsigned char *screen_reg = (unsigned char *)WRITE_SCREEN;
     unsigned char *config_reg = (unsigned char *)CONFIG_REG;
 
-    *config_reg = 0xA5;
 
     printf("\n--- Teste de Video Card com Pi Pico ---\n");
 
-    /* 1. Escreve 'A' (0x41) no endereço 0xB8000 */
-    printf("Vou testar a placa de video: enviando 0x41 'A' para reg 0x00\n");
-    printf("Escrevendo 'A' em 0xB8000...\n");
+    printf("Vou testar a placa de video: enviando SYSTEM_ENABLE \n");
+    *config_reg = CMD_SYSTEM_ENABLE;
+
+    show_menu();
 
 
     for(unsigned char i=0x20;i<0x80;i++){

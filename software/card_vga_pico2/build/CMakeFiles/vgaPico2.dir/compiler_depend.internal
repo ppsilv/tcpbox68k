@@ -2620,6 +2620,7 @@ CMakeFiles/vgaPico2.dir/vga16.c.o
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/pt_cornell_v1_4.h
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_drv.h
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_primitives.h
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h
 
 CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_bus_read.c
@@ -2679,6 +2680,7 @@ CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/generated/pico_base/pico/config_autogen.h
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/generated/pico_base/pico/version.h
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga_bus_read.pio.h
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h
 
 CMakeFiles/vgaPico2.dir/vga16_drv.c.o
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_drv.c

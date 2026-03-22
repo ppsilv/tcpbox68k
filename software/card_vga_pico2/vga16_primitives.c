@@ -421,7 +421,7 @@ vga16_text_t* create_screen(screenMode_t mode,unsigned char vga_data_array[],uns
   vga->getTextColor = getTextColor;
   vga->setTextSize = setTextSize;
   vga->getTextSize = getTextSize;
-  vga->setTextCursor = setTextCursor;
+  vga->setTextCursorPos = setTextCursor;
   vga->clrscr = clrscr;
   vga->setTextCursorVisible = setTextCursorVisible;
   vga->setTextCursorBlink = setTextCursorBlink;

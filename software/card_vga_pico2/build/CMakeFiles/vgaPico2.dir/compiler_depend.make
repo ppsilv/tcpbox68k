@@ -2569,7 +2569,8 @@ CMakeFiles/vgaPico2.dir/vga16.c.o: /home/pdsilva/project/tcpbox68k/software/card
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/pt_cornell_v1_4.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_drv.h \
-  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_primitives.h
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_primitives.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h
 
 CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o: /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_bus_read.c \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/boards/include/boards/pico2.h \
@@ -2627,7 +2628,8 @@ CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o: /home/pdsilva/project/tcpbox68k/soft
   /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/lib/gcc/arm-none-eabi/14.2.1/include/stdint.h \
   generated/pico_base/pico/config_autogen.h \
   generated/pico_base/pico/version.h \
-  vga_bus_read.pio.h
+  vga_bus_read.pio.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h
 
 CMakeFiles/vgaPico2.dir/vga16_drv.c.o: /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga16_drv.c \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/boards/include/boards/pico2.h \
@@ -3075,6 +3077,8 @@ vga_rgb.pio.h:
 /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dreq.h:
 
 /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/uart.h:
+
+/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h:
 
 /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/accessctrl.h:
 

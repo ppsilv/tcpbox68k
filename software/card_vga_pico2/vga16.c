@@ -8,6 +8,7 @@
 #include "vga16_primitives.h"
 #include "pt_cornell_v1_4.h"    // protothreads header
 #include "colors.h"
+#include "vga_bus_read.h"
 
 
 vga16_text_t *vga = NULL ;
@@ -82,7 +83,13 @@ extern uint bus_sm;
 extern bool bus_try_get_event(uint8_t *value,uint8_t *reg,PIO pio, uint sm);
 bool bus_try_get_event32(uint32_t *value,PIO pio, uint sm);
 int total_screen_char=1920;
-extern bool system_run;
+static bool system_run;
+
+//VGA variables
+uint16_t cursor_x = 0;
+uint16_t cursor_y = 0;
+
+
 
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
@@ -99,7 +106,7 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
         if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
             //sprintf(buf,"%d-%d ",data,reg);
             //vga->printString(buf);
-            if(data == 0xA5 && reg == 4 ){
+            if(data == CMD_SYSTEM_ENABLE && reg == D_SYSTEM_RUN ){
                 system_run = true;
             }
         }
@@ -112,15 +119,65 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 
     while(1) {
         PT_YIELD_INTERVAL(1) ;
+        data=0x00;reg=0x00;
         if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
-            if(reg == 0){    
+            //sprintf(buf,"dat:%02X reg:%02X\n",data,reg);
+            //vga->printString(buf);
+            switch(reg){    
+                case D_RUN_CMD:
+                    switch(data){
+                        case CMD_SET_CUR_POS:
+                            vga->setTextCursorPos(cursor_x,cursor_y);
+                            break;
+                        case CMD_CLEAR_SCREEN:
+                            vga->clrscr();
+                        break;
+                    }
+                case D_WRITE_SCREEN:    
+                        vga->pchar(data);  
+                        idx++;
+                        if(idx > 2400){
+                            idx = 0;
+                            vga->clrscr();
+                        }     
+                        break;
+                case D_REG_X_HIGH:
+                        cursor_x = (data <<8)|cursor_x;
+                        break;
+                case D_REG_X_LOW:
+                        cursor_x = data;// | cursor_x;
+                        sprintf(buf,"X-L data:%02X cursor_x:%02X\n\n\n",data,cursor_x);
+                        vga->printString(buf);
+                        break;
+                case D_REG_Y_HIGH:
+                        cursor_y = (data <<8)|cursor_y;
+                        break;
+                case D_REG_Y_LOW:
+                        cursor_y = data;// | cursor_y;
+                        sprintf(buf,"Y-L data:%02X cursor_y:%02X\n\n\n",data,cursor_y);
+                        vga->printString(buf);
+                        break;
+                case D_CHANGE_BUFFER: 
+                        vga->printString("NOT impl");
+                        break;
+                case D_SELECT_SCREEN: 
+                        vga->printString("NOT impl");
+                        break;
+                case D_SET_HORIZONTAL:
+                        vga->printString("NOT impl");
+                        break;
+                case D_SET_VERTICAL:  
+                        vga->printString("NOT impl");
+                        break;
+            }/*
+            if(reg == WRITE_SCREEN){    
                 vga->pchar(data);  
                 idx++;
                 if(idx > 2400){
                     idx = 0;
                     vga->clrscr();
                 }     
-            }
+            }*/
         }
 
     } // END WHILE(1)
@@ -178,13 +235,13 @@ int main(){
 
     //fillRect(0,2,400,640,RED);
 
-    vga->setTextCursor(0,1);
+    vga->setTextCursorPos(0,1);
     vga->printString("         0         1         2         3         4         5         6         7");      
     vga->printString("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
     vga->printString("         0         1         2         3         4         5         6         7");      
     vga->printString("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
     
-    vga->setTextCursor(0,6);
+    vga->setTextCursorPos(0,6);
     vga->printString("Tela numero 1 cor: ");
 
     char buf[12];
@@ -197,7 +254,7 @@ int main(){
         vga->printString(buf);
         vga->printString("]");
     }
-    vga->setTextCursor(0,7);
+    vga->setTextCursorPos(0,7);
     sprintf(buf,"blink interval: %d", vga->get_blink_interval());
     vga->printString(buf);
 
@@ -224,13 +281,13 @@ int main(){
     */
     swap_buffers(&active_buffer, vga_video_data_array1);
     vga->set_vga_data_array(vga_video_data_array1);
-    vga->setTextCursor(0,4);
+    vga->setTextCursorPos(0,4);
     vga->printString("Paulo da silva (c) 2025-2026 marco-16 compilation 101...\n");
-    vga->setTextCursor(0,5);
+    vga->setTextCursorPos(0,5);
     vga->printString("Paulo da silva (c) 2025-2026 marco-17 compilation 101...\n");
-    vga->setTextCursor(0,6);
+    vga->setTextCursorPos(0,6);
     vga->printString("Paulo da silva (c) 2025-2026 marco-19 compilation 101...\n");
-    vga->setTextCursor(0,7);
+    vga->setTextCursorPos(0,7);
     vga->printString("Paulo da silva (c) 2025-2026 marco-20 compilation 101...\n");
 
 

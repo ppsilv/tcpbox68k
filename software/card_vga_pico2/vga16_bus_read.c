@@ -1,21 +1,15 @@
 #include "hardware/pio.h"
 #include "vga_bus_read.pio.h"
+#include "vga_bus_read.h"
+
 /*
 bit 0–7   → D0–D7   (data)
 bit 8–12  → A1–A5   (addr = 5 bits)
 bit 13    → CS
 
+
 */
 
-//Registers
-#define WRITE_SCREEN    0x00
-#define CHANGE_BUFFER   0x30
-#define SELECT_SCREEN   0x29
-#define SET_HORIZONTAL  0x28
-#define SET_VERTICAL    0x27
-#define RUN_CMD         0x26
-
-bool system_run = false;
 
 static uint8_t bus_decode(uint8_t * reg, uint32_t v)
 {

@@ -88,6 +88,7 @@ CMakeFiles/vgaPico2.dir/vga16.c.o: \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/colors.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/pt_cornell_v1_4.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include/hardware/pio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/pio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/pio.h \

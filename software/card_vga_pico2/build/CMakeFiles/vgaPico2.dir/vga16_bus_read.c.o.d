@@ -56,4 +56,5 @@ CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/include/hardware/gpio_coproc.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dreq.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include/hardware/pio_instructions.h \
- /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga_bus_read.pio.h
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga_bus_read.pio.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h
