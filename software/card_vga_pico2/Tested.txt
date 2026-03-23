@@ -149,3 +149,138 @@ uint8_t bufferB[2400] __attribute__((aligned(4)));
 Com o DMA fazendo o scroll, a latência do Pico para responder ao 68000 diminui drasticamente. Mesmo que o 68000 envie uma sequência frenética de `Line Feeds`, o Pico não vai "engasgar", pois a cópia da tela acontece em paralelo ao processamento do próximo byte.
 
 **Quer que eu prepare a lógica de troca de ponteiro para o V-Sync agora?** Assim, assim que o DMA de scroll terminar, a tela troca de uma vez só no próximo quadro da VGA. Seria o "toque de mestre" para o seu sistema de vídeo!
+
+
+1. Definindo a Interface (O Contrato)
+No seu monitor.asm, você define uma tabela de funções. O 68000 coloca o número da função em D0 e os parâmetros em outros registradores:
+
+Função 00h: Limpar Tela (CLS)
+
+Função 01h: Posicionar Cursor (X em D1, Y em D2)
+
+Função 02h: Imprimir Caractere (Char em D1)
+
+Função 03h: Imprimir String (Endereço em A0)
+
+2. Exemplo de Implementação da "BIOS" no 68000
+No seu código Assembly, a rotina de "Set Cursor" usaria os novos registradores que blindamos:
+
+Snippet de código
+; BIOS VIDEO SERVICE - SET CURSOR
+; D1.W = X, D2.W = Y
+VIDEO_SET_CURSOR:
+    ; Envia X Low e High
+    MOVE.B D1, $B8009        ; X_LOW (Reg 4)
+    ASR.W  #8, D1            ; Shift para pegar o byte alto
+    MOVE.B D1, $B800B        ; X_HIGH (Reg 5)
+    
+    ; Envia Y Low e High
+    MOVE.B D2, $B800D        ; Y_LOW (Reg 6)
+    ASR.W  #8, D2            ; Shift para pegar o byte alto
+    MOVE.B D2, $B800F        ; Y_HIGH (Reg 7)
+    
+    ; Comando de "Gatilho" para o Pico atualizar
+    MOVE.B #$01, $B803F      ; CMD_SET_CUR_POS (D_RUN_CMD)
+    RTS
+
+
+    1. Definindo a Interface (O Contrato)
+No seu monitor.asm, você define uma tabela de funções. O 68000 coloca o número da função em D0 e os parâmetros em outros registradores:
+
+Função 00h: Limpar Tela (CLS)
+
+Função 01h: Posicionar Cursor (X em D1, Y em D2)
+
+Função 02h: Imprimir Caractere (Char em D1)
+
+Função 03h: Imprimir String (Endereço em A0)
+
+2. Exemplo de Implementação da "BIOS" no 68000
+No seu código Assembly, a rotina de "Set Cursor" usaria os novos registradores que blindamos:
+
+Snippet de código
+; BIOS VIDEO SERVICE - SET CURSOR
+; D1.W = X, D2.W = Y
+VIDEO_SET_CURSOR:
+    ; Envia X Low e High
+    MOVE.B D1, $B8009        ; X_LOW (Reg 4)
+    ASR.W  #8, D1            ; Shift para pegar o byte alto
+    MOVE.B D1, $B800B        ; X_HIGH (Reg 5)
+    
+    ; Envia Y Low e High
+    MOVE.B D2, $B800D        ; Y_LOW (Reg 6)
+    ASR.W  #8, D2            ; Shift para pegar o byte alto
+    MOVE.B D2, $B800F        ; Y_HIGH (Reg 7)
+    
+    ; Comando de "Gatilho" para o Pico atualizar
+    MOVE.B #$01, $B803F      ; CMD_SET_CUR_POS (D_RUN_CMD)
+    RTS
+
+
+    Como você veio do MS-DOS, sabe que a `INT 21h / AH=09h` (que usava o terminador `$`) era um padrão, mas no mundo C o terminador nulo (`0x00`) é muito mais prático.
+
+Vamos montar a `VBIOS_PSTR` seguindo o padrão de **String terminada em Zero**, que é o que o seu compilador GCC para 68k vai gerar por padrão.
+
+### 1. A Lógica da Função (Lado 68000)
+
+Essa função vai receber o endereço da string no registrador **A0**. Ela vai ler byte a byte e "cuspir" no endereço do Pico (`$B8001`), que mapeamos como o registrador de escrita de tela.
+
+```assembly
+; ----------------------------------------------------------------80
+; VBIOS_PSTR - Print String (C-Style)
+; Entrada: A0 = Ponteiro para a string (null-terminated)
+; Destrói: A0 (ou salve se preferir)
+; ----------------------------------------------------------------80
+VBIOS_PSTR:
+    MOVE.B  (A0)+, D1       ; Lê o caractere e incrementa o ponteiro
+    TST.B   D1              ; É o fim da string (00)?
+    BEQ.S   .EXIT           ; Sim, sai da função
+    
+    ; Aqui enviamos para o registrador de escrita do hardware
+    ; O Pico vai receber esse byte no Case D_WRITE_SCREEN
+    MOVE.B  D1, $B8001       ; Endereço mapeado para escrita de caractere
+    
+    BRA.S   VBIOS_PSTR      ; Loop para o próximo caractere
+
+.EXIT:
+    RTS
+```
+
+---
+
+### 2. A Chamada no seu código C (68000)
+
+Para usar essa BIOS dentro do seu `hello.c`, você pode criar um "wrapper" em inline assembly. Isso evita que você tenha que lidar com o erro de "implicit declaration" da `stdio.h` que tivemos antes.
+
+```c
+void bios_print_string(const char *str) {
+    __asm__ __volatile__ (
+        "movea.l %0, a0\n\t"    // Coloca o endereço da string em A0
+        "jsr VBIOS_PSTR\n\t"    // Chama a função da sua BIOS
+        : 
+        : "r" (str)             // Entrada: o ponteiro 'str'
+        : "a0", "d1"            // Registradores que a função altera
+    );
+}
+```
+
+---
+
+### 3. Por que isso é eficiente?
+
+1.  **Velocidade de Barramento:** O 68000 é muito rápido processando `MOVE.B (A0)+, $ADDR`. O gargalo aqui será apenas o tempo de acesso ao barramento (DTACK).
+2.  **Independência do Pico:** O Pico recebe os caracteres um atrás do outro. Como ele está rodando a 150MHz+, ele processa o caractere e atualiza o buffer de vídeo muito antes do 68000 conseguir enviar o próximo byte (mesmo que o 68k esteja a 16MHz).
+3.  **Abstração:** Se amanhã você decidir trocar o hardware de vídeo por um chip real (tipo um Yamaha V9958), você só altera a `VBIOS_PSTR`. O seu `hello.c` nem fica sabendo da mudança.
+
+
+
+---
+
+### O Próximo "Nível" da BIOS (Estilo DOS)
+
+Como você já foi analista, sabe que cedo ou tarde você vai querer imprimir números ou variáveis. Na sua BIOS, você pode implementar uma função que interpreta códigos de controle (Escapes):
+
+* Se o byte for `0x0A` (Line Feed): A BIOS envia para o Pico o comando de pular linha.
+* Se o byte for `0x0C` (Form Feed): A BIOS limpa a tela.
+
+**O que você acha de adicionarmos o tratamento do '\n' (Line Feed) dentro dessa função de String?** Assim, quando você fizer um `bios_print_string("Olá Mundo\n");`, o cursor já pula para a linha de baixo automaticamente no Pico. Quer que eu escreva esse "parser" de caracteres de controle?

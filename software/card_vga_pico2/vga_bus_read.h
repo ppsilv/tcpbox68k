@@ -56,7 +56,7 @@
 #define D_REG_12            0x11
 #define D_REG_13            0x12
 #define D_REG_14            0x13
-#define D_REG_15            0x14
+#define D_SET_TXT_COLOR     0x14
 #define D_CHANGE_CUR_POS    0x15
 #define D_REG_X_HIGH        0x16
 #define D_REG_X_LOW         0x17
@@ -74,5 +74,7 @@
 #define CMD_SYSTEM_ENABLE   0xA5
 #define CMD_CLEAR_SCREEN    0xA0
 #define CMD_SET_CUR_POS     0xA1
+#define CMD_SET_TXT_COLOR   0xA2
+
 
 #endif

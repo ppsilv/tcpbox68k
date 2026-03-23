@@ -88,6 +88,8 @@ static bool system_run;
 //VGA variables
 uint16_t cursor_x = 0;
 uint16_t cursor_y = 0;
+uint8_t  text_color = 0;
+uint8_t  bg_color = 0;
 
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
@@ -129,9 +131,17 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                             break;
                         case CMD_CLEAR_SCREEN:
                             vga->clrscr();
-                        break;
+                            break;
+
                     }
                     break;
+                case D_SET_TXT_COLOR:
+                    text_color = (data>>4) & 0x0F;
+                    bg_color = data & 0x0F;
+                    sprintf(buf,"text [%d] bg[%d]\n",text_color);
+                    vga->printString(buf);
+                    vga->setTextColor(text_color, bg_color);  
+                    break;    
                 case D_WRITE_SCREEN:    
                         vga->pchar(data);  
                         idx++;

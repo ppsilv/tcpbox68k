@@ -73,7 +73,7 @@ void led_effects() {
 #define REG_12         0xB8023        //Endereço real 35 0x23  o pico enxerga 0x11
 #define REG_13         0xB8025        //Endereço real 37 0x25  o pico enxerga 0x12
 #define REG_14         0xB8027        //Endereço real 39 0x27  o pico enxerga 0x13
-#define REG_15         0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14
+#define SET_TXT_COLOR  0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14
 #define CHANGE_CUR_POS 0xB802b        //Endereço real 43 0x2b  o pico enxerga 0x15
 #define REG_X_HIGH     0xB802d        //Endereço real 45 0x2d  o pico enxerga 0x16
 #define REG_X_LOW      0xB802f        //Endereço real 47 0x2f  o pico enxerga 0x17
@@ -94,6 +94,7 @@ void led_effects() {
 #define CMD_SYSTEM_ENABLE   0xA5
 #define CMD_CLEAR_SCREEN    0xA0
 #define CMD_SET_CUR_POS     0xA1
+#define CMD_SET_TXT_COLOR   0xA2
 
 unsigned char *vga_run_cmd = (unsigned char *)RUN_CMD;
 
@@ -116,6 +117,11 @@ void vga_set_y(unsigned short y) {
         *config_reg_y_low  = (unsigned char)(y & 0xFF);
         *config_reg_y_high = (unsigned char)(y >> 8);
     }
+}
+void vga_set_txt_color(unsigned char color){
+    unsigned char *config_reg_txt_color = (unsigned char *)SET_TXT_COLOR;
+
+    *config_reg_txt_color = (unsigned char)color;
 }
 
 unsigned short read_uint() {
@@ -165,11 +171,12 @@ void show_menu(){
         printf("\n--- TCPBOX68K VIDEO TEST ---\n");
         printf("1 - Clear Screen\n");
         printf("2 - Set X Position\n");
-        //printf("3 - Set y Position\n");
+        printf("3 - Set text and bg color \n");
         //printf("4 - Posiciona cursor\n");
         printf("5 - Imprime tbl ascii\n");
         printf("6 - Imprime um caractere\n");
-        printf("7 - sai do programa\n");
+
+        printf("0 - sai do programa\n");
         printf("\nEscolha: ");
         choice = getchar();
         printf("choice [%x04]\n",choice);
@@ -183,15 +190,22 @@ void show_menu(){
                 pos_x = read_uint();
                 vga_set_x(pos_x);
                 printf("X definido para %d\n", pos_x);
-           //     break;
-           // case '3':
                 printf("Digite a posicao Y (0-319): ");
                 pos_y = read_uint();
                 vga_set_y(pos_y);
                 printf("Y definido para %d\n", pos_y);
-           //     break;
            // case '4': //Change cursor position.
                 *vga_run_cmd =CMD_SET_CUR_POS;
+                break;
+            case '3':
+                unsigned char textColor,bgColor,color;
+                printf("Digite   a  cor  do  texto [0-8]: ");
+                textColor = read_uint();
+                printf("Digite a cor do background [0-8]: ");
+                bgColor = read_uint();
+                color = (unsigned char )((textColor<<4)&0xF0) | bgColor;
+                printf("textColor[%x][%x] bgColor[%x] color[%x]",((textColor<<4)&0xF0),textColor,bgColor,color);
+                vga_set_txt_color(color);
                 break;
             case '5':
                 printf("\nVamos imprimir a tabela ascii\n");
@@ -202,7 +216,7 @@ void show_menu(){
                 char ch = getchar();
                 imprime_char(ch);
                 break;
-            case '7':
+            case '0':
                 return;
 
                 break;
