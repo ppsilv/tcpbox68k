@@ -26,11 +26,13 @@
  *    for the PIC32 written by Bruce Land and students
  *
  */
-
-#define SCREEN_0                0       //40 col 24 linhas
-#define SCREEN_1                1       //80 col 30 linhas
-#define SCREEN_2                2       //320x240 gráfico com 256 cores.
-#define SCREEN_3                3       //640x480 gráfico com 8 cores.
+//Inicialmente eu confundi screen com modo de tela 
+//São coisas distintas no mesmo modo de tela eu posso ter várias screens,
+//desde que tenha memória para isso
+#define SCREEN_0                0      
+#define SCREEN_1                1        
+#define SCREEN_2                2        
+#define SCREEN_3                3        
 #define BUFFER_1                1
 #define BUFFER_2                2
 #define CURSOR_ON               1

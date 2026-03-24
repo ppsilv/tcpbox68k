@@ -11,7 +11,7 @@
 #include "vga_bus_read.h"
 
 
-vga_text_t *vga = NULL ;
+vga_t *vga = NULL ;
 
 static repeating_timer_t timer;
 static int last_toggle_time = 1;
@@ -145,8 +145,16 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                         case CMD_CLEAR_SCREEN:
                             vga->clrscr();
                             break;
-
+                        case CMD_GO_HOME:
+                            vga->set_vga_home();
+                            break;    
+                        default:
+                            vga->printString("VGA-Panic: Comando inexistente...\n");
                     }
+                    break;
+                case D_SET_MODE:                //0x12
+                    break;
+                case D_SET_HOME:                //0x13                    
                     break;
                 case D_SET_TXT_COLOR:
                     text_color = (data>>4) & 0x0F;
@@ -255,7 +263,8 @@ int main(){
     // Isso faz o Core 1 começar a executar a função 'core1_entry'
 //    multicore_launch_core1(core1_worker_loop);
     font = set_font(FONTE_8X16);
-    vga = create_screen( MODE_640x480, active_buffer, TXCOUNT, font );
+   
+    vga = create_screen( MODE_TEXT_80_S, active_buffer, TXCOUNT, font );
     vga->set_vga_data_array(vga_video_data_array1);
     vga->setTextColor(GREEN, BLACK);
     //vga->setTextSize(1);

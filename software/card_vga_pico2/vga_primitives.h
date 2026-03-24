@@ -27,14 +27,20 @@ void drawChar(uint8_t c, color_t color, color_t bg, uint8_t size) ;
 
 
 //NOVAS IMPLEMENTAÇÕES
+//(0=Texto+Scroll, 1=Texto Fixo, 2=320x200, 3=640x200)
 enum screenMode {
+    MODE_TEXT_40_S,
+    MODE_TEXT_40_F,
+    MODE_TEXT_80_S,
+    MODE_TEXT_80_F,
     MODE_320x240,
     MODE_640x480
 };
 typedef enum screenMode screenMode_t ;
-typedef struct vga_text vga_text_t ;
+typedef struct vga_text vga_t ;
 
 struct vga_text {
+  screenMode_t screen_mode;
   //getters
   uint8_t (*getTextColor)(void);
   uint8_t (*getTextSize)(void);
@@ -47,6 +53,8 @@ struct vga_text {
   void (*setTextCursorVisible)(bool v);
   void (*setTextCursorBlink)(bool b);
   void (*set_vga_data_array)(uint8_t video_data_array[]);
+  void (*set_vga_home)(void);
+  void (*set_vga_mode)(uint8_t mode);
   //functions
   void (*printString)(char* str);
   void (*pchar)(uint8_t c);
@@ -55,7 +63,7 @@ struct vga_text {
   void * _private;
 };
 
-vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font);
+vga_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font);
 void put_cursor(uint8_t c);
 
 

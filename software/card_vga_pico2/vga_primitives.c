@@ -42,7 +42,7 @@ typedef struct  {
 
 
 
-static vga_text_t * vga = NULL ;
+static vga_t * vga = NULL ;
 
 
 static void set_vga_data_array(uint8_t video_data_array[])
@@ -338,6 +338,12 @@ static void setTextCursorBlink(bool b) {
 //  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 //  priv->textcolor = priv->textbgcolor = c;
 //}
+void set_vga_home(void){
+  vga->setTextCursorPos(0,0);
+}
+void set_vga_mode(uint8_t mode){
+
+}
 
 static void setTextColor(char c, char b) {
   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
@@ -391,8 +397,8 @@ short readPixel(short x, short y) {
 }
 
 
-vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font){
-  vga = (vga_text_t*)malloc(sizeof(vga_text_t));
+vga_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font){
+  vga = (vga_t*)malloc(sizeof(vga_t));
   vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
   
   if (!vga || !priv) {
@@ -400,7 +406,6 @@ vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t tx
       free(priv);
       return NULL;
   }
-  
   vga->_private = priv;
   priv->cursor = create_default_cursor() ;
   priv->textcolor = WHITE ;
@@ -416,16 +421,39 @@ vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t tx
   priv->bottommask = 0b11110000 ;
   priv->vga_data_array = vga_data_array ;
 
-  if( mode == MODE_320x240 ){    
-    priv->width = 320;
-    priv->height= 240;
-  }
-  else if( mode == MODE_640x480 ){    
-    priv->width = 640;
-    priv->height= 480;
-  }else{ //default
-    priv->width = 640;
-    priv->height= 480;
+  vga->screen_mode = mode;
+
+  switch(mode){
+    case MODE_TEXT_40_S:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_TEXT_40_F:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_TEXT_80_S:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    case MODE_TEXT_80_F:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    case MODE_320x240:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_640x480:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    default:
+      priv->width = 640;
+      priv->height= 480;
+      mode = MODE_TEXT_40_S;
+      break;
+
   }
 
   vga->printString = printString;
@@ -438,6 +466,8 @@ vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t tx
   vga->setTextCursorBlink = setTextCursorBlink;
   vga->get_blink_interval = get_blink_interval;
   vga->set_blink_interval = set_blink_interval;
+  vga->set_vga_home = set_vga_home;
+  vga->set_vga_mode = set_vga_mode;
   vga->pchar = tft_write;
   vga->set_vga_data_array = set_vga_data_array;
 
