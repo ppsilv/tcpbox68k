@@ -1,11 +1,11 @@
-#ifndef __FONT_ROM_BRL4_H__
-#define __FONT_ROM_BRL4_H__   
-
+#include <stdio.h>
+#include <stdint.h>
+/*
 char  * font_name="Font 8x16";
 const unsigned char  font_height=16;
 const unsigned char  font_width=8;
 const unsigned char  font_size=1;
- 
+*/
 const unsigned char font_8x16[16*130]=
 {
    // code x00
@@ -2221,5 +2221,3 @@ const unsigned char font_8x16[16*130]=
    0b00000000  // f
 
 } ;
-
-#endif // FONT6X12_H

@@ -7,21 +7,12 @@
 #include "hardware/pio.h"
 #include "hardware/dma.h"
 
-#include "vga16_primitives.h"
-#include "font_5x7.h"
-#include "font_8x16.h"
+#include "vga_primitives.h"
+#include "font.h"
 
 // 5x7 font
 void writeStringBold(char* str);
 
-struct font{
-    uint8_t *name;
-    uint8_t width ;
-    uint8_t height ;
-    uint8_t size;
-    const uint8_t *data ;
-};
-typedef struct font font_t ;
 /*
 struct cursor{
     uint16_t x;
@@ -47,21 +38,21 @@ typedef struct  {
     uint16_t bottommask;
     uint8_t tabspace;    
     uint8_t* vga_data_array;    
-}vga16_text_private_t;
+}vga_text_private_t;
 
 
 
-static vga16_text_t * vga = NULL ;
+static vga_text_t * vga = NULL ;
 
 
-static void set_vga_data_array(unsigned char video_data_array[])
+static void set_vga_data_array(uint8_t video_data_array[])
 {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->vga_data_array = &video_data_array[0];  
 } 
 
 void clrscr(){
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
   memset(&priv->vga_data_array[0], 0, priv->txcount) ;
   // reset cursor position
@@ -76,7 +67,7 @@ static void pchar(char c){
 
 
 void drawPixel(short x, short y, color_t color) {
-    vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+    vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
     if((x > (priv->width-1)) | (x < 0) | (y > (priv->height-1)) | (y < 0) ) return;
 
     int pixel = ((priv->width * y) + x) ;
@@ -89,7 +80,7 @@ void drawPixel(short x, short y, color_t color) {
 }
 
 void drawHLine(int x, int y, int w, color_t color) {
-    vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+    vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   // range checks
   if((x >= priv->width) || (y >= priv->height)) return;
   if((x + w - 1) >= priv->width)  w = priv->width  - x - 1;
@@ -113,7 +104,7 @@ void drawHLine(int x, int y, int w, color_t color) {
  }
 
 void fillRect(short x, short y, short w, short h, color_t color) {
-   vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
    if((y + h - 1) >= priv->height) h = priv->height - y - 1;
 
   for(int i=x; i <= w;i++)
@@ -125,8 +116,8 @@ void fillRect(short x, short y, short w, short h, color_t color) {
 //  }
 }
 
-static void drawChar_interna(short x, short y, unsigned char c, color_t color, color_t bg, unsigned char size) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+static void drawChar_interna(short x, short y, uint8_t c, color_t color, color_t bg, uint8_t size) {
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   char i, j;
   if((x >= priv->width)            || // Clip right
      (y >= priv->height)           || // Clip bottom
@@ -144,7 +135,7 @@ static void drawChar_interna(short x, short y, unsigned char c, color_t color, c
   uint8_t altura = 8 ;
   uint8_t largura = 6 ;
   for (i=0; i<largura; i++ ) {
-    unsigned char line;
+    uint8_t line;
     if (i == lastColumn)
       line = 0x0;
     else
@@ -168,8 +159,8 @@ static void drawChar_interna(short x, short y, unsigned char c, color_t color, c
   }
 }
 
-void drawChar2( int start_x, int start_y, uint8_t char_code, int color,  int bgcolor, unsigned char size) {
-    vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+void drawChar2( int start_x, int start_y, uint8_t char_code, int color,  int bgcolor, uint8_t size) {
+    vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
     // Calcula a área do caractere
     size=1;
@@ -207,8 +198,8 @@ void drawChar2( int start_x, int start_y, uint8_t char_code, int color,  int bgc
 }
 
 
-void drawChar(unsigned char c, color_t color, color_t bg, unsigned char size) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+void drawChar(uint8_t c, color_t color, color_t bg, uint8_t size) {
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
   if(size == 2)
     drawChar_interna( priv->cursor->x, priv->cursor->y, c, color, bg, size);
@@ -216,8 +207,8 @@ void drawChar(unsigned char c, color_t color, color_t bg, unsigned char size) {
     drawChar2( priv->cursor->x, priv->cursor->y, c, color, bg, size);
 }
 
-void tft_write(unsigned char c){
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+void tft_write(uint8_t c){
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
   if (c == '\n') {
 //    priv->cursor->y += priv->font.size*8;
@@ -243,8 +234,8 @@ void tft_write(unsigned char c){
   }
 }
 
-void put_cursor(unsigned char c){
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+void put_cursor(uint8_t c){
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
   uint16_t cursorx=priv->cursor->x;
   uint16_t cursory=priv->cursor->y;
@@ -291,7 +282,7 @@ void vga_scroll() {
 }
 
 static void setTextCursor(uint16_t x, uint16_t y) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   if((x >= priv->width) || (y >= priv->height)) 
     return;
   if(x*priv->font.width >= priv->width) {
@@ -311,50 +302,51 @@ static void setTextCursor(uint16_t x, uint16_t y) {
   priv->cursor->x = x;
   priv->cursor->y = y;
 }
-
-static void setTextSize(unsigned char s) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+/*
+static void setTextSize(uint8_t s) {
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   if(s >0 ){
     priv->font.size = s;
   }else{
     priv->font.size = 1;
   }
 }
-static unsigned char getTextSize(void) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+*/
+static uint8_t getTextSize(void) {
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   
   return priv->font.size;
 }
 void set_blink_interval(uint16_t interval)
 {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->cursor->blink_interval = interval;
 }
 static uint16_t get_blink_interval(void){
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   return priv->cursor->blink_interval;
 }
 static void setTextCursorVisible(bool v) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->cursor->visible = v;
 }
 static void setTextCursorBlink(bool b) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->cursor->blink = b;
 }
 //static void setTextColor(char c) {
-//  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+//  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 //  priv->textcolor = priv->textbgcolor = c;
 //}
 
 static void setTextColor(char c, char b) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->textcolor = c;
   priv->textbgcolor = b;
 }
 
-static char getTextColor(void) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+static uint8_t getTextColor(void) {
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   return priv->textcolor;
 }
 
@@ -366,13 +358,13 @@ static void printString(char* str){
 }
 
 static void setTextColorBig(color_t color, char background) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   priv->textcolor = color;
   priv->textbgcolor = background;
 }
 /* 
 static void writeStringBold(char* str){
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
     char temp_bg ;
     temp_bg = priv->textbgcolor;
@@ -386,7 +378,7 @@ static void writeStringBold(char* str){
 }
 */
 short readPixel(short x, short y) {
-  vga16_text_private_t* priv = (vga16_text_private_t*)vga->_private;
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
   int pixel = ((640 * y) + x) ;
   short color ;
   if (pixel & 1) {
@@ -399,9 +391,9 @@ short readPixel(short x, short y) {
 }
 
 
-vga16_text_t* create_screen(screenMode_t mode,unsigned char vga_data_array[],unsigned int txcount){
-  vga = (vga16_text_t*)malloc(sizeof(vga16_text_t));
-  vga16_text_private_t* priv = (vga16_text_private_t*)malloc(sizeof(vga16_text_private_t));
+vga_text_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font){
+  vga = (vga_text_t*)malloc(sizeof(vga_text_t));
+  vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
   
   if (!vga || !priv) {
       free(vga);
@@ -413,11 +405,11 @@ vga16_text_t* create_screen(screenMode_t mode,unsigned char vga_data_array[],uns
   priv->cursor = create_default_cursor() ;
   priv->textcolor = WHITE ;
   priv->textbgcolor = BLACK ;
-  priv->font.name = font_name;
-  priv->font.width = font_width ;
-  priv->font.height= font_height ;
-  priv->font.size = font_size ;   //textsize
-  priv->font.data = font_8x16 ;
+  priv->font.name = font->name;
+  priv->font.width = font->width ;
+  priv->font.height= font->height ;
+  priv->font.size = font->size ;   
+  priv->font.data = font->name ;
   priv->tabspace = 4;
   priv->txcount = txcount ;
   priv->topmask = 0b00001111 ;
@@ -439,7 +431,6 @@ vga16_text_t* create_screen(screenMode_t mode,unsigned char vga_data_array[],uns
   vga->printString = printString;
   vga->setTextColor = setTextColor;
   vga->getTextColor = getTextColor;
-  vga->setTextSize = setTextSize;
   vga->getTextSize = getTextSize;
   vga->setTextCursorPos = setTextCursor;
   vga->clrscr = clrscr;

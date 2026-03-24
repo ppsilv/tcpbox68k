@@ -7,7 +7,7 @@
 #include "vga_vsync.pio.h"
 #include "vga_rgb.pio.h"
 #include "vga_bus_read.pio.h"
-#include "vga16_drv.h"
+#include "vga_drv.h"
 
 // Give the I/O pins that we're using some names that make sense - usable in main()
 //enum vga_pins {BUS=0,HSYNC=19, VSYNC=20, RED_PIN=21, LO_GRN=22, BLUE_PIN=26} ;

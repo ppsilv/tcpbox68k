@@ -4,14 +4,14 @@
 #include "pico/stdlib.h"
 #include "hardware/clocks.h"
 #include "string.h"
-#include "vga16_drv.h"
-#include "vga16_primitives.h"
+#include "vga_drv.h"
+#include "vga_primitives.h"
 #include "pt_cornell_v1_4.h"    // protothreads header
 #include "colors.h"
 #include "vga_bus_read.h"
 
 
-vga16_text_t *vga = NULL ;
+vga_text_t *vga = NULL ;
 
 static repeating_timer_t timer;
 static int last_toggle_time = 1;
@@ -54,7 +54,24 @@ void swap_buffers(char **active_buffer_ptr, unsigned char *new_buffer) {
 char vga_video_data_array0[TXCOUNT];
 char vga_video_data_array1[TXCOUNT];
 char *active_buffer = (char *)&vga_video_data_array0[0];
-char buffer=0;
+unsigned char buffer=0;
+void set_screen(unsigned char screen){
+    switch(screen){
+        case SCREEN_0:
+            swap_buffers(&active_buffer, vga_video_data_array0);
+            vga->set_vga_data_array(vga_video_data_array0);
+            break;
+        case SCREEN_1:
+            swap_buffers(&active_buffer, vga_video_data_array1);
+            vga->set_vga_data_array(vga_video_data_array1);
+            break;
+        default:
+            swap_buffers(&active_buffer, vga_video_data_array0);
+            vga->set_vga_data_array(vga_video_data_array0);
+    }
+    buffer=screen;
+}
+
 static PT_THREAD (protothread_trocatela(struct pt *pt))
 {
     PT_BEGIN(pt);
@@ -64,13 +81,9 @@ static PT_THREAD (protothread_trocatela(struct pt *pt))
 
     while(1) {
         PT_YIELD_INTERVAL(5000000) ;
-        swap_buffers(&active_buffer, vga_video_data_array0);
-        vga->set_vga_data_array(vga_video_data_array0);
-        buffer=0;
+        set_screen(0);
         PT_YIELD_INTERVAL(5000000) ;
-        swap_buffers(&active_buffer, vga_video_data_array1);
-        vga->set_vga_data_array(vga_video_data_array1);
-        buffer=1;
+        set_screen(1);
     }
   PT_END(pt);
 } 
@@ -213,8 +226,21 @@ void core1_worker_loop() {
     }
 }
 
-int main(){
+void video_welcome_screen(){
+    vga->setTextCursorPos(0,0);
+    vga->setTextColor(RED, BLACK);
+    vga->printString("Tcpbox Vpico2 vga312k   VGA BIOS VRP2350\n");
+    vga->setTextColor(YELLOW, BLACK);
+    vga->printString("Version 26.03.00RA\n");
+    vga->setTextColor(CYAN, BLACK);
+    vga->printString("Copyright (C) 2026 pdsilva(aka pgordao).V1.0 Vpico2vga312k\n");
+    vga->setTextCursorPos(0,5);
+    vga->setTextColor(GREEN, BLACK);
+    vga->printString("Loading Operating system loader...\n");
+}
 
+int main(){
+    font_t *font;
     // set the clock
     set_sys_clock_khz(150000, true);
 
@@ -228,12 +254,11 @@ int main(){
     // 2. LANÇA O CORE 1! 
     // Isso faz o Core 1 começar a executar a função 'core1_entry'
 //    multicore_launch_core1(core1_worker_loop);
-
-
-    vga = create_screen( MODE_640x480, active_buffer, TXCOUNT );
-    vga->set_vga_data_array(vga_video_data_array0);
-    vga->setTextColor(CYAN, BLACK);
-    vga->setTextSize(1);
+    font = set_font(FONTE_8X16);
+    vga = create_screen( MODE_640x480, active_buffer, TXCOUNT, font );
+    vga->set_vga_data_array(vga_video_data_array1);
+    vga->setTextColor(GREEN, BLACK);
+    //vga->setTextSize(1);
     vga->set_blink_interval(125);
     vga->setTextCursorVisible(CURSOR_ON);
 
@@ -288,17 +313,8 @@ int main(){
             buffer1.
                         
     */
-    swap_buffers(&active_buffer, vga_video_data_array1);
-    vga->set_vga_data_array(vga_video_data_array1);
-    vga->setTextCursorPos(0,4);
-    vga->printString("Paulo da silva (c) 2025-2026 marco-16 compilation 101...\n");
-    vga->setTextCursorPos(0,5);
-    vga->printString("Paulo da silva (c) 2025-2026 marco-17 compilation 101...\n");
-    vga->setTextCursorPos(0,6);
-    vga->printString("Paulo da silva (c) 2025-2026 marco-19 compilation 101...\n");
-    vga->setTextCursorPos(0,7);
-    vga->printString("Paulo da silva (c) 2025-2026 marco-20 compilation 101...\n");
-
+    set_screen(SCREEN_0);
+    video_welcome_screen();
 
 
   // === config threads ========================

@@ -138,10 +138,6 @@ unsigned short read_uint() {
     putchar('\n');
     return val;
 }
-void clrscr()
-{
-    *vga_run_cmd = CMD_CLEAR_SCREEN;
-}
 
 void imprime_char(char ch)
 {
@@ -149,6 +145,33 @@ void imprime_char(char ch)
     *screen_reg = ch;
 
 }
+
+void read_str(char *str) {
+    char c;
+    char *p = str;
+
+    while (1) {
+        c = getchar(); // Lê um caractere
+        // Para no Enter (Unix usa \n, alguns terminais mandam \r)
+        if (c == '\n' || c == '\r') {
+            break;
+        }
+        // Armazena o caractere no ponteiro e avança
+        *p = c;
+        p++;
+        imprime_char(c);
+    }
+    *p = '\0'; // FINALIZA A STRING (Essencial em C!)
+    putchar('\n');
+    imprime_char('\0');
+    imprime_char('\n');
+}
+void clrscr()
+{
+    *vga_run_cmd = CMD_CLEAR_SCREEN;
+}
+
+
 
 void imprime_tbl_ascii()
 {
@@ -172,7 +195,7 @@ void show_menu(){
         printf("1 - Clear Screen\n");
         printf("2 - Set X Position\n");
         printf("3 - Set text and bg color \n");
-        //printf("4 - Posiciona cursor\n");
+        printf("4 - Envia string\n");
         printf("5 - Imprime tbl ascii\n");
         printf("6 - Imprime um caractere\n");
 
@@ -206,6 +229,11 @@ void show_menu(){
                 color = (unsigned char )((textColor<<4)&0xF0) | bgColor;
                 printf("textColor[%x][%x] bgColor[%x] color[%x]",((textColor<<4)&0xF0),textColor,bgColor,color);
                 vga_set_txt_color(color);
+                break;
+            case '4':
+                printf("Escolhido opcao 4\n");
+                char cstr[256];
+                read_str(cstr);
                 break;
             case '5':
                 printf("\nVamos imprimir a tabela ascii\n");

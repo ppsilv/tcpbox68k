@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pdsilva/project/tcpbox68k/software/card_vga_pico2
+CMAKE_SOURCE_DIR = /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build
+CMAKE_BINARY_DIR = /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/CMakeFiles /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -269,6 +269,126 @@ cursor.s: cursor.c.s
 cursor.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/cursor.c.s
 .PHONY : cursor.c.s
+
+font.o: font.c.o
+.PHONY : font.o
+
+# target to build an object file
+font.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font.c.o
+.PHONY : font.c.o
+
+font.i: font.c.i
+.PHONY : font.i
+
+# target to preprocess a source file
+font.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font.c.i
+.PHONY : font.c.i
+
+font.s: font.c.s
+.PHONY : font.s
+
+# target to generate assembly for a file
+font.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font.c.s
+.PHONY : font.c.s
+
+font_8x12.o: font_8x12.c.o
+.PHONY : font_8x12.o
+
+# target to build an object file
+font_8x12.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x12.c.o
+.PHONY : font_8x12.c.o
+
+font_8x12.i: font_8x12.c.i
+.PHONY : font_8x12.i
+
+# target to preprocess a source file
+font_8x12.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x12.c.i
+.PHONY : font_8x12.c.i
+
+font_8x12.s: font_8x12.c.s
+.PHONY : font_8x12.s
+
+# target to generate assembly for a file
+font_8x12.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x12.c.s
+.PHONY : font_8x12.c.s
+
+font_8x14.o: font_8x14.c.o
+.PHONY : font_8x14.o
+
+# target to build an object file
+font_8x14.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x14.c.o
+.PHONY : font_8x14.c.o
+
+font_8x14.i: font_8x14.c.i
+.PHONY : font_8x14.i
+
+# target to preprocess a source file
+font_8x14.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x14.c.i
+.PHONY : font_8x14.c.i
+
+font_8x14.s: font_8x14.c.s
+.PHONY : font_8x14.s
+
+# target to generate assembly for a file
+font_8x14.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x14.c.s
+.PHONY : font_8x14.c.s
+
+font_8x16.o: font_8x16.c.o
+.PHONY : font_8x16.o
+
+# target to build an object file
+font_8x16.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x16.c.o
+.PHONY : font_8x16.c.o
+
+font_8x16.i: font_8x16.c.i
+.PHONY : font_8x16.i
+
+# target to preprocess a source file
+font_8x16.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x16.c.i
+.PHONY : font_8x16.c.i
+
+font_8x16.s: font_8x16.c.s
+.PHONY : font_8x16.s
+
+# target to generate assembly for a file
+font_8x16.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x16.c.s
+.PHONY : font_8x16.c.s
+
+font_8x18.o: font_8x18.c.o
+.PHONY : font_8x18.o
+
+# target to build an object file
+font_8x18.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x18.c.o
+.PHONY : font_8x18.c.o
+
+font_8x18.i: font_8x18.c.i
+.PHONY : font_8x18.i
+
+# target to preprocess a source file
+font_8x18.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x18.c.i
+.PHONY : font_8x18.c.i
+
+font_8x18.s: font_8x18.c.s
+.PHONY : font_8x18.s
+
+# target to generate assembly for a file
+font_8x18.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/font_8x18.c.s
+.PHONY : font_8x18.c.s
 
 home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.o: home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
 .PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.o
@@ -1502,101 +1622,101 @@ home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.c.s
 .PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.c.s
 
-vga16.o: vga16.c.o
-.PHONY : vga16.o
+vga.o: vga.c.o
+.PHONY : vga.o
 
 # target to build an object file
-vga16.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16.c.o
-.PHONY : vga16.c.o
+vga.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga.c.o
+.PHONY : vga.c.o
 
-vga16.i: vga16.c.i
-.PHONY : vga16.i
+vga.i: vga.c.i
+.PHONY : vga.i
 
 # target to preprocess a source file
-vga16.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16.c.i
-.PHONY : vga16.c.i
+vga.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga.c.i
+.PHONY : vga.c.i
 
-vga16.s: vga16.c.s
-.PHONY : vga16.s
+vga.s: vga.c.s
+.PHONY : vga.s
 
 # target to generate assembly for a file
-vga16.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16.c.s
-.PHONY : vga16.c.s
+vga.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga.c.s
+.PHONY : vga.c.s
 
-vga16_bus_read.o: vga16_bus_read.c.o
-.PHONY : vga16_bus_read.o
+vga_bus_read.o: vga_bus_read.c.o
+.PHONY : vga_bus_read.o
 
 # target to build an object file
-vga16_bus_read.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_bus_read.c.o
-.PHONY : vga16_bus_read.c.o
+vga_bus_read.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+.PHONY : vga_bus_read.c.o
 
-vga16_bus_read.i: vga16_bus_read.c.i
-.PHONY : vga16_bus_read.i
+vga_bus_read.i: vga_bus_read.c.i
+.PHONY : vga_bus_read.i
 
 # target to preprocess a source file
-vga16_bus_read.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_bus_read.c.i
-.PHONY : vga16_bus_read.c.i
+vga_bus_read.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_bus_read.c.i
+.PHONY : vga_bus_read.c.i
 
-vga16_bus_read.s: vga16_bus_read.c.s
-.PHONY : vga16_bus_read.s
+vga_bus_read.s: vga_bus_read.c.s
+.PHONY : vga_bus_read.s
 
 # target to generate assembly for a file
-vga16_bus_read.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_bus_read.c.s
-.PHONY : vga16_bus_read.c.s
+vga_bus_read.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_bus_read.c.s
+.PHONY : vga_bus_read.c.s
 
-vga16_drv.o: vga16_drv.c.o
-.PHONY : vga16_drv.o
+vga_drv.o: vga_drv.c.o
+.PHONY : vga_drv.o
 
 # target to build an object file
-vga16_drv.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_drv.c.o
-.PHONY : vga16_drv.c.o
+vga_drv.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_drv.c.o
+.PHONY : vga_drv.c.o
 
-vga16_drv.i: vga16_drv.c.i
-.PHONY : vga16_drv.i
+vga_drv.i: vga_drv.c.i
+.PHONY : vga_drv.i
 
 # target to preprocess a source file
-vga16_drv.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_drv.c.i
-.PHONY : vga16_drv.c.i
+vga_drv.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_drv.c.i
+.PHONY : vga_drv.c.i
 
-vga16_drv.s: vga16_drv.c.s
-.PHONY : vga16_drv.s
+vga_drv.s: vga_drv.c.s
+.PHONY : vga_drv.s
 
 # target to generate assembly for a file
-vga16_drv.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_drv.c.s
-.PHONY : vga16_drv.c.s
+vga_drv.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_drv.c.s
+.PHONY : vga_drv.c.s
 
-vga16_primitives.o: vga16_primitives.c.o
-.PHONY : vga16_primitives.o
+vga_primitives.o: vga_primitives.c.o
+.PHONY : vga_primitives.o
 
 # target to build an object file
-vga16_primitives.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_primitives.c.o
-.PHONY : vga16_primitives.c.o
+vga_primitives.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+.PHONY : vga_primitives.c.o
 
-vga16_primitives.i: vga16_primitives.c.i
-.PHONY : vga16_primitives.i
+vga_primitives.i: vga_primitives.c.i
+.PHONY : vga_primitives.i
 
 # target to preprocess a source file
-vga16_primitives.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_primitives.c.i
-.PHONY : vga16_primitives.c.i
+vga_primitives.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_primitives.c.i
+.PHONY : vga_primitives.c.i
 
-vga16_primitives.s: vga16_primitives.c.s
-.PHONY : vga16_primitives.s
+vga_primitives.s: vga_primitives.c.s
+.PHONY : vga_primitives.s
 
 # target to generate assembly for a file
-vga16_primitives.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga16_primitives.c.s
-.PHONY : vga16_primitives.c.s
+vga_primitives.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/vga_primitives.c.s
+.PHONY : vga_primitives.c.s
 
 # Help Target
 help:
@@ -1619,6 +1739,21 @@ help:
 	@echo "... cursor.o"
 	@echo "... cursor.i"
 	@echo "... cursor.s"
+	@echo "... font.o"
+	@echo "... font.i"
+	@echo "... font.s"
+	@echo "... font_8x12.o"
+	@echo "... font_8x12.i"
+	@echo "... font_8x12.s"
+	@echo "... font_8x14.o"
+	@echo "... font_8x14.i"
+	@echo "... font_8x14.s"
+	@echo "... font_8x16.o"
+	@echo "... font_8x16.i"
+	@echo "... font_8x16.s"
+	@echo "... font_8x18.o"
+	@echo "... font_8x18.i"
+	@echo "... font_8x18.s"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.o"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.i"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.s"
@@ -1773,18 +1908,18 @@ help:
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.o"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.i"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdlib/stdlib.s"
-	@echo "... vga16.o"
-	@echo "... vga16.i"
-	@echo "... vga16.s"
-	@echo "... vga16_bus_read.o"
-	@echo "... vga16_bus_read.i"
-	@echo "... vga16_bus_read.s"
-	@echo "... vga16_drv.o"
-	@echo "... vga16_drv.i"
-	@echo "... vga16_drv.s"
-	@echo "... vga16_primitives.o"
-	@echo "... vga16_primitives.i"
-	@echo "... vga16_primitives.s"
+	@echo "... vga.o"
+	@echo "... vga.i"
+	@echo "... vga.s"
+	@echo "... vga_bus_read.o"
+	@echo "... vga_bus_read.i"
+	@echo "... vga_bus_read.s"
+	@echo "... vga_drv.o"
+	@echo "... vga_drv.i"
+	@echo "... vga_drv.s"
+	@echo "... vga_primitives.o"
+	@echo "... vga_primitives.i"
+	@echo "... vga_primitives.s"
 .PHONY : help
 
 

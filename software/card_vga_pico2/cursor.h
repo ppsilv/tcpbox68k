@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "pico/stdlib.h"
-#include "vga16_primitives.h"
+#include "vga_primitives.h"
 #include "colors.h"
 
 typedef enum {

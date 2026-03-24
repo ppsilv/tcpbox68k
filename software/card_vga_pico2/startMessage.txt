@@ -1,0 +1,7 @@
+<MARCA><NOME DA PLACA> <MODELO> VGA BIOS V<CODIGO DO PICO>
+Version <ano>26.<mes>3.<serial>00
+Copyright (C) 2026 <MARCA><MODELO>. 
+
+Tcpbox Vpico2 vga312k   VGA BIOS VRP2350
+Version 26.03.00RA
+Copyright (C) 2026 Tcpbox Vpico2vga312k
