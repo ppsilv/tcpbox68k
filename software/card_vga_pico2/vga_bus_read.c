@@ -6,8 +6,6 @@
 bit 0–7   → D0–D7   (data)
 bit 8–12  → A1–A5   (addr = 5 bits)
 bit 13    → CS
-
-
 */
 
 

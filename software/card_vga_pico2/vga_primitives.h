@@ -63,7 +63,7 @@ struct vga_text {
   void * _private;
 };
 
-vga_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font);
+vga_t* create_screen(screenMode_t mode); //,uint8_t vga_data_array[],uint32_t txcount,font_t * font);
 void put_cursor(uint8_t c);
 
 

@@ -396,18 +396,31 @@ short readPixel(short x, short y) {
   return color ;
 }
 
+//extern char *active_buffer;
+#define TXCOUNT 153600 // Total pixels/2 (since we have 2 pixels per byte)
+char vga_video_data_array0[TXCOUNT];
+char vga_video_data_array1[TXCOUNT];
+char *active_buffer = (char *)&vga_video_data_array0[0];
+unsigned char buffer=0;
+font_t *font;
 
-vga_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount,font_t * font){
+vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t txcount,font_t * font1){
   vga = (vga_t*)malloc(sizeof(vga_t));
   vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
   
+font = set_font(FONTE_8X16);
+    // Initialize the VGA screen
+    initVGA(  &active_buffer, TXCOUNT ) ;
+
+
   if (!vga || !priv) {
       free(vga);
       free(priv);
       return NULL;
   }
   vga->_private = priv;
-  priv->cursor = create_default_cursor() ;
+  
+  priv->cursor = create_default_cursor() ;  
   priv->textcolor = WHITE ;
   priv->textbgcolor = BLACK ;
   priv->font.name = font->name;
@@ -416,10 +429,10 @@ vga_t* create_screen(screenMode_t mode,uint8_t vga_data_array[],uint32_t txcount
   priv->font.size = font->size ;   
   priv->font.data = font->name ;
   priv->tabspace = 4;
-  priv->txcount = txcount ;
+  priv->txcount = TXCOUNT ;
   priv->topmask = 0b00001111 ;
   priv->bottommask = 0b11110000 ;
-  priv->vga_data_array = vga_data_array ;
+  priv->vga_data_array = &active_buffer[0] ;
 
   vga->screen_mode = mode;
 

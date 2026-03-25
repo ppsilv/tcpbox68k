@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2
+CMAKE_SOURCE_DIR = /home/pdsilva/project/tcpbox68k/software/card_vga_pico2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build
+CMAKE_BINARY_DIR = /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/CMakeFiles /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -130,43 +130,43 @@ vgaPico2/fast:
 .PHONY : vgaPico2/fast
 
 #=============================================================================
-# Target rules for targets named vgaPico2_vga_hsync_pio_h
+# Target rules for targets named vgaPico2_vga640p_hsync_pio_h
 
 # Build rule for target.
-vgaPico2_vga_hsync_pio_h: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga_hsync_pio_h
-.PHONY : vgaPico2_vga_hsync_pio_h
+vgaPico2_vga640p_hsync_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga640p_hsync_pio_h
+.PHONY : vgaPico2_vga640p_hsync_pio_h
 
 # fast build rule for target.
-vgaPico2_vga_hsync_pio_h/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga_hsync_pio_h.dir/build
-.PHONY : vgaPico2_vga_hsync_pio_h/fast
+vgaPico2_vga640p_hsync_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/build
+.PHONY : vgaPico2_vga640p_hsync_pio_h/fast
 
 #=============================================================================
-# Target rules for targets named vgaPico2_vga_vsync_pio_h
+# Target rules for targets named vgaPico2_vga640p_vsync_pio_h
 
 # Build rule for target.
-vgaPico2_vga_vsync_pio_h: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga_vsync_pio_h
-.PHONY : vgaPico2_vga_vsync_pio_h
+vgaPico2_vga640p_vsync_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga640p_vsync_pio_h
+.PHONY : vgaPico2_vga640p_vsync_pio_h
 
 # fast build rule for target.
-vgaPico2_vga_vsync_pio_h/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga_vsync_pio_h.dir/build
-.PHONY : vgaPico2_vga_vsync_pio_h/fast
+vgaPico2_vga640p_vsync_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/build
+.PHONY : vgaPico2_vga640p_vsync_pio_h/fast
 
 #=============================================================================
-# Target rules for targets named vgaPico2_vga_rgb_pio_h
+# Target rules for targets named vgaPico2_vga640p_rgb_pio_h
 
 # Build rule for target.
-vgaPico2_vga_rgb_pio_h: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga_rgb_pio_h
-.PHONY : vgaPico2_vga_rgb_pio_h
+vgaPico2_vga640p_rgb_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga640p_rgb_pio_h
+.PHONY : vgaPico2_vga640p_rgb_pio_h
 
 # fast build rule for target.
-vgaPico2_vga_rgb_pio_h/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga_rgb_pio_h.dir/build
-.PHONY : vgaPico2_vga_rgb_pio_h/fast
+vgaPico2_vga640p_rgb_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/build
+.PHONY : vgaPico2_vga640p_rgb_pio_h/fast
 
 #=============================================================================
 # Target rules for targets named vgaPico2_vga_bus_read_pio_h
@@ -1729,10 +1729,10 @@ help:
 	@echo "... bs2_default_bin"
 	@echo "... cyw43_driver_picow_cyw43_bus_pio_spi_pio_h"
 	@echo "... pico_status_led_ws2812_pio_h"
+	@echo "... vgaPico2_vga640p_hsync_pio_h"
+	@echo "... vgaPico2_vga640p_rgb_pio_h"
+	@echo "... vgaPico2_vga640p_vsync_pio_h"
 	@echo "... vgaPico2_vga_bus_read_pio_h"
-	@echo "... vgaPico2_vga_hsync_pio_h"
-	@echo "... vgaPico2_vga_rgb_pio_h"
-	@echo "... vgaPico2_vga_vsync_pio_h"
 	@echo "... bs2_default"
 	@echo "... bs2_default_library"
 	@echo "... vgaPico2"

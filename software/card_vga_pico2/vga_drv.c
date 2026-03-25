@@ -3,9 +3,9 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
-#include "vga_hsync.pio.h"
-#include "vga_vsync.pio.h"
-#include "vga_rgb.pio.h"
+#include "vga640p_hsync.pio.h"
+#include "vga640p_vsync.pio.h"
+#include "vga640p_rgb.pio.h"
 #include "vga_bus_read.pio.h"
 #include "vga_drv.h"
 
