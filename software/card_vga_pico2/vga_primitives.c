@@ -396,6 +396,7 @@ short readPixel(short x, short y) {
   return color ;
 }
 extern void __not_in_flash_func(vga_line_handler)();
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void init_vga_320x200(){
   // 1. Habilita a interrupção específica do PIO0
   pio_set_irq0_source_enabled(pio0, pis_interrupt1, true);
@@ -413,7 +414,7 @@ char vga_video_data_array1[TXCOUNT];
 char *active_buffer = (char *)&vga_video_data_array0[0];
 unsigned char buffer=0;
 font_t *font;
-
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t txcount,font_t * font1){
   vga = (vga_t*)malloc(sizeof(vga_t));
   vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
@@ -422,9 +423,12 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
     // Initialize the VGA screen
   initVGA(  &active_buffer, TXCOUNT , mode) ;
 
-  //Iniciar somente para 320x200
-  //init_vga_320x200();
-
+  if( mode == MODE_TEXT_40_S ||
+      mode == MODE_TEXT_40_F ||
+      mode == MODE_320x240
+    ){
+    init_vga_320x200();
+  }
   if (!vga || !priv) {
       free(vga);
       free(priv);

@@ -21,8 +21,8 @@
 #define REG_11         0xB8021        //Endereço real 33 0x21  o pico enxerga 0x10
 #define REG_12         0xB8023        //Endereço real 35 0x23  o pico enxerga 0x11
 #define REG_13         0xB8025        //Endereço real 37 0x25  o pico enxerga 0x12
-#define SET_MODE       0xB8027        //Endereço real 39 0x27  o pico enxerga 0x13 (0=Texto+Scroll, 1=Texto Fixo, 2=320x200, 3=640x200)
-#define SET_TXT_COLOR  0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14  
+#define SET_TXT_MODE   0xB8027        //Endereço real 39 0x27  o pico enxerga 0x13 (0=Texto+Scroll, 1=Texto Fixo, 2=320x200, 3=640x200)
+#define SET_TXT_COLOR  0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14
 #define CHANGE_CUR_POS 0xB802b        //Endereço real 43 0x2b  o pico enxerga 0x15
 #define REG_X_HIGH     0xB802d        //Endereço real 45 0x2d  o pico enxerga 0x16
 #define REG_X_LOW      0xB802f        //Endereço real 47 0x2f  o pico enxerga 0x17

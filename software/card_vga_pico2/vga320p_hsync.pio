@@ -4,7 +4,7 @@
 
 
 ; Program name
-.program hsync_320p
+.program hsync320p
 
 ; frontporch: 16 clocks (0.64us at 25MHz)
 ; sync pulse: 96 clocks (3.84us at 25MHz)
@@ -46,13 +46,13 @@ backporch:
 
 
 % c-sdk {
-static inline void hsync_320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
+static inline void hsync320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
 
     // creates state machine configuration object c, sets
     // to default configurations. I believe this function is auto-generated
     // and gets a name of <program name>_program_get_default_config
     // Yes, page 40 of SDK guide
-    pio_sm_config c = hsync_320p_program_get_default_config(offset);
+    pio_sm_config c = hsync320p_program_get_default_config(offset);
 
     // Map the state machine's SET pin group to one pin, namely the `pin`
     // parameter to this function.

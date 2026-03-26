@@ -8,15 +8,15 @@
 #include "hardware/pio.h"
 #endif
 
-// ---------- //
-// hsync_320p //
-// ---------- //
+// --------- //
+// hsync320p //
+// --------- //
 
-#define hsync_320p_wrap_target 1
-#define hsync_320p_wrap 6
-#define hsync_320p_pio_version 1
+#define hsync320p_wrap_target 1
+#define hsync320p_wrap 6
+#define hsync320p_pio_version 1
 
-static const uint16_t hsync_320p_program_instructions[] = {
+static const uint16_t hsync320p_program_instructions[] = {
     0x80a0, //  0: pull   block
             //     .wrap_target
     0xa027, //  1: mov    x, osr
@@ -29,28 +29,28 @@ static const uint16_t hsync_320p_program_instructions[] = {
 };
 
 #if !PICO_NO_HARDWARE
-static const struct pio_program hsync_320p_program = {
-    .instructions = hsync_320p_program_instructions,
+static const struct pio_program hsync320p_program = {
+    .instructions = hsync320p_program_instructions,
     .length = 7,
     .origin = -1,
-    .pio_version = hsync_320p_pio_version,
+    .pio_version = hsync320p_pio_version,
 #if PICO_PIO_VERSION > 0
     .used_gpio_ranges = 0x0
 #endif
 };
 
-static inline pio_sm_config hsync_320p_program_get_default_config(uint offset) {
+static inline pio_sm_config hsync320p_program_get_default_config(uint offset) {
     pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + hsync_320p_wrap_target, offset + hsync_320p_wrap);
+    sm_config_set_wrap(&c, offset + hsync320p_wrap_target, offset + hsync320p_wrap);
     return c;
 }
 
-static inline void hsync_320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
+static inline void hsync320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
     // creates state machine configuration object c, sets
     // to default configurations. I believe this function is auto-generated
     // and gets a name of <program name>_program_get_default_config
     // Yes, page 40 of SDK guide
-    pio_sm_config c = hsync_320p_program_get_default_config(offset);
+    pio_sm_config c = hsync320p_program_get_default_config(offset);
     // Map the state machine's SET pin group to one pin, namely the `pin`
     // parameter to this function.
     sm_config_set_set_pins(&c, pin, 1);

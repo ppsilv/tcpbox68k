@@ -8,15 +8,15 @@
 #include "hardware/pio.h"
 #endif
 
-// ---------- //
-// vsync_320p //
-// ---------- //
+// --------- //
+// vsync320p //
+// --------- //
 
-#define vsync_320p_wrap_target 1
-#define vsync_320p_wrap 13
-#define vsync_320p_pio_version 1
+#define vsync320p_wrap_target 1
+#define vsync320p_wrap 13
+#define vsync320p_pio_version 1
 
-static const uint16_t vsync_320p_program_instructions[] = {
+static const uint16_t vsync320p_program_instructions[] = {
     0x80a0, //  0: pull   block
             //     .wrap_target
     0xa027, //  1: mov    x, osr
@@ -36,29 +36,29 @@ static const uint16_t vsync_320p_program_instructions[] = {
 };
 
 #if !PICO_NO_HARDWARE
-static const struct pio_program vsync_320p_program = {
-    .instructions = vsync_320p_program_instructions,
+static const struct pio_program vsync320p_program = {
+    .instructions = vsync320p_program_instructions,
     .length = 14,
     .origin = -1,
-    .pio_version = vsync_320p_pio_version,
+    .pio_version = vsync320p_pio_version,
 #if PICO_PIO_VERSION > 0
     .used_gpio_ranges = 0x0
 #endif
 };
 
-static inline pio_sm_config vsync_320p_program_get_default_config(uint offset) {
+static inline pio_sm_config vsync320p_program_get_default_config(uint offset) {
     pio_sm_config c = pio_get_default_sm_config();
-    sm_config_set_wrap(&c, offset + vsync_320p_wrap_target, offset + vsync_320p_wrap);
+    sm_config_set_wrap(&c, offset + vsync320p_wrap_target, offset + vsync320p_wrap);
     sm_config_set_sideset(&c, 2, true, false);
     return c;
 }
 
-static inline void vsync_320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
+static inline void vsync320p_program_init(PIO pio, uint sm, uint offset, uint pin) {
     // creates state machine configuration object c, sets
     // to default configurations. I believe this function is auto-generated
     // and gets a name of <program name>_program_get_default_config
     // Yes, page 40 of SDK guide
-    pio_sm_config c = vsync_320p_program_get_default_config(offset);
+    pio_sm_config c = vsync320p_program_get_default_config(offset);
     // Map the state machine's SET pin group to one pin, namely the `pin`
     // parameter to this function.
     sm_config_set_set_pins(&c, pin, 1);

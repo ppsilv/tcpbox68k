@@ -54,7 +54,7 @@ void initReadBus_Pio()
 }
 static void initPio_320p();
 static void initPio_640p();
-
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mode) {
 
     switch(mode){    
@@ -73,25 +73,21 @@ void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mod
     }    
 
 }
-
-static void initPio0(screenMode_t mode){
-
-}
-
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 static void initPio_320p(){
     PIO pio = pio0;
     bus_pio0 = pio;
-    uint hsync_offset = pio_add_program(pio, &hsync_320p_program);
-    uint vsync_offset = pio_add_program(pio, &vsync_320p_program);
-    uint rgb_offset = pio_add_program(pio, &rgb_320p_program);
+    uint hsync_offset = pio_add_program(pio, &hsync320p_program);
+    uint vsync_offset = pio_add_program(pio, &vsync320p_program);
+    uint rgb_offset = pio_add_program(pio, &rgb320p_program);
  
     pio_sm_claim (pio, hsync_sm);
     pio_sm_claim (pio, vsync_sm);
     pio_sm_claim (pio, rgb_sm);
 
-    hsync_program_init(pio, hsync_sm, hsync_offset, HSYNC);
-    vsync_program_init(pio, vsync_sm, vsync_offset, VSYNC);
-    rgb_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
+    hsync320p_program_init(pio, hsync_sm, hsync_offset, HSYNC);
+    vsync320p_program_init(pio, vsync_sm, vsync_offset, VSYNC);
+    rgb320p_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
 
     pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_1);
     pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_1);
@@ -121,64 +117,6 @@ static void initPio_640p(){
     pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
 }
 
-static void initPio0_BKP(screenMode_t mode)
-{
-        // Choose which PIO instance to use (there are two instances, each with 4 state machines)
-    PIO pio = pio0;
-    bus_pio0 = pio;
-    // The program name comes from the .program part of the pio file
-    // and is of the form <program name_program>
-    uint hsync_offset = pio_add_program(pio, &hsync_program);
-    uint vsync_offset = pio_add_program(pio, &vsync_program);
-    uint rgb_offset = pio_add_program(pio, &rgb_program);
-/*
-    // Manually select a few state machines from pio instance pio0.
-    uint hsync_sm = 0;
-    uint vsync_sm = 1;
-    uint rgb_sm = 2;
-*/
-    pio_sm_claim (pio, hsync_sm);
-    pio_sm_claim (pio, vsync_sm);
-    pio_sm_claim (pio, rgb_sm);
-
-    // Call the initialization functions that are defined within each PIO file.
-    // Why not create these programs here? By putting the initialization function in
-    // the pio file, then all information about how to use/setup that state machine
-    // is consolidated in one place. Here in the C, we then just import and use it.
-    hsync_program_init(pio, hsync_sm, hsync_offset, HSYNC);
-    vsync_program_init(pio, vsync_sm, vsync_offset, VSYNC);
-    rgb_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // Initialize PIO state machine counters. This passes the information to the state machines
-    // that they retrieve in the first 'pull' instructions, before the .wrap_target directive
-    // in the assembly. Each uses these values to initialize some counting registers.
-    switch(mode){
-        case MODE_TEXT_40_S:
-        case MODE_TEXT_40_F:
-        case MODE_320x240:
-            pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_1);
-            pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_1);
-            pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_1);
-            break;
-        case MODE_TEXT_80_S:
-        case MODE_TEXT_80_F:
-        case MODE_640x480:    
-            pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_2);
-            pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_2);
-            pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_2);
-            break;
-    }   
-
-    // Start the two pio machine IN SYNC
-    // Note that the RGB state machine is running at full speed,
-    // so synchronization doesn't matter for that one. But, we'll
-    // start them all simultaneously anyway.
-    pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
-
-}
 
 static void initDMA(char **active_buffer_ptr,unsigned int totalBytes,PIO pio){
 
@@ -242,6 +180,7 @@ int rgb_chan_0;
 static uint16_t vga_line_counter = 0;
 static bool vga_repeat_step = false;
 char * vga_buffer_global;
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm) {
     vga_buffer_global = *active_buffer_ptr;
     rgb_chan_0 = dma_claim_unused_channel(true);
@@ -263,7 +202,7 @@ void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm) {
         false               // NÃO começa ainda
     );
 }
-
+//ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void __not_in_flash_func(vga_line_handler)() {
     pio_interrupt_clear(pio0, 1); 
 
