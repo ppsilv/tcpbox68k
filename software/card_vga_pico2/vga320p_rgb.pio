@@ -44,7 +44,7 @@ static inline void rgb_320p_program_init(PIO pio, uint sm, uint offset, uint pin
     // to default configurations. I believe this function is auto-generated
     // and gets a name of <program name>_program_get_default_config
     // Yes, page 40 of SDK guide
-    pio_sm_config c = rgb_program_get_default_config(offset);
+    pio_sm_config c = rgb_320p_program_get_default_config(offset);
 
     // Map the state machine's SET and OUT pin group to three pins, the `pin`
     // parameter to this function is the lowest one. These groups overlap.

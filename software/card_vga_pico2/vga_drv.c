@@ -3,6 +3,9 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/dma.h"
+#include "vga320p_hsync.pio.h"
+#include "vga320p_vsync.pio.h"
+#include "vga320p_rgb.pio.h"
 #include "vga640p_hsync.pio.h"
 #include "vga640p_vsync.pio.h"
 #include "vga640p_rgb.pio.h"
@@ -49,26 +52,76 @@ void initReadBus_Pio()
     bus_read_program_init(pio, bus_read_sm, bus_read_offset, BUS);
 
 }
+static void initPio_320p();
+static void initPio_640p();
 
 void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mode) {
 
-    initPio0(mode);
     switch(mode){    
         case MODE_TEXT_40_S:
         case MODE_TEXT_40_F:
         case MODE_320x240:
+            initPio_320p(mode);
             initDMA_320x200(active_buffer_ptr, bus_pio0, rgb_sm);
             break;
         case MODE_TEXT_80_S:
         case MODE_TEXT_80_F:
         case MODE_640x480:    
+            initPio_640p(mode);
             initDMA(active_buffer_ptr,totalBytes,bus_pio0);
             break;
     }    
 
 }
 
-static void initPio0(screenMode_t mode)
+static void initPio0(screenMode_t mode){
+
+}
+
+static void initPio_320p(){
+    PIO pio = pio0;
+    bus_pio0 = pio;
+    uint hsync_offset = pio_add_program(pio, &hsync_320p_program);
+    uint vsync_offset = pio_add_program(pio, &vsync_320p_program);
+    uint rgb_offset = pio_add_program(pio, &rgb_320p_program);
+ 
+    pio_sm_claim (pio, hsync_sm);
+    pio_sm_claim (pio, vsync_sm);
+    pio_sm_claim (pio, rgb_sm);
+
+    hsync_program_init(pio, hsync_sm, hsync_offset, HSYNC);
+    vsync_program_init(pio, vsync_sm, vsync_offset, VSYNC);
+    rgb_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
+
+    pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_1);
+    pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_1);
+    pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_1);
+
+    pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
+}
+static void initPio_640p(){
+    PIO pio = pio0;
+    bus_pio0 = pio;
+    uint hsync_offset = pio_add_program(pio, &hsync_program);
+    uint vsync_offset = pio_add_program(pio, &vsync_program);
+    uint rgb_offset = pio_add_program(pio, &rgb_program);
+ 
+    pio_sm_claim (pio, hsync_sm);
+    pio_sm_claim (pio, vsync_sm);
+    pio_sm_claim (pio, rgb_sm);
+
+    hsync_program_init(pio, hsync_sm, hsync_offset, HSYNC);
+    vsync_program_init(pio, vsync_sm, vsync_offset, VSYNC);
+    rgb_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
+
+    pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_2);
+    pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_2);
+    pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_2);
+
+    pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
+}
+
+static void initPio0_BKP(screenMode_t mode)
 {
         // Choose which PIO instance to use (there are two instances, each with 4 state machines)
     PIO pio = pio0;

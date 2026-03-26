@@ -83,6 +83,9 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/dma.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dma.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/dma_debug.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga320p_hsync.pio.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga320p_vsync.pio.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga320p_rgb.pio.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga640p_hsync.pio.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga640p_vsync.pio.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga640p_rgb.pio.h \
