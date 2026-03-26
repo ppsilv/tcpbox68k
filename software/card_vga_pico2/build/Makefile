@@ -130,6 +130,45 @@ vgaPico2/fast:
 .PHONY : vgaPico2/fast
 
 #=============================================================================
+# Target rules for targets named vgaPico2_vga320p_hsync_pio_h
+
+# Build rule for target.
+vgaPico2_vga320p_hsync_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga320p_hsync_pio_h
+.PHONY : vgaPico2_vga320p_hsync_pio_h
+
+# fast build rule for target.
+vgaPico2_vga320p_hsync_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build
+.PHONY : vgaPico2_vga320p_hsync_pio_h/fast
+
+#=============================================================================
+# Target rules for targets named vgaPico2_vga320p_vsync_pio_h
+
+# Build rule for target.
+vgaPico2_vga320p_vsync_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga320p_vsync_pio_h
+.PHONY : vgaPico2_vga320p_vsync_pio_h
+
+# fast build rule for target.
+vgaPico2_vga320p_vsync_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build
+.PHONY : vgaPico2_vga320p_vsync_pio_h/fast
+
+#=============================================================================
+# Target rules for targets named vgaPico2_vga320p_rgb_pio_h
+
+# Build rule for target.
+vgaPico2_vga320p_rgb_pio_h: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vgaPico2_vga320p_rgb_pio_h
+.PHONY : vgaPico2_vga320p_rgb_pio_h
+
+# fast build rule for target.
+vgaPico2_vga320p_rgb_pio_h/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build
+.PHONY : vgaPico2_vga320p_rgb_pio_h/fast
+
+#=============================================================================
 # Target rules for targets named vgaPico2_vga640p_hsync_pio_h
 
 # Build rule for target.
@@ -1729,6 +1768,9 @@ help:
 	@echo "... bs2_default_bin"
 	@echo "... cyw43_driver_picow_cyw43_bus_pio_spi_pio_h"
 	@echo "... pico_status_led_ws2812_pio_h"
+	@echo "... vgaPico2_vga320p_hsync_pio_h"
+	@echo "... vgaPico2_vga320p_rgb_pio_h"
+	@echo "... vgaPico2_vga320p_vsync_pio_h"
 	@echo "... vgaPico2_vga640p_hsync_pio_h"
 	@echo "... vgaPico2_vga640p_rgb_pio_h"
 	@echo "... vgaPico2_vga640p_vsync_pio_h"

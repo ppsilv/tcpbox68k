@@ -73,6 +73,9 @@ preinstall: pico-sdk/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/vgaPico2.dir/clean
+clean: CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/clean
+clean: CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/clean
+clean: CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/clean
 clean: CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/clean
 clean: CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/clean
 clean: CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/clean
@@ -1906,6 +1909,9 @@ pico-sdk/tools/clean:
 # Target rules for target CMakeFiles/vgaPico2.dir
 
 # All Build rule for target.
+CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/all
+CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/all
+CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/all
 CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/all
 CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/all
 CMakeFiles/vgaPico2.dir/all: CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/all
@@ -1918,7 +1924,7 @@ CMakeFiles/vgaPico2.dir/all: pico-sdk/src/rp2350/boot_stage2/CMakeFiles/bs2_defa
 
 # Build rule for subdir invocation for target.
 CMakeFiles/vgaPico2.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 78
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 81
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/vgaPico2.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
 .PHONY : CMakeFiles/vgaPico2.dir/rule
@@ -1933,13 +1939,91 @@ CMakeFiles/vgaPico2.dir/clean:
 .PHONY : CMakeFiles/vgaPico2.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir
+
+# All Build rule for target.
+CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=78 "Built target vgaPico2_vga320p_hsync_pio_h"
+.PHONY : CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 1
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
+.PHONY : CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/rule
+
+# Convenience name for target.
+vgaPico2_vga320p_hsync_pio_h: CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/rule
+.PHONY : vgaPico2_vga320p_hsync_pio_h
+
+# clean rule for target.
+CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/clean
+.PHONY : CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir
+
+# All Build rule for target.
+CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=80 "Built target vgaPico2_vga320p_vsync_pio_h"
+.PHONY : CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 1
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
+.PHONY : CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/rule
+
+# Convenience name for target.
+vgaPico2_vga320p_vsync_pio_h: CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/rule
+.PHONY : vgaPico2_vga320p_vsync_pio_h
+
+# clean rule for target.
+CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/clean
+.PHONY : CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir
+
+# All Build rule for target.
+CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=79 "Built target vgaPico2_vga320p_rgb_pio_h"
+.PHONY : CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 1
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles 0
+.PHONY : CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/rule
+
+# Convenience name for target.
+vgaPico2_vga320p_rgb_pio_h: CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/rule
+.PHONY : vgaPico2_vga320p_rgb_pio_h
+
+# clean rule for target.
+CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/clean
+.PHONY : CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir
 
 # All Build rule for target.
 CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=78 "Built target vgaPico2_vga640p_hsync_pio_h"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=81 "Built target vgaPico2_vga640p_hsync_pio_h"
 .PHONY : CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/all
 
 # Build rule for subdir invocation for target.
@@ -1965,7 +2049,7 @@ CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/clean:
 CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=80 "Built target vgaPico2_vga640p_vsync_pio_h"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=83 "Built target vgaPico2_vga640p_vsync_pio_h"
 .PHONY : CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/all
 
 # Build rule for subdir invocation for target.
@@ -1991,7 +2075,7 @@ CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/clean:
 CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/build.make CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=79 "Built target vgaPico2_vga640p_rgb_pio_h"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=82 "Built target vgaPico2_vga640p_rgb_pio_h"
 .PHONY : CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/all
 
 # Build rule for subdir invocation for target.
@@ -2017,7 +2101,7 @@ CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/clean:
 CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/build.make CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/build.make CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=81 "Built target vgaPico2_vga_bus_read_pio_h"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/CMakeFiles --progress-num=84 "Built target vgaPico2_vga_bus_read_pio_h"
 .PHONY : CMakeFiles/vgaPico2_vga_bus_read_pio_h.dir/all
 
 # Build rule for subdir invocation for target.

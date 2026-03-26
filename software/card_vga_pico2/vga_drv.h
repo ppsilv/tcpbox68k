@@ -1,5 +1,6 @@
 #ifndef __VGA16_DRV_H__
 #define __VGA16_DRV_H__
+#include "screen_mode.h"
 
 /**
  * Hunter Adams (vha3@cornell.edu)
@@ -44,7 +45,8 @@
 
 
 // VGA primitives - usable in main
-void initVGA(  char **active_buffer_ptr,unsigned int totalBytes) ;
+//void initVGA(  char **active_buffer_ptr,unsigned int totalBytes) ;
+void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mode) ;
 void initReadBus_Pio();
 char* get_vga_buffer_pointer(void);
 

@@ -87,4 +87,5 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga640p_vsync.pio.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga640p_rgb.pio.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/build/vga_bus_read.pio.h \
- /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h

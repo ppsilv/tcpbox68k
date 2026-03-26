@@ -38,6 +38,9 @@ pico_sdk_init()
 
 add_executable(vgaPico2 vga.c vga_drv.c vga_primitives.c vga_bus_read.c cursor.c font.c font_8x12.c font_8x14.c font_8x16.c font_8x18.c )
 
+pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga320p_hsync.pio)
+pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga320p_vsync.pio)
+pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga320p_rgb.pio)
 pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga640p_hsync.pio)
 pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga640p_vsync.pio)
 pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga640p_rgb.pio)

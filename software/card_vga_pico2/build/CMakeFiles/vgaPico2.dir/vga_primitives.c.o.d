@@ -89,6 +89,7 @@ CMakeFiles/vgaPico2.dir/vga_primitives.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/dma_debug.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/cursor.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/colors.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \

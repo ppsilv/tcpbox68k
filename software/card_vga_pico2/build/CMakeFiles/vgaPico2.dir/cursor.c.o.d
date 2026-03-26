@@ -83,6 +83,7 @@ CMakeFiles/vgaPico2.dir/cursor.c.o: \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/string.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
+ /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/colors.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font_5x7.h

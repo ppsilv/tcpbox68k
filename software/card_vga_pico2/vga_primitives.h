@@ -25,7 +25,7 @@ static void writeStringBold(char* str);
 
 void drawChar(uint8_t c, color_t color, color_t bg, uint8_t size) ;
 
-
+/*
 //NOVAS IMPLEMENTAÇÕES
 //(0=Texto+Scroll, 1=Texto Fixo, 2=320x200, 3=640x200)
 enum screenMode {
@@ -37,6 +37,7 @@ enum screenMode {
     MODE_640x480
 };
 typedef enum screenMode screenMode_t ;
+*/
 typedef struct vga_text vga_t ;
 
 struct vga_text {

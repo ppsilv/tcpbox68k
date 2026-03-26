@@ -379,6 +379,9 @@ set(CMAKE_MAKEFILE_PRODUCTS
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/vgaPico2.dir/DependInfo.cmake"
+  "CMakeFiles/vgaPico2_vga320p_hsync_pio_h.dir/DependInfo.cmake"
+  "CMakeFiles/vgaPico2_vga320p_vsync_pio_h.dir/DependInfo.cmake"
+  "CMakeFiles/vgaPico2_vga320p_rgb_pio_h.dir/DependInfo.cmake"
   "CMakeFiles/vgaPico2_vga640p_hsync_pio_h.dir/DependInfo.cmake"
   "CMakeFiles/vgaPico2_vga640p_vsync_pio_h.dir/DependInfo.cmake"
   "CMakeFiles/vgaPico2_vga640p_rgb_pio_h.dir/DependInfo.cmake"

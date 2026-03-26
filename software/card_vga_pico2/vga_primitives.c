@@ -395,6 +395,16 @@ short readPixel(short x, short y) {
   }
   return color ;
 }
+extern void __not_in_flash_func(vga_line_handler)();
+void init_vga_320x200(){
+  // 1. Habilita a interrupção específica do PIO0
+  pio_set_irq0_source_enabled(pio0, pis_interrupt1, true);
+  // 2. Diz qual função deve rodar
+  irq_set_exclusive_handler(PIO0_IRQ_0, vga_line_handler);
+  // 3. Liga a interrupção no nível do processador
+  irq_set_enabled(PIO0_IRQ_0, true);
+  irq_set_priority(PIO0_IRQ_0, 0);  
+}
 
 //extern char *active_buffer;
 #define TXCOUNT 153600 // Total pixels/2 (since we have 2 pixels per byte)
@@ -408,10 +418,12 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
   vga = (vga_t*)malloc(sizeof(vga_t));
   vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
   
-font = set_font(FONTE_8X16);
+  font = set_font(FONTE_8X16);
     // Initialize the VGA screen
-    initVGA(  &active_buffer, TXCOUNT ) ;
+  initVGA(  &active_buffer, TXCOUNT , mode) ;
 
+  //Iniciar somente para 320x200
+  //init_vga_320x200();
 
   if (!vga || !priv) {
       free(vga);

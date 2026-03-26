@@ -197,6 +197,12 @@ Discarded input sections
  .text          0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .data          0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .bss           0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .time_critical.vga_line_handler
+                0x00000000       0x58 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .bss.physical_line.0
+                0x00000000        0x4 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .bss.data_line.1
+                0x00000000        0x4 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .text          0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .data          0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .bss           0x00000000        0x0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
@@ -204,6 +210,8 @@ Discarded input sections
                 0x00000000       0x44 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.readPixel
                 0x00000000       0x24 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .text.init_vga_320x200
+                0x00000000       0x30 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .bss.buffer    0x00000000        0x1 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .bss.vga_video_data_array1
                 0x00000000    0x25800 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
@@ -2484,7 +2492,7 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
 .flash_begin    0x10000000        0x0
                 0x10000000                        __flash_binary_start = .
 
-.text           0x10000000     0x530c
+.text           0x10000000     0x53e4
                 0x10000000                        __logical_binary_start = .
  *(.vectors)
  .vectors       0x10000000      0x124 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
@@ -2595,387 +2603,388 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
  .text.initReadBus_Pio
                 0x10000920       0xc8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
                 0x10000920                initReadBus_Pio
- .text.initVGA  0x100009e8      0x2c4 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .text.initVGA  0x100009e8      0x394 CMakeFiles/vgaPico2.dir/vga_drv.c.o
                 0x100009e8                initVGA
  .text.set_vga_data_array
-                0x10000cac       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000d7c       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.setTextCursor
-                0x10000cbc       0x44 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000d8c       0x44 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.getTextSize
-                0x10000d00       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000dd0       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.set_blink_interval
-                0x10000d10       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000d10                set_blink_interval
+                0x10000de0       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000de0                set_blink_interval
  .text.get_blink_interval
-                0x10000d20       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000df0       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.setTextCursorVisible
-                0x10000d30       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e00       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.setTextCursorBlink
-                0x10000d40       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e10       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.set_vga_home
-                0x10000d50       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000d50                set_vga_home
+                0x10000e20       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e20                set_vga_home
  .text.set_vga_mode
-                0x10000d60        0x4 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000d60                set_vga_mode
+                0x10000e30        0x4 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e30                set_vga_mode
  .text.setTextColor
-                0x10000d64       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e34       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.getTextColor
-                0x10000d74       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .text.clrscr   0x10000d84       0x20 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000d84                clrscr
+                0x10000e44       0x10 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .text.clrscr   0x10000e54       0x20 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e54                clrscr
  .text.drawPixel
-                0x10000da4       0x4c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000da4                drawPixel
+                0x10000e74       0x4c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000e74                drawPixel
  .text.drawHLine
-                0x10000df0       0x90 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000df0                drawHLine
+                0x10000ec0       0x90 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000ec0                drawHLine
  .text.fillRect
-                0x10000e80       0xa0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000e80                fillRect
+                0x10000f50       0xa0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000f50                fillRect
  .text.drawChar2
-                0x10000f20      0x128 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10000f20                drawChar2
+                0x10000ff0      0x128 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10000ff0                drawChar2
  .text.drawChar
-                0x10001048      0x1ec CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10001048                drawChar
+                0x10001118      0x1ec CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10001118                drawChar
  .text.tft_write
-                0x10001234       0x74 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10001234                tft_write
+                0x10001304       0x74 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10001304                tft_write
  .text.printString
-                0x100012a8       0x8c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10001378       0x8c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .text.put_cursor
-                0x10001334       0x4c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10001334                put_cursor
+                0x10001404       0x4c CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10001404                put_cursor
  .text.create_screen
-                0x10001380      0x124 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x10001380                create_screen
+                0x10001450      0x128 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x10001450                create_screen
  .text.bus_try_get_event
-                0x100014a4       0x2c CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
-                0x100014a4                bus_try_get_event
- .text.set_x    0x100014d0       0x14 CMakeFiles/vgaPico2.dir/cursor.c.o
- .text.set_y    0x100014e4       0x14 CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x10001578       0x2c CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+                0x10001578                bus_try_get_event
+ .text.set_x    0x100015a4       0x14 CMakeFiles/vgaPico2.dir/cursor.c.o
+ .text.set_y    0x100015b8       0x14 CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.set_position
-                0x100014f8       0x20 CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x100015cc       0x20 CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.set_visible
-                0x10001518        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x100015ec        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.set_blink
-                0x10001524        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x100015f8        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.set_blink_interval
-                0x10001530        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x10001604        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.get_blink_interval
-                0x1000153c        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x10001610        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.set_shape
-                0x10001548        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
- .text.get_x    0x10001554        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
- .text.get_y    0x10001560        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x1000161c        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+ .text.get_x    0x10001628        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+ .text.get_y    0x10001634        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.is_visible
-                0x1000156c        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x10001640        0xc CMakeFiles/vgaPico2.dir/cursor.c.o
  .text.create_default_cursor
-                0x10001578       0x7c CMakeFiles/vgaPico2.dir/cursor.c.o
-                0x10001578                create_default_cursor
+                0x1000164c       0x7c CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x1000164c                create_default_cursor
  .text.set_font
-                0x100015f4       0x18 CMakeFiles/vgaPico2.dir/font.c.o
-                0x100015f4                set_font
+                0x100016c8       0x18 CMakeFiles/vgaPico2.dir/font.c.o
+                0x100016c8                set_font
  .text.gpio_set_function
-                0x1000160c       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
-                0x1000160c                gpio_set_function
+                0x100016e0       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+                0x100016e0                gpio_set_function
  .text.gpio_set_pulls
-                0x10001648       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
-                0x10001648                gpio_set_pulls
- .text.panic    0x10001670       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
-                0x10001670                panic
+                0x1000171c       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+                0x1000171c                gpio_set_pulls
+ .text.panic    0x10001744       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+                0x10001744                panic
  .text.hw_claim_lock
-                0x100016a0       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
-                0x100016a0                hw_claim_lock
+                0x10001774       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x10001774                hw_claim_lock
  .text.hw_claim_unlock
-                0x100016c4       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
-                0x100016c4                hw_claim_unlock
+                0x10001798       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x10001798                hw_claim_unlock
  .text.hw_claim_or_assert
-                0x100016d8       0x58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
-                0x100016d8                hw_claim_or_assert
+                0x100017ac       0x58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x100017ac                hw_claim_or_assert
  .text.hw_claim_unused_from_range
-                0x10001730       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
-                0x10001730                hw_claim_unused_from_range
+                0x10001804       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x10001804                hw_claim_unused_from_range
  .text.next_striped_spin_lock_num
-                0x100017b0       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
-                0x100017b0                next_striped_spin_lock_num
+                0x10001884       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+                0x10001884                next_striped_spin_lock_num
  .text.spinlock_set_extexclall
-                0x100017c8       0x10 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x1000189c       0x10 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .text.spin_locks_reset
-                0x100017d8       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
-                0x100017d8                spin_locks_reset
+                0x100018ac       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x100018ac                spin_locks_reset
  .text.runtime_init_per_core_irq_priorities
-                0x100017f0       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
-                0x100017f0                runtime_init_per_core_irq_priorities
+                0x100018c4       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x100018c4                runtime_init_per_core_irq_priorities
  .text.irq_set_enabled
-                0x10001830       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
-                0x10001830                irq_set_enabled
+                0x10001904       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x10001904                irq_set_enabled
  .text.irq_set_exclusive_handler
-                0x1000185c       0x60 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
-                0x1000185c                irq_set_exclusive_handler
+                0x10001930       0x60 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x10001930                irq_set_exclusive_handler
  .text.lock_init
-                0x100018bc        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
-                0x100018bc                lock_init
+                0x10001990        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+                0x10001990                lock_init
  .text.runtime_init_mutex
-                0x100018c8       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
-                0x100018c8                runtime_init_mutex
+                0x1000199c       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+                0x1000199c                runtime_init_mutex
  .text.sleep_until_callback
-                0x10001914       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x100019e8       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ *fill*         0x10001a24        0x4 
  .text.alarm_pool_irq_handler
-                0x10001950      0x2f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001a28      0x2f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
  .text.runtime_init_default_alarm_pool
-                0x10001c40      0x100 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001c40                runtime_init_default_alarm_pool
+                0x10001d18      0x100 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001d18                runtime_init_default_alarm_pool
  .text.alarm_pool_get_default
-                0x10001d40        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001d40                alarm_pool_get_default
+                0x10001e18        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001e18                alarm_pool_get_default
  .text.alarm_pool_add_alarm_at_force_in_context
-                0x10001d48       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001d48                alarm_pool_add_alarm_at_force_in_context
+                0x10001e20       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001e20                alarm_pool_add_alarm_at_force_in_context
  .text.alarm_pool_cancel_alarm
-                0x10001e10       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001e10                alarm_pool_cancel_alarm
+                0x10001ee8       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001ee8                alarm_pool_cancel_alarm
  .text.best_effort_wfe_or_timeout
-                0x10001e90       0xd4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001e90                best_effort_wfe_or_timeout
+                0x10001f68       0xd4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x10001f68                best_effort_wfe_or_timeout
  .text.alarm_pool_add_repeating_timer_us
-                0x10001f64      0x120 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10001f64                alarm_pool_add_repeating_timer_us
+                0x1000203c      0x120 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x1000203c                alarm_pool_add_repeating_timer_us
  .text.cancel_repeating_timer
-                0x10002084       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x10002084                cancel_repeating_timer
+                0x1000215c       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x1000215c                cancel_repeating_timer
  .text.timer_hardware_alarm_claim
-                0x10002120       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
-                0x10002120                timer_hardware_alarm_claim
+                0x100021f8       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x100021f8                timer_hardware_alarm_claim
  .text.timer_time_us_64
-                0x10002144       0x10 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
-                0x10002144                timer_time_us_64
+                0x1000221c       0x10 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x1000221c                timer_time_us_64
  .text.time_us_64
-                0x10002154       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
-                0x10002154                time_us_64
+                0x1000222c       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x1000222c                time_us_64
  .text.clock_configure_undivided
-                0x10002168       0xd0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
-                0x10002168                clock_configure_undivided
+                0x10002240       0xd0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x10002240                clock_configure_undivided
  .text.clock_get_hz
-                0x10002238        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
-                0x10002238                clock_get_hz
+                0x10002310        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x10002310                clock_get_hz
  .text.set_sys_clock_pll
-                0x10002244      0x184 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
-                0x10002244                set_sys_clock_pll
+                0x1000231c      0x184 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x1000231c                set_sys_clock_pll
  .text.check_sys_clock_khz
-                0x100023c8      0x19c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
-                0x100023c8                check_sys_clock_khz
+                0x100024a0      0x19c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x100024a0                check_sys_clock_khz
  .text.pll_init
-                0x10002564       0x8c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
-                0x10002564                pll_init
+                0x1000263c       0x8c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+                0x1000263c                pll_init
  .text.tick_start
-                0x100025f0       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
-                0x100025f0                tick_start
+                0x100026c8       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+                0x100026c8                tick_start
  .text.rom_func_lookup
-                0x10002608       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
-                0x10002608                rom_func_lookup
+                0x100026e0       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x100026e0                rom_func_lookup
  .text.runtime_init_bootrom_locking_enable
-                0x10002620       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
-                0x10002620                runtime_init_bootrom_locking_enable
+                0x100026f8       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x100026f8                runtime_init_bootrom_locking_enable
  .text.runtime_init_boot_locks_reset
-                0x10002634       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
-                0x10002634                runtime_init_boot_locks_reset
+                0x1000270c       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x1000270c                runtime_init_boot_locks_reset
  .text.xosc_init
-                0x10002650       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
-                0x10002650                xosc_init
+                0x10002728       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+                0x10002728                xosc_init
  .text.first_per_core_initializer
-                0x10002680        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x10002758        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
  .text.hard_assertion_failure
-                0x10002684        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
-                0x10002684                hard_assertion_failure
+                0x1000275c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x1000275c                hard_assertion_failure
  .text.runtime_run_initializers
-                0x10002690       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
-                0x10002690                runtime_run_initializers
+                0x10002768       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x10002768                runtime_run_initializers
  .text.runtime_init_early_resets
-                0x100026b0       0x34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100026b0                runtime_init_early_resets
+                0x10002788       0x34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x10002788                runtime_init_early_resets
  .text.runtime_init_usb_power_down
-                0x100026e4       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100026e4                runtime_init_usb_power_down
+                0x100027bc       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100027bc                runtime_init_usb_power_down
  .text.runtime_init_per_core_enable_coprocessors
-                0x10002700       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x10002700                runtime_init_per_core_enable_coprocessors
+                0x100027d8       0x1c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100027d8                runtime_init_per_core_enable_coprocessors
  .text.runtime_init_post_clock_resets
-                0x1000271c       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x1000271c                runtime_init_post_clock_resets
+                0x100027f4       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100027f4                runtime_init_post_clock_resets
  .text.runtime_init_bootrom_reset
-                0x1000273c       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x1000273c                runtime_init_bootrom_reset
+                0x10002814       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x10002814                runtime_init_bootrom_reset
  .text.runtime_init_per_core_bootrom_reset
-                0x10002750       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x10002750                runtime_init_per_core_bootrom_reset
+                0x10002828       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x10002828                runtime_init_per_core_bootrom_reset
  .text.runtime_init_spin_locks_reset
-                0x10002764        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x10002764                runtime_init_spin_locks_reset
+                0x1000283c        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x1000283c                runtime_init_spin_locks_reset
  .text.runtime_init_install_ram_vector_table
-                0x10002768       0x68 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x10002768                runtime_init_install_ram_vector_table
+                0x10002840       0x68 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x10002840                runtime_init_install_ram_vector_table
  .text.runtime_init_clocks
-                0x100027d0       0xdc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
-                0x100027d0                runtime_init_clocks
+                0x100028a8       0xdc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x100028a8                runtime_init_clocks
  .text.__rp2350_dcp_engaged_state_save_restore
-                0x100028ac       0x3a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- *fill*         0x100028e6        0x2 
+                0x10002984       0x3a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ *fill*         0x100029be        0x2 
  .text.__wrap___aeabi_dadd
-                0x100028e8       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x100028f0                __wrap___aeabi_dadd
+                0x100029c0       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x100029c8                __wrap___aeabi_dadd
  .text.__wrap___aeabi_dsub
-                0x10002910       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002918                __wrap___aeabi_dsub
+                0x100029e8       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x100029f0                __wrap___aeabi_dsub
  .text.__wrap___aeabi_dmul
-                0x10002938       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002940                __wrap___aeabi_dmul
+                0x10002a10       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002a18                __wrap___aeabi_dmul
  .text.__wrap___aeabi_ddiv
-                0x10002984       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x1000298c                __wrap___aeabi_ddiv
+                0x10002a5c       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002a64                __wrap___aeabi_ddiv
  .text.__wrap___aeabi_i2d
-                0x10002a20       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002a28                __wrap___aeabi_i2d
-                0x10002a28                int2double
+                0x10002af8       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002b00                __wrap___aeabi_i2d
+                0x10002b00                int2double
  .text.__wrap___aeabi_ui2d
-                0x10002a44       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002a4c                __wrap___aeabi_ui2d
-                0x10002a4c                uint2double
+                0x10002b1c       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002b24                __wrap___aeabi_ui2d
+                0x10002b24                uint2double
  .text.__wrap___aeabi_d2iz
-                0x10002a68       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002a70                __wrap___aeabi_d2iz
-                0x10002a70                double2int_z
+                0x10002b40       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002b48                __wrap___aeabi_d2iz
+                0x10002b48                double2int_z
  .text.__wrap___aeabi_d2uiz
-                0x10002a8c       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002a94                double2uint_z
-                0x10002a94                double2uint
-                0x10002a94                __wrap___aeabi_d2uiz
+                0x10002b64       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002b6c                double2uint_z
+                0x10002b6c                double2uint
+                0x10002b6c                __wrap___aeabi_d2uiz
  .text.__wrap___aeabi_dcmpun
-                0x10002ab0       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002ab8                __wrap___aeabi_dcmpun
+                0x10002b88       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002b90                __wrap___aeabi_dcmpun
  .text.__wrap___aeabi_dcmplt
-                0x10002ad4       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002adc                __wrap___aeabi_dcmplt
+                0x10002bac       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002bb4                __wrap___aeabi_dcmplt
  .text.__wrap___aeabi_dcmple
-                0x10002afc       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002b04                __wrap___aeabi_dcmple
+                0x10002bd4       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002bdc                __wrap___aeabi_dcmple
  .text.__wrap___aeabi_dcmpge
-                0x10002b24       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002b2c                __wrap___aeabi_dcmpge
+                0x10002bfc       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002c04                __wrap___aeabi_dcmpge
  .text.__wrap___aeabi_dcmpgt
-                0x10002b4c       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
-                0x10002b54                __wrap___aeabi_dcmpgt
+                0x10002c24       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x10002c2c                __wrap___aeabi_dcmpgt
  .text.__wrap_malloc
-                0x10002b74       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
-                0x10002b74                __wrap_malloc
+                0x10002c4c       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x10002c4c                __wrap_malloc
  .text.__wrap_free
-                0x10002bac       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
-                0x10002bac                __wrap_free
+                0x10002c84       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x10002c84                __wrap_free
  .text._out_buffer
-                0x10002bcc        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10002ca4        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text._out_null
-                0x10002bd4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10002cac        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text._out_rev
-                0x10002bd8       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10002cb0       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text._ntoa_format
-                0x10002c74      0x1d4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10002d4c      0x1d4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text._out_char
-                0x10002e48        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .text._ftoa    0x10002e50      0x4bc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- *fill*         0x1000330c        0x4 
- .text._etoa    0x10003310      0x574 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10002f20        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .text._ftoa    0x10002f28      0x4bc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ *fill*         0x100033e4        0x4 
+ .text._etoa    0x100033e8      0x574 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text._vsnprintf
-                0x10003884      0x9e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x1000395c      0x9e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .text.__wrap_sprintf
-                0x10004268       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
-                0x10004268                __wrap_sprintf
+                0x10004340       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10004340                __wrap_sprintf
  .text.weak_raw_vprintf
-                0x10004294       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
-                0x10004294                weak_raw_vprintf
- .text._exit    0x100042c4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
-                0x100042c4                _exit
- .text._sbrk    0x100042c8       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
-                0x100042c8                _sbrk
- .text.exit     0x100042f4        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
-                0x100042f4                exit
+                0x1000436c       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x1000436c                weak_raw_vprintf
+ .text._exit    0x1000439c        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x1000439c                _exit
+ .text._sbrk    0x100043a0       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x100043a0                _sbrk
+ .text.exit     0x100043cc        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x100043cc                exit
  .text.runtime_init
-                0x100042fc       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
-                0x100042fc                runtime_init
+                0x100043d4       0x24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x100043d4                runtime_init
  .text.stdio_out_chars_no_crlf
-                0x10004320        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x100043f8        0x8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .text.stdio_out_chars_crlf
-                0x10004328       0xb0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x10004400       0xb0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .text.stdio_put_string
-                0x100043d8       0xec CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
-                0x100043d8                stdio_put_string
+                0x100044b0       0xec CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x100044b0                stdio_put_string
  .text.stdio_init_all
-                0x100044c4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
-                0x100044c4                stdio_init_all
+                0x1000459c        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x1000459c                stdio_init_all
  .text.__wrap_putchar
-                0x100044c8       0x84 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
-                0x100044c8                stdio_putchar
-                0x100044c8                __wrap_putchar
+                0x100045a0       0x84 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x100045a0                stdio_putchar
+                0x100045a0                __wrap_putchar
  .text.__wrap_puts
-                0x1000454c       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
-                0x1000454c                __wrap_puts
-                0x1000454c                stdio_puts
+                0x10004624       0x3c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x10004624                __wrap_puts
+                0x10004624                stdio_puts
  .text.pio_sm_claim
-                0x10004588       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
-                0x10004588                pio_sm_claim
+                0x10004660       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x10004660                pio_sm_claim
  .text.pio_add_program
-                0x100045d0       0xf4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
-                0x100045d0                pio_add_program
+                0x100046a8       0xf4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x100046a8                pio_add_program
  .text.pio_sm_set_consecutive_pindirs
-                0x100046c4       0x8c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
-                0x100046c4                pio_sm_set_consecutive_pindirs
+                0x1000479c       0x8c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x1000479c                pio_sm_set_consecutive_pindirs
  .text.pio_sm_init
-                0x10004750       0xa8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
-                0x10004750                pio_sm_init
+                0x10004828       0xa8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x10004828                pio_sm_init
  .text.dma_claim_unused_channel
-                0x100047f8       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
-                0x100047f8                dma_claim_unused_channel
- .text.malloc   0x10004818       0x10 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
-                0x10004818                malloc
- .text.free     0x10004828       0x10 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
-                0x10004828                free
+                0x100048d0       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+                0x100048d0                dma_claim_unused_channel
+ .text.malloc   0x100048f0       0x10 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
+                0x100048f0                malloc
+ .text.free     0x10004900       0x10 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
+                0x10004900                free
  .text._malloc_r
-                0x10004838      0x578 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mallocr.o)
-                0x10004838                _malloc_r
+                0x10004910      0x578 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mallocr.o)
+                0x10004910                _malloc_r
  .text.__malloc_lock
-                0x10004db0        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
-                0x10004db0                __malloc_lock
+                0x10004e88        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
+                0x10004e88                __malloc_lock
  .text.__malloc_unlock
-                0x10004dbc        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
-                0x10004dbc                __malloc_unlock
- .text.memset   0x10004dc8       0x9c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
-                0x10004dc8                memset
- .text._sbrk_r  0x10004e64       0x24 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sbrkr.o)
-                0x10004e64                _sbrk_r
- .text.__errno  0x10004e88        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-errno.o)
-                0x10004e88                __errno
+                0x10004e94        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
+                0x10004e94                __malloc_unlock
+ .text.memset   0x10004ea0       0x9c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+                0x10004ea0                memset
+ .text._sbrk_r  0x10004f3c       0x24 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sbrkr.o)
+                0x10004f3c                _sbrk_r
+ .text.__errno  0x10004f60        0xc /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-errno.o)
+                0x10004f60                __errno
  .text.__retarget_lock_acquire_recursive
-                0x10004e94        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
-                0x10004e94                __retarget_lock_acquire_recursive
+                0x10004f6c        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
+                0x10004f6c                __retarget_lock_acquire_recursive
  .text.__retarget_lock_release_recursive
-                0x10004e98        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
-                0x10004e98                __retarget_lock_release_recursive
- .text.sysconf  0x10004e9c       0x1c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sysconf.o)
-                0x10004e9c                sysconf
- .text          0x10004eb8       0xec /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
-                0x10004eb8                memcpy
- .text.strlen   0x10004fa4       0x5c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
-                0x10004fa4                strlen
+                0x10004f70        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
+                0x10004f70                __retarget_lock_release_recursive
+ .text.sysconf  0x10004f74       0x1c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sysconf.o)
+                0x10004f74                sysconf
+ .text          0x10004f90       0xec /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+                0x10004f90                memcpy
+ .text.strlen   0x1000507c       0x5c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+                0x1000507c                strlen
  .text._malloc_trim_r
-                0x10005000       0xb8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
-                0x10005000                _malloc_trim_r
- .text._free_r  0x100050b8      0x1e8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
-                0x100050b8                _free_r
+                0x100050d8       0xb8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
+                0x100050d8                _malloc_trim_r
+ .text._free_r  0x10005190      0x1e8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
+                0x10005190                _free_r
  *(.fini)
- .fini          0x100052a0        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crti.o
-                0x100052a0                _fini
- *fill*         0x100052a4        0x4 
- .fini.__stub   0x100052a8       0x20 linker stubs
+ .fini          0x10005378        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crti.o
+                0x10005378                _fini
+ *fill*         0x1000537c        0x4 
+ .fini.__stub   0x10005380       0x20 linker stubs
  *crtbegin.o(.ctors)
  *crtbegin?.o(.ctors)
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .ctors)
@@ -2986,221 +2995,221 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
  *(EXCLUDE_FILE(*crtend.o *crtend?.o) .dtors)
  *(SORT_BY_NAME(.dtors.*))
  *(.dtors)
-                0x100052c8                        . = ALIGN (0x4)
-                0x100052c8                        PROVIDE (__preinit_array_start = .)
+                0x100053a0                        . = ALIGN (0x4)
+                0x100053a0                        PROVIDE (__preinit_array_start = .)
  *(SORT_BY_NAME(.preinit_array.*))
  .preinit_array.00050
-                0x100052c8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052c8                __pre_init_runtime_init_bootrom_reset
+                0x100053a0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053a0                __pre_init_runtime_init_bootrom_reset
  .preinit_array.00100
-                0x100052cc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052cc                __pre_init_runtime_init_early_resets
+                0x100053a4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053a4                __pre_init_runtime_init_early_resets
  .preinit_array.00101
-                0x100052d0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052d0                __pre_init_runtime_init_usb_power_down
+                0x100053a8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053a8                __pre_init_runtime_init_usb_power_down
  .preinit_array.00500
-                0x100052d4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052d4                __pre_init_runtime_init_clocks
+                0x100053ac        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053ac                __pre_init_runtime_init_clocks
  .preinit_array.00600
-                0x100052d8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052d8                __pre_init_runtime_init_post_clock_resets
+                0x100053b0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053b0                __pre_init_runtime_init_post_clock_resets
  .preinit_array.01000
-                0x100052dc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
-                0x100052dc                __pre_init_runtime_init_boot_locks_reset
+                0x100053b4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x100053b4                __pre_init_runtime_init_boot_locks_reset
  .preinit_array.01000
-                0x100052e0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052e0                __pre_init_runtime_init_spin_locks_reset
+                0x100053b8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053b8                __pre_init_runtime_init_spin_locks_reset
  .preinit_array.01010
-                0x100052e4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
-                0x100052e4                __pre_init_runtime_init_bootrom_locking_enable
+                0x100053bc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x100053bc                __pre_init_runtime_init_bootrom_locking_enable
  .preinit_array.01100
-                0x100052e8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
-                0x100052e8                __pre_init_runtime_init_mutex
+                0x100053c0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+                0x100053c0                __pre_init_runtime_init_mutex
  .preinit_array.10080
-                0x100052ec        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052ec                __pre_init_runtime_init_install_ram_vector_table
+                0x100053c4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053c4                __pre_init_runtime_init_install_ram_vector_table
  .preinit_array.11000
-                0x100052f0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
-                0x100052f0                __pre_init_runtime_init_default_alarm_pool
+                0x100053c8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x100053c8                __pre_init_runtime_init_default_alarm_pool
  .preinit_array.YYYYY
-                0x100052f4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
-                0x100052f4                __pre_init_first_per_core_initializer
+                0x100053cc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x100053cc                __pre_init_first_per_core_initializer
  .preinit_array.ZZZZZ.00051
-                0x100052f8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052f8                __pre_init_runtime_init_per_core_bootrom_reset
+                0x100053d0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053d0                __pre_init_runtime_init_per_core_bootrom_reset
  .preinit_array.ZZZZZ.00200
-                0x100052fc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
-                0x100052fc                __pre_init_runtime_init_per_core_enable_coprocessors
+                0x100053d4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x100053d4                __pre_init_runtime_init_per_core_enable_coprocessors
  .preinit_array.ZZZZZ.01000
-                0x10005300        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
-                0x10005300                __pre_init_spinlock_set_extexclall
+                0x100053d8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x100053d8                __pre_init_spinlock_set_extexclall
  .preinit_array.ZZZZZ.01200
-                0x10005304        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
-                0x10005304                __pre_init_runtime_init_per_core_irq_priorities
+                0x100053dc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x100053dc                __pre_init_runtime_init_per_core_irq_priorities
  *(.preinit_array)
-                0x10005308                        PROVIDE (__preinit_array_end = .)
-                0x10005308                        . = ALIGN (0x4)
-                0x10005308                        PROVIDE (__init_array_start = .)
+                0x100053e0                        PROVIDE (__preinit_array_end = .)
+                0x100053e0                        . = ALIGN (0x4)
+                0x100053e0                        PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array)
- .init_array    0x10005308        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
-                0x1000530c                        PROVIDE (__init_array_end = .)
-                0x1000530c                        . = ALIGN (0x4)
+ .init_array    0x100053e0        0x4 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
+                0x100053e4                        PROVIDE (__init_array_end = .)
+                0x100053e4                        . = ALIGN (0x4)
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array)
                 [!provide]                        PROVIDE (__fini_array_end = .)
  *(.eh_frame*)
- .eh_frame      0x1000530c        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
-                0x1000530c                        . = ALIGN (0x4)
+ .eh_frame      0x100053e4        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
+                0x100053e4                        . = ALIGN (0x4)
 
-.glue_7         0x1000530c        0x0
- .glue_7        0x1000530c        0x0 linker stubs
+.glue_7         0x100053e4        0x0
+ .glue_7        0x100053e4        0x0 linker stubs
 
-.glue_7t        0x1000530c        0x0
- .glue_7t       0x1000530c        0x0 linker stubs
+.glue_7t        0x100053e4        0x0
+ .glue_7t       0x100053e4        0x0 linker stubs
 
-.vfp11_veneer   0x1000530c        0x0
- .vfp11_veneer  0x1000530c        0x0 linker stubs
+.vfp11_veneer   0x100053e4        0x0
+ .vfp11_veneer  0x100053e4        0x0 linker stubs
 
-.v4_bx          0x1000530c        0x0
- .v4_bx         0x1000530c        0x0 linker stubs
+.v4_bx          0x100053e4        0x0
+ .v4_bx         0x100053e4        0x0 linker stubs
 
-.iplt           0x1000530c        0x0
- .iplt          0x1000530c        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
+.iplt           0x100053e4        0x0
+ .iplt          0x100053e4        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
 
-.boot2          0x1000530c        0x0
-                0x1000530c                        __boot2_start__ = .
+.boot2          0x100053e4        0x0
+                0x100053e4                        __boot2_start__ = .
  *(.boot2)
-                0x1000530c                        __boot2_end__ = .
+                0x100053e4                        __boot2_end__ = .
                 0x00000001                        ASSERT (((__boot2_end__ - __boot2_start__) <= 0x100), ERROR: Pico second stage bootloader must be no more than 256 bytes in size)
 
-.rodata         0x10005310     0x30d4
+.rodata         0x100053e8     0x30d4
  *(EXCLUDE_FILE(*libm.a: *libc.a:*lib_a-mem*.o *libgcc.a:) .rodata*)
  .rodata.protothread_print_bus_read.str1.4
-                0x10005310      0x27e CMakeFiles/vgaPico2.dir/vga.c.o
+                0x100053e8      0x27e CMakeFiles/vgaPico2.dir/vga.c.o
                                  0x41 (size before relaxing)
  .rodata.video_welcome_screen.str1.4
-                0x1000558e       0xa0 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x10005666       0xa0 CMakeFiles/vgaPico2.dir/vga.c.o
  .rodata.main.str1.4
-                0x1000558e       0x32 CMakeFiles/vgaPico2.dir/vga.c.o
- *fill*         0x1000558e        0x2 
+                0x10005666       0x32 CMakeFiles/vgaPico2.dir/vga.c.o
+ *fill*         0x10005666        0x2 
  .rodata.bus_read_program
-                0x10005590        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x10005668        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .rodata.bus_read_program_instructions
-                0x10005598        0xa CMakeFiles/vgaPico2.dir/vga_drv.c.o
- *fill*         0x100055a2        0x2 
+                0x10005670        0xa CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ *fill*         0x1000567a        0x2 
  .rodata.rgb_program
-                0x100055a4        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x1000567c        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .rodata.rgb_program_instructions
-                0x100055ac       0x12 CMakeFiles/vgaPico2.dir/vga_drv.c.o
- *fill*         0x100055be        0x2 
+                0x10005684       0x12 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ *fill*         0x10005696        0x2 
  .rodata.vsync_program
-                0x100055c0        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x10005698        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .rodata.vsync_program_instructions
-                0x100055c8       0x1c CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x100056a0       0x1c CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .rodata.hsync_program
-                0x100055e4        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x100056bc        0x8 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .rodata.hsync_program_instructions
-                0x100055ec       0x12 CMakeFiles/vgaPico2.dir/vga_drv.c.o
- *fill*         0x100055fe        0x2 
+                0x100056c4       0x12 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ *fill*         0x100056d6        0x2 
  .rodata.font_5x7
-                0x10005600      0x4fb CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- *fill*         0x10005afb        0x1 
+                0x100056d8      0x4fb CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ *fill*         0x10005bd3        0x1 
  .rodata.CSWTCH.1
-                0x10005afc       0x10 CMakeFiles/vgaPico2.dir/font.c.o
+                0x10005bd4       0x10 CMakeFiles/vgaPico2.dir/font.c.o
  .rodata.str1.4
-                0x10005b0c       0x2e CMakeFiles/vgaPico2.dir/font.c.o
+                0x10005be4       0x2e CMakeFiles/vgaPico2.dir/font.c.o
  .rodata.font_8x12
-                0x10005b0c      0x800 CMakeFiles/vgaPico2.dir/font_8x12.c.o
-                0x10005b0c                font_8x12
+                0x10005be4      0x800 CMakeFiles/vgaPico2.dir/font_8x12.c.o
+                0x10005be4                font_8x12
  .rodata.font_8x14
-                0x1000630c      0x800 CMakeFiles/vgaPico2.dir/font_8x14.c.o
-                0x1000630c                font_8x14
+                0x100063e4      0x800 CMakeFiles/vgaPico2.dir/font_8x14.c.o
+                0x100063e4                font_8x14
  .rodata.font_8x16
-                0x10006b0c      0x820 CMakeFiles/vgaPico2.dir/font_8x16.c.o
-                0x10006b0c                font_8x16
+                0x10006be4      0x820 CMakeFiles/vgaPico2.dir/font_8x16.c.o
+                0x10006be4                font_8x16
  .rodata.font_8x18
-                0x1000732c     0x1000 CMakeFiles/vgaPico2.dir/font_8x18.c.o
-                0x1000732c                font_8x18
+                0x10007404     0x1000 CMakeFiles/vgaPico2.dir/font_8x18.c.o
+                0x10007404                font_8x18
  .rodata.panic.str1.4
-                0x1000832c       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+                0x10008404       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
  .rodata.timer_hardware_alarm_claim.str1.4
-                0x1000832c       0x22 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x10008404       0x22 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
  .rodata.hard_assertion_failure.str1.4
-                0x1000832c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x10008404        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
  .rodata.__wrap_malloc.str1.4
-                0x1000832c        0xe CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x10008404        0xe CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
  .rodata.str1.4
-                0x1000832c       0x44 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008404       0x44 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_84
-                0x1000832c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008404        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_78
-                0x10008338        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008410        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_60
-                0x10008344        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x1000841c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_54
-                0x10008350        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008428        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_48
-                0x1000835c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008434        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_42
-                0x10008368        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008440        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_34
-                0x10008374        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x1000844c        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata.__bi_26
-                0x10008380        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x10008458        0xc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .rodata._ftoa.str1.4
-                0x1000838c       0x15 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- *fill*         0x1000838c        0x4 
+                0x10008464       0x15 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ *fill*         0x10008464        0x4 
  .rodata.pow10.0
-                0x10008390       0x50 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x10008468       0x50 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .rodata.crlf_str.0
-                0x100083e0        0x2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x100084b8        0x2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .rodata.pio_sm_claim.str1.4
-                0x100083e2       0x62 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x100084ba       0x62 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
  .rodata.dma_claim_unused_channel.str1.4
-                0x100083e2       0x1e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+                0x100084ba       0x1e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
  *(.srodata*)
-                0x10008444                        . = ALIGN (0x4)
- *fill*         0x100083e2        0x2 
+                0x1000851c                        . = ALIGN (0x4)
+ *fill*         0x100084ba        0x2 
  *(SORT_BY_ALIGNMENT(SORT_BY_NAME(.flashdata*)))
-                0x100083e4                        . = ALIGN (0x4)
+                0x100084bc                        . = ALIGN (0x4)
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x100083e4                        __exidx_start = .
+                0x100084bc                        __exidx_start = .
 
-.ARM.exidx      0x100083e4        0x8
+.ARM.exidx      0x100084bc        0x8
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
- .ARM.exidx     0x100083e4        0x8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+ .ARM.exidx     0x100084bc        0x8 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
  .ARM.exidx.text.__udivmoddi4
-                0x100083ec        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_udivmoddi4.o)
+                0x100084c4        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_udivmoddi4.o)
                                   0x8 (size before relaxing)
-                0x100083ec                        __exidx_end = .
-                0x100083ec                        . = ALIGN (0x4)
-                0x100083ec                        __binary_info_start = .
+                0x100084c4                        __exidx_end = .
+                0x100084c4                        . = ALIGN (0x4)
+                0x100084c4                        __binary_info_start = .
 
-.binary_info    0x100083ec       0x20
+.binary_info    0x100084c4       0x20
  *(.binary_info.keep.*)
  .binary_info.keep.__bi_ptr84
-                0x100083ec        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084c4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr78
-                0x100083f0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084c8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr60
-                0x100083f4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084cc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr54
-                0x100083f8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084d0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr48
-                0x100083fc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084d4        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr42
-                0x10008400        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084d8        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr34
-                0x10008404        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084dc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .binary_info.keep.__bi_ptr26
-                0x10008408        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x100084e0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  *(.binary_info.*)
-                0x1000840c                        __binary_info_end = .
-                0x1000840c                        . = ALIGN (0x4)
+                0x100084e4                        __binary_info_end = .
+                0x100084e4                        . = ALIGN (0x4)
 
 .ram_vector_table
                 0x20000000      0x110
@@ -3214,7 +3223,7 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
                 0x20000110                        . = ALIGN (0x4)
  *(.uninitialized_data*)
 
-.data           0x20000110      0xae0 load address 0x1000840c
+.data           0x20000110      0xae0 load address 0x100084e4
                 0x20000110                        __data_start__ = .
  *(vtable)
  *(.time_critical*)
@@ -3298,23 +3307,23 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
                 0x20000bf0                        . = ALIGN (0x4)
 
 .tm_clone_table
-                0x20000bf0        0x0 load address 0x10008eec
+                0x20000bf0        0x0 load address 0x10008fc4
  .tm_clone_table
                 0x20000bf0        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
  .tm_clone_table
                 0x20000bf0        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtend.o
 
-.igot.plt       0x20000bf0        0x0 load address 0x10008eec
+.igot.plt       0x20000bf0        0x0 load address 0x10008fc4
  .igot.plt      0x20000bf0        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
 
-.tdata          0x20000bf0        0x0 load address 0x10008eec
+.tdata          0x20000bf0        0x0 load address 0x10008fc4
                 0x20000bf0                        . = ALIGN (0x4)
  *(.tdata .tdata.* .gnu.linkonce.td.*)
                 0x20000bf0                        __tdata_end = .
                 0x20000bf0                        PROVIDE (__data_end__ = .)
-                0x1000840c                        __etext = LOADADDR (.data)
+                0x100084e4                        __etext = LOADADDR (.data)
 
-.tbss           0x20000bf0        0x0 load address 0x10008eec
+.tbss           0x20000bf0        0x0 load address 0x10008fc4
                 0x20000bf0                        . = ALIGN (0x4)
                 0x20000bf0                        __bss_start__ = .
                 0x20000bf0                        __tls_base = .
@@ -3322,7 +3331,7 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
  *(.tcommon)
                 0x20000bf0                        __tls_end = .
 
-.bss            0x20000bf0    0x25e08 load address 0x10008eec
+.bss            0x20000bf0    0x25e10 load address 0x10008fc4
                 0x20000bf0                        . = ALIGN (0x4)
                 0x20000bf0                        __tbss_end = .
  *(SORT_BY_ALIGNMENT(SORT_BY_NAME(.bss*)))
@@ -3417,66 +3426,72 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
                 0x20001094       0x78 CMakeFiles/vgaPico2.dir/vga.c.o
  .bss.pt_thread_list1
                 0x2000110c       0x78 CMakeFiles/vgaPico2.dir/vga.c.o
+ .bss.rgb_chan_0
+                0x20001184        0x4 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x20001184                rgb_chan_0
  .bss.sched_count
-                0x20001184        0x4 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x20001184                sched_count
- .bss.sched_count1
                 0x20001188        0x4 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x20001188                sched_count1
+                0x20001188                sched_count
+ .bss.sched_count1
+                0x2000118c        0x4 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x2000118c                sched_count1
  .bss.sched_thread_stats
-                0x2000118c       0x28 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x2000118c                sched_thread_stats
+                0x20001190       0x28 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x20001190                sched_thread_stats
  .bss.sched_thread_stats1
-                0x200011b4       0x28 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200011b4                sched_thread_stats1
+                0x200011b8       0x28 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200011b8                sched_thread_stats1
  .bss.sleep_notifier
-                0x200011dc        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .bss.this      0x200011e0        0x4 CMakeFiles/vgaPico2.dir/cursor.c.o
- .bss.vga       0x200011e4        0x4 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200011e4                vga
- .bss.vga       0x200011e8        0x4 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x200011e0        0x4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .bss.this      0x200011e4        0x4 CMakeFiles/vgaPico2.dir/cursor.c.o
+ .bss.vga       0x200011e8        0x4 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200011e8                vga
+ .bss.vga       0x200011ec        0x4 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .bss.vga_buffer_global
+                0x200011f0        0x4 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x200011f0                vga_buffer_global
  .bss.vga_video_data_array0
-                0x200011ec    0x25800 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
-                0x200011ec                vga_video_data_array0
- .bss._claimed  0x200269ec        0x2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .bss.cursor_x  0x200269ee        0x2 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200269ee                cursor_x
- .bss.cursor_y  0x200269f0        0x2 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200269f0                cursor_y
- .bss.bg_color  0x200269f2        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200269f2                bg_color
+                0x200011f4    0x25800 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x200011f4                vga_video_data_array0
+ .bss._claimed  0x200269f4        0x2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .bss.cursor_x  0x200269f6        0x2 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200269f6                cursor_x
+ .bss.cursor_y  0x200269f8        0x2 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200269f8                cursor_y
+ .bss.bg_color  0x200269fa        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200269fa                bg_color
  .bss.system_run
-                0x200269f3        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200269fb        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
  .bss.text_color
-                0x200269f4        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
-                0x200269f4                text_color
+                0x200269fc        0x1 CMakeFiles/vgaPico2.dir/vga.c.o
+                0x200269fc                text_color
  *(COMMON)
                 [!provide]                        PROVIDE (__global_pointer$ = (. + 0x800))
  *(.sbss*)
-                0x200269f8                        . = ALIGN (0x4)
- *fill*         0x200269f5        0x3 
-                0x200269f8                        __bss_end__ = .
+                0x20026a00                        . = ALIGN (0x4)
+ *fill*         0x200269fd        0x3 
+                0x20026a00                        __bss_end__ = .
 
-.heap           0x200269f8      0x800 load address 0x10008eec
-                0x200269f8                        __end__ = .
-                0x200269f8                        end = __end__
+.heap           0x20026a00      0x800 load address 0x10008fc4
+                0x20026a00                        __end__ = .
+                0x20026a00                        end = __end__
  *(.heap*)
- .heap          0x200269f8      0x800 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+ .heap          0x20026a00      0x800 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
                 0x20080000                        __HeapLimit = (ORIGIN (RAM) + LENGTH (RAM))
 
-.scratch_x      0x20080000        0x0 load address 0x10008eec
+.scratch_x      0x20080000        0x0 load address 0x10008fc4
                 0x20080000                        __scratch_x_start__ = .
  *(.scratch_x.*)
                 0x20080000                        . = ALIGN (0x4)
                 0x20080000                        __scratch_x_end__ = .
-                0x10008eec                        __scratch_x_source__ = LOADADDR (.scratch_x)
+                0x10008fc4                        __scratch_x_source__ = LOADADDR (.scratch_x)
 
-.scratch_y      0x20081000        0x0 load address 0x10008eec
+.scratch_y      0x20081000        0x0 load address 0x10008fc4
                 0x20081000                        __scratch_y_start__ = .
  *(.scratch_y.*)
                 0x20081000                        . = ALIGN (0x4)
                 0x20081000                        __scratch_y_end__ = .
-                0x10008eec                        __scratch_y_source__ = LOADADDR (.scratch_y)
+                0x10008fc4                        __scratch_y_source__ = LOADADDR (.scratch_y)
 
 .stack1_dummy   0x20080000      0x800
  *(.stack1*)
@@ -3486,11 +3501,11 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
  *(.stack*)
  .stack         0x20081000      0x800 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
 
-.flash_end      0x10008eec       0x14
+.flash_end      0x10008fc4       0x14
  *(.embedded_end_block*)
  .embedded_end_block
-                0x10008eec       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
-                0x10008f00                        PROVIDE (__flash_binary_end = .)
+                0x10008fc4       0x14 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+                0x10008fd8                        PROVIDE (__flash_binary_end = .)
                 0x20080000                        __StackLimit = (ORIGIN (RAM) + LENGTH (RAM))
                 0x20081000                        __StackOneTop = (ORIGIN (SCRATCH_X) + LENGTH (SCRATCH_X))
                 0x20082000                        __StackTop = (ORIGIN (SCRATCH_Y) + LENGTH (SCRATCH_Y))
@@ -3593,8 +3608,8 @@ LOAD /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14
 OUTPUT(vgaPico2.elf elf32-littlearm)
 LOAD linker stubs
 
-.rel.dyn        0x10008f00        0x0
- .rel.iplt      0x10008f00        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
+.rel.dyn        0x10008fd8        0x0
+ .rel.iplt      0x10008fd8        0x0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/crtbegin.o
 
 .ARM.attributes
                 0x00000000       0x34
@@ -3760,446 +3775,446 @@ LOAD linker stubs
  .comment       0x00000045       0x46 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
  .comment       0x00000045       0x46 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_info     0x00000000    0x2de81
+.debug_info     0x00000000    0x2ebb8
  .debug_info    0x00000000     0x28bd CMakeFiles/vgaPico2.dir/vga.c.o
- .debug_info    0x000028bd     0x2df6 CMakeFiles/vgaPico2.dir/vga_drv.c.o
- .debug_info    0x000056b3     0x1d55 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .debug_info    0x00007408      0x6b6 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
- .debug_info    0x00007abe     0x10b8 CMakeFiles/vgaPico2.dir/cursor.c.o
- .debug_info    0x00008b76      0xe20 CMakeFiles/vgaPico2.dir/font.c.o
- .debug_info    0x00009996       0xb8 CMakeFiles/vgaPico2.dir/font_8x12.c.o
- .debug_info    0x00009a4e       0xa0 CMakeFiles/vgaPico2.dir/font_8x14.c.o
- .debug_info    0x00009aee       0xa0 CMakeFiles/vgaPico2.dir/font_8x16.c.o
- .debug_info    0x00009b8e       0xa0 CMakeFiles/vgaPico2.dir/font_8x18.c.o
- .debug_info    0x00009c2e     0x2416 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_info    0x0000c044      0x1be CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_info    0x0000c202      0xb78 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
- .debug_info    0x0000cd7a      0x46f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
- .debug_info    0x0000d1e9     0x145e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_info    0x0000e647     0x262d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
- .debug_info    0x00010c74      0x187 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
- .debug_info    0x00010dfb     0x1e7c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
- .debug_info    0x00012c77     0x5492 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .debug_info    0x00018109     0x30c6 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
- .debug_info    0x0001b1cf     0x28c2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_info    0x0001da91      0x507 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
- .debug_info    0x0001df98      0x26c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_info    0x0001e204     0x10ab CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_info    0x0001f2af      0x1c4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_info    0x0001f473      0x316 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_info    0x0001f789      0x1b1 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_info    0x0001f93a      0x21a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
- .debug_info    0x0001fb54     0x1c34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_info    0x00021788      0x7c9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_info    0x00021f51       0x23 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_info    0x00021f74      0x6c1 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
- .debug_info    0x00022635      0x2e2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_info    0x00022917     0x22ff CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .debug_info    0x00024c16       0x23 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
- .debug_info    0x00024c39      0xc25 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_info    0x0002585e     0x1c24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
- .debug_info    0x00027482     0x3636 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
- .debug_info    0x0002aab8      0xb64 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .debug_info    0x0002b61c     0x2865 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+ .debug_info    0x000028bd     0x34ac CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .debug_info    0x00005d69     0x23d6 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .debug_info    0x0000813f      0x6b6 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+ .debug_info    0x000087f5     0x10b8 CMakeFiles/vgaPico2.dir/cursor.c.o
+ .debug_info    0x000098ad      0xe20 CMakeFiles/vgaPico2.dir/font.c.o
+ .debug_info    0x0000a6cd       0xb8 CMakeFiles/vgaPico2.dir/font_8x12.c.o
+ .debug_info    0x0000a785       0xa0 CMakeFiles/vgaPico2.dir/font_8x14.c.o
+ .debug_info    0x0000a825       0xa0 CMakeFiles/vgaPico2.dir/font_8x16.c.o
+ .debug_info    0x0000a8c5       0xa0 CMakeFiles/vgaPico2.dir/font_8x18.c.o
+ .debug_info    0x0000a965     0x2416 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_info    0x0000cd7b      0x1be CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_info    0x0000cf39      0xb78 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+ .debug_info    0x0000dab1      0x46f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+ .debug_info    0x0000df20     0x145e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_info    0x0000f37e     0x262d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+ .debug_info    0x000119ab      0x187 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+ .debug_info    0x00011b32     0x1e7c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+ .debug_info    0x000139ae     0x5492 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .debug_info    0x00018e40     0x30c6 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+ .debug_info    0x0001bf06     0x28c2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_info    0x0001e7c8      0x507 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+ .debug_info    0x0001eccf      0x26c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_info    0x0001ef3b     0x10ab CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_info    0x0001ffe6      0x1c4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_info    0x000201aa      0x316 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_info    0x000204c0      0x1b1 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_info    0x00020671      0x21a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_info    0x0002088b     0x1c34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_info    0x000224bf      0x7c9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_info    0x00022c88       0x23 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_info    0x00022cab      0x6c1 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+ .debug_info    0x0002336c      0x2e2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_info    0x0002364e     0x22ff CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .debug_info    0x0002594d       0x23 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_info    0x00025970      0xc25 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_info    0x00026595     0x1c24 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_info    0x000281b9     0x3636 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+ .debug_info    0x0002b7ef      0xb64 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .debug_info    0x0002c353     0x2865 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_abbrev   0x00000000     0x7736
+.debug_abbrev   0x00000000     0x7889
  .debug_abbrev  0x00000000      0x71f CMakeFiles/vgaPico2.dir/vga.c.o
- .debug_abbrev  0x0000071f      0x4a9 CMakeFiles/vgaPico2.dir/vga_drv.c.o
- .debug_abbrev  0x00000bc8      0x541 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .debug_abbrev  0x00001109      0x2dc CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
- .debug_abbrev  0x000013e5      0x2ac CMakeFiles/vgaPico2.dir/cursor.c.o
- .debug_abbrev  0x00001691       0xf7 CMakeFiles/vgaPico2.dir/font.c.o
- .debug_abbrev  0x00001788       0x61 CMakeFiles/vgaPico2.dir/font_8x12.c.o
- .debug_abbrev  0x000017e9       0x52 CMakeFiles/vgaPico2.dir/font_8x14.c.o
- .debug_abbrev  0x0000183b       0x52 CMakeFiles/vgaPico2.dir/font_8x16.c.o
- .debug_abbrev  0x0000188d       0x52 CMakeFiles/vgaPico2.dir/font_8x18.c.o
- .debug_abbrev  0x000018df      0x558 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_abbrev  0x00001e37      0x12b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_abbrev  0x00001f62      0x35e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
- .debug_abbrev  0x000022c0      0x22f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
- .debug_abbrev  0x000024ef      0x26e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_abbrev  0x0000275d      0x63b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
- .debug_abbrev  0x00002d98      0x11e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
- .debug_abbrev  0x00002eb6      0x49b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
- .debug_abbrev  0x00003351      0x644 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .debug_abbrev  0x00003995      0x4f9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
- .debug_abbrev  0x00003e8e      0x517 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_abbrev  0x000043a5      0x1a8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
- .debug_abbrev  0x0000454d      0x146 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_abbrev  0x00004693      0x458 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_abbrev  0x00004aeb       0xfb CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_abbrev  0x00004be6      0x1de CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_abbrev  0x00004dc4      0x109 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_abbrev  0x00004ecd      0x182 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
- .debug_abbrev  0x0000504f      0x310 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_abbrev  0x0000535f      0x2b8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_abbrev  0x00005617       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_abbrev  0x00005629      0x21d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
- .debug_abbrev  0x00005846       0xb8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_abbrev  0x000058fe      0x505 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .debug_abbrev  0x00005e03       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
- .debug_abbrev  0x00005e15      0x375 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_abbrev  0x0000618a      0x5fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
- .debug_abbrev  0x00006787      0x58a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
- .debug_abbrev  0x00006d11      0x328 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .debug_abbrev  0x00007039      0x6fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+ .debug_abbrev  0x0000071f      0x4ae CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .debug_abbrev  0x00000bcd      0x68f CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .debug_abbrev  0x0000125c      0x2dc CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+ .debug_abbrev  0x00001538      0x2ac CMakeFiles/vgaPico2.dir/cursor.c.o
+ .debug_abbrev  0x000017e4       0xf7 CMakeFiles/vgaPico2.dir/font.c.o
+ .debug_abbrev  0x000018db       0x61 CMakeFiles/vgaPico2.dir/font_8x12.c.o
+ .debug_abbrev  0x0000193c       0x52 CMakeFiles/vgaPico2.dir/font_8x14.c.o
+ .debug_abbrev  0x0000198e       0x52 CMakeFiles/vgaPico2.dir/font_8x16.c.o
+ .debug_abbrev  0x000019e0       0x52 CMakeFiles/vgaPico2.dir/font_8x18.c.o
+ .debug_abbrev  0x00001a32      0x558 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_abbrev  0x00001f8a      0x12b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_abbrev  0x000020b5      0x35e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+ .debug_abbrev  0x00002413      0x22f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+ .debug_abbrev  0x00002642      0x26e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_abbrev  0x000028b0      0x63b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+ .debug_abbrev  0x00002eeb      0x11e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+ .debug_abbrev  0x00003009      0x49b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+ .debug_abbrev  0x000034a4      0x644 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .debug_abbrev  0x00003ae8      0x4f9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+ .debug_abbrev  0x00003fe1      0x517 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_abbrev  0x000044f8      0x1a8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+ .debug_abbrev  0x000046a0      0x146 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_abbrev  0x000047e6      0x458 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_abbrev  0x00004c3e       0xfb CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_abbrev  0x00004d39      0x1de CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_abbrev  0x00004f17      0x109 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_abbrev  0x00005020      0x182 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_abbrev  0x000051a2      0x310 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_abbrev  0x000054b2      0x2b8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_abbrev  0x0000576a       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_abbrev  0x0000577c      0x21d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+ .debug_abbrev  0x00005999       0xb8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_abbrev  0x00005a51      0x505 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .debug_abbrev  0x00005f56       0x12 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_abbrev  0x00005f68      0x375 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_abbrev  0x000062dd      0x5fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_abbrev  0x000068da      0x58a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+ .debug_abbrev  0x00006e64      0x328 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .debug_abbrev  0x0000718c      0x6fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
 .debug_loclists
-                0x00000000    0x1451e
+                0x00000000    0x14912
  .debug_loclists
                 0x00000000      0x38e CMakeFiles/vgaPico2.dir/vga.c.o
  .debug_loclists
-                0x0000038e      0xac1 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x0000038e      0xe6f CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .debug_loclists
-                0x00000e4f     0x1108 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x000011fd     0x114e CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .debug_loclists
-                0x00001f57      0x146 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+                0x0000234b      0x146 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
  .debug_loclists
-                0x0000209d       0x46 CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x00002491       0x46 CMakeFiles/vgaPico2.dir/cursor.c.o
  .debug_loclists
-                0x000020e3       0x32 CMakeFiles/vgaPico2.dir/font.c.o
+                0x000024d7       0x32 CMakeFiles/vgaPico2.dir/font.c.o
  .debug_loclists
-                0x00002115     0x17d5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+                0x00002509     0x17d5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
  .debug_loclists
-                0x000038ea      0x42d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x00003cde      0x42d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
  .debug_loclists
-                0x00003d17      0x132 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+                0x0000410b      0x132 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
  .debug_loclists
-                0x00003e49       0xa2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x0000423d       0xa2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .debug_loclists
-                0x00003eeb     0x1034 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x000042df     0x1034 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
  .debug_loclists
-                0x00004f1f       0x17 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+                0x00005313       0x17 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
  .debug_loclists
-                0x00004f36      0xae7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+                0x0000532a      0xae7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
  .debug_loclists
-                0x00005a1d     0x2c58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x00005e11     0x2c58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
  .debug_loclists
-                0x00008675     0x1a3f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x00008a69     0x1a3f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
  .debug_loclists
-                0x0000a0b4     0x2038 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x0000a4a8     0x2038 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
  .debug_loclists
-                0x0000c0ec      0x1b7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+                0x0000c4e0      0x1b7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
  .debug_loclists
-                0x0000c2a3       0x8b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+                0x0000c697       0x8b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
  .debug_loclists
-                0x0000c32e      0x812 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x0000c722      0x812 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
  .debug_loclists
-                0x0000cb40       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x0000cf34       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
  .debug_loclists
-                0x0000cb68       0x78 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x0000cf5c       0x78 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
  .debug_loclists
-                0x0000cbe0       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+                0x0000cfd4       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
  .debug_loclists
-                0x0000cc28       0x7e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x0000d01c       0x7e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
  .debug_loclists
-                0x0000cca6      0x129 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x0000d09a      0x129 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
  .debug_loclists
-                0x0000cdcf       0x74 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x0000d1c3       0x74 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
  .debug_loclists
-                0x0000ce43      0x1d0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x0000d237      0x1d0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
  .debug_loclists
-                0x0000d013     0x2e21 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x0000d407     0x2e21 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .debug_loclists
-                0x0000fe34      0x425 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x00010228      0x425 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
  .debug_loclists
-                0x00010259      0xb26 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x0001064d      0xb26 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .debug_loclists
-                0x00010d7f     0x2026 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x00011173     0x2026 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
  .debug_loclists
-                0x00012da5      0x3c4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+                0x00013199      0x3c4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
  .debug_loclists
-                0x00013169     0x13b5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+                0x0001355d     0x13b5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_aranges  0x00000000      0xfb8
+.debug_aranges  0x00000000      0xfc8
  .debug_aranges
                 0x00000000       0x60 CMakeFiles/vgaPico2.dir/vga.c.o
  .debug_aranges
-                0x00000060       0x28 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x00000060       0x30 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .debug_aranges
-                0x00000088       0xd0 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x00000090       0xd8 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .debug_aranges
-                0x00000158       0x28 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+                0x00000168       0x28 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
  .debug_aranges
-                0x00000180       0x80 CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x00000190       0x80 CMakeFiles/vgaPico2.dir/cursor.c.o
  .debug_aranges
-                0x00000200       0x20 CMakeFiles/vgaPico2.dir/font.c.o
+                0x00000210       0x20 CMakeFiles/vgaPico2.dir/font.c.o
  .debug_aranges
-                0x00000220       0x18 CMakeFiles/vgaPico2.dir/font_8x12.c.o
+                0x00000230       0x18 CMakeFiles/vgaPico2.dir/font_8x12.c.o
  .debug_aranges
-                0x00000238       0x18 CMakeFiles/vgaPico2.dir/font_8x14.c.o
+                0x00000248       0x18 CMakeFiles/vgaPico2.dir/font_8x14.c.o
  .debug_aranges
-                0x00000250       0x18 CMakeFiles/vgaPico2.dir/font_8x16.c.o
+                0x00000260       0x18 CMakeFiles/vgaPico2.dir/font_8x16.c.o
  .debug_aranges
-                0x00000268       0x18 CMakeFiles/vgaPico2.dir/font_8x18.c.o
+                0x00000278       0x18 CMakeFiles/vgaPico2.dir/font_8x18.c.o
  .debug_aranges
-                0x00000280      0x118 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+                0x00000290      0x118 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
  .debug_aranges
-                0x00000398       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+                0x000003a8       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
  .debug_aranges
-                0x000003c0       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x000003d0       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
  .debug_aranges
-                0x00000408       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+                0x00000418       0x48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
  .debug_aranges
-                0x00000450       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x00000460       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .debug_aranges
-                0x00000480       0xb8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x00000490       0xb8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
  .debug_aranges
-                0x00000538       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+                0x00000548       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
  .debug_aranges
-                0x00000558       0x98 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+                0x00000568       0x98 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
  .debug_aranges
-                0x000005f0       0xe0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x00000600       0xe0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
  .debug_aranges
-                0x000006d0       0xf0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x000006e0       0xf0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
  .debug_aranges
-                0x000007c0       0x90 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x000007d0       0x90 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
  .debug_aranges
-                0x00000850       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+                0x00000860       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
  .debug_aranges
-                0x00000878       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+                0x00000888       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
  .debug_aranges
-                0x000008a8       0x60 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x000008b8       0x60 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
  .debug_aranges
-                0x00000908       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x00000918       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
  .debug_aranges
-                0x00000928       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x00000938       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
  .debug_aranges
-                0x00000958       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+                0x00000968       0x30 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
  .debug_aranges
-                0x00000988       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x00000998       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
  .debug_aranges
-                0x000009c0       0x58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x000009d0       0x58 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
  .debug_aranges
-                0x00000a18       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x00000a28       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
  .debug_aranges
-                0x00000a38       0xf8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x00000a48       0xf8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
  .debug_aranges
-                0x00000b30       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x00000b40       0x38 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
  .debug_aranges
-                0x00000b68       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+                0x00000b78       0x18 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
  .debug_aranges
-                0x00000b80       0x90 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x00000b90       0x90 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .debug_aranges
-                0x00000c10       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+                0x00000c20       0x28 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
  .debug_aranges
-                0x00000c38       0xa8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x00000c48       0xa8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
  .debug_aranges
-                0x00000ce0       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x00000cf0       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .debug_aranges
-                0x00000da8       0xd8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x00000db8       0xd8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
  .debug_aranges
-                0x00000e80       0x70 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+                0x00000e90       0x70 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
  .debug_aranges
-                0x00000ef0       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+                0x00000f00       0xc8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
 .debug_rnglists
-                0x00000000     0x3e55
+                0x00000000     0x3f6e
  .debug_rnglists
                 0x00000000      0x149 CMakeFiles/vgaPico2.dir/vga.c.o
  .debug_rnglists
-                0x00000149      0x335 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+                0x00000149      0x439 CMakeFiles/vgaPico2.dir/vga_drv.c.o
  .debug_rnglists
-                0x0000047e      0x15f CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+                0x00000582      0x174 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
  .debug_rnglists
-                0x000005dd       0x4c CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+                0x000006f6       0x4c CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
  .debug_rnglists
-                0x00000629       0x5b CMakeFiles/vgaPico2.dir/cursor.c.o
+                0x00000742       0x5b CMakeFiles/vgaPico2.dir/cursor.c.o
  .debug_rnglists
-                0x00000684       0x13 CMakeFiles/vgaPico2.dir/font.c.o
+                0x0000079d       0x13 CMakeFiles/vgaPico2.dir/font.c.o
  .debug_rnglists
-                0x00000697      0x626 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+                0x000007b0      0x626 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
  .debug_rnglists
-                0x00000cbd       0x19 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+                0x00000dd6       0x19 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
  .debug_rnglists
-                0x00000cd6       0xf2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+                0x00000def       0xf2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
  .debug_rnglists
-                0x00000dc8       0x5b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+                0x00000ee1       0x5b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
  .debug_rnglists
-                0x00000e23       0x43 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+                0x00000f3c       0x43 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
  .debug_rnglists
-                0x00000e66      0x3e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+                0x00000f7f      0x3e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
  .debug_rnglists
-                0x0000124a       0x13 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+                0x00001363       0x13 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
  .debug_rnglists
-                0x0000125d      0x2ac CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+                0x00001376      0x2ac CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
  .debug_rnglists
-                0x00001509      0x847 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+                0x00001622      0x847 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
  .debug_rnglists
-                0x00001d50      0x481 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+                0x00001e69      0x481 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
  .debug_rnglists
-                0x000021d1      0x610 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+                0x000022ea      0x610 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
  .debug_rnglists
-                0x000027e1       0x59 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+                0x000028fa       0x59 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
  .debug_rnglists
-                0x0000283a       0x2b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+                0x00002953       0x2b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
  .debug_rnglists
-                0x00002865      0x131 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+                0x0000297e      0x131 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
  .debug_rnglists
-                0x00002996       0x13 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+                0x00002aaf       0x13 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
  .debug_rnglists
-                0x000029a9       0x4f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+                0x00002ac2       0x4f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
  .debug_rnglists
-                0x000029f8       0x2b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+                0x00002b11       0x2b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
  .debug_rnglists
-                0x00002a23       0x3d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+                0x00002b3c       0x3d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
  .debug_rnglists
-                0x00002a60       0x7c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+                0x00002b79       0x7c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
  .debug_rnglists
-                0x00002adc       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+                0x00002bf5       0x2c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
  .debug_rnglists
-                0x00002b08       0xb7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+                0x00002c21       0xb7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
  .debug_rnglists
-                0x00002bbf       0x49 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+                0x00002cd8       0x49 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
  .debug_rnglists
-                0x00002c08      0x2fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+                0x00002d21      0x2fd CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
  .debug_rnglists
-                0x00002f05       0x1b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+                0x0000301e       0x1b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
  .debug_rnglists
-                0x00002f20       0xb5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+                0x00003039       0xb5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
  .debug_rnglists
-                0x00002fd5      0x302 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+                0x000030ee      0x302 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
  .debug_rnglists
-                0x000032d7      0x636 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+                0x000033f0      0x636 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
  .debug_rnglists
-                0x0000390d       0xc4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+                0x00003a26       0xc4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
  .debug_rnglists
-                0x000039d1      0x484 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+                0x00003aea      0x484 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_line     0x00000000    0x1b533
- .debug_line    0x00000000     0x12ab CMakeFiles/vgaPico2.dir/vga.c.o
- .debug_line    0x000012ab      0xf5b CMakeFiles/vgaPico2.dir/vga_drv.c.o
- .debug_line    0x00002206      0xf19 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .debug_line    0x0000311f      0x427 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
- .debug_line    0x00003546      0x38a CMakeFiles/vgaPico2.dir/cursor.c.o
- .debug_line    0x000038d0      0x147 CMakeFiles/vgaPico2.dir/font.c.o
- .debug_line    0x00003a17      0x115 CMakeFiles/vgaPico2.dir/font_8x12.c.o
- .debug_line    0x00003b2c       0x64 CMakeFiles/vgaPico2.dir/font_8x14.c.o
- .debug_line    0x00003b90       0x64 CMakeFiles/vgaPico2.dir/font_8x16.c.o
- .debug_line    0x00003bf4       0x64 CMakeFiles/vgaPico2.dir/font_8x18.c.o
- .debug_line    0x00003c58     0x1baf CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_line    0x00005807      0x27f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_line    0x00005a86      0x808 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
- .debug_line    0x0000628e      0x41d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
- .debug_line    0x000066ab      0x39d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_line    0x00006a48     0x170d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
- .debug_line    0x00008155      0x26a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
- .debug_line    0x000083bf     0x126f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
- .debug_line    0x0000962e     0x31c2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .debug_line    0x0000c7f0     0x1dc3 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
- .debug_line    0x0000e5b3     0x1ec2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_line    0x00010475      0x4e2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
- .debug_line    0x00010957      0x333 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_line    0x00010c8a      0xb1a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_line    0x000117a4      0x3b6 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_line    0x00011b5a      0x420 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_line    0x00011f7a      0x367 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_line    0x000122e1      0x313 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
- .debug_line    0x000125f4      0x6d9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_line    0x00012ccd      0x586 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_line    0x00013253      0x28f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_line    0x000134e2      0x489 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
- .debug_line    0x0001396b      0x1f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_line    0x00013b5b     0x1baf CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .debug_line    0x0001570a       0x9e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
- .debug_line    0x000157a8      0x89b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_line    0x00016043     0x14b8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
- .debug_line    0x000174fb     0x1de8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
- .debug_line    0x000192e3      0x75b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .debug_line    0x00019a3e     0x1af5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+.debug_line     0x00000000    0x1bbef
+ .debug_line    0x00000000     0x12bc CMakeFiles/vgaPico2.dir/vga.c.o
+ .debug_line    0x000012bc     0x1362 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .debug_line    0x0000261e     0x11bd CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .debug_line    0x000037db      0x427 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+ .debug_line    0x00003c02      0x38a CMakeFiles/vgaPico2.dir/cursor.c.o
+ .debug_line    0x00003f8c      0x147 CMakeFiles/vgaPico2.dir/font.c.o
+ .debug_line    0x000040d3      0x115 CMakeFiles/vgaPico2.dir/font_8x12.c.o
+ .debug_line    0x000041e8       0x64 CMakeFiles/vgaPico2.dir/font_8x14.c.o
+ .debug_line    0x0000424c       0x64 CMakeFiles/vgaPico2.dir/font_8x16.c.o
+ .debug_line    0x000042b0       0x64 CMakeFiles/vgaPico2.dir/font_8x18.c.o
+ .debug_line    0x00004314     0x1baf CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_line    0x00005ec3      0x27f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_line    0x00006142      0x808 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+ .debug_line    0x0000694a      0x41d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+ .debug_line    0x00006d67      0x39d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_line    0x00007104     0x170d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+ .debug_line    0x00008811      0x26a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+ .debug_line    0x00008a7b     0x126f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+ .debug_line    0x00009cea     0x31c2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .debug_line    0x0000ceac     0x1dc3 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+ .debug_line    0x0000ec6f     0x1ec2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_line    0x00010b31      0x4e2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+ .debug_line    0x00011013      0x333 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_line    0x00011346      0xb1a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_line    0x00011e60      0x3b6 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_line    0x00012216      0x420 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_line    0x00012636      0x367 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_line    0x0001299d      0x313 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_line    0x00012cb0      0x6d9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_line    0x00013389      0x586 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_line    0x0001390f      0x28f CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_line    0x00013b9e      0x489 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+ .debug_line    0x00014027      0x1f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_line    0x00014217     0x1baf CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .debug_line    0x00015dc6       0x9e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_line    0x00015e64      0x89b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_line    0x000166ff     0x14b8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_line    0x00017bb7     0x1de8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+ .debug_line    0x0001999f      0x75b CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .debug_line    0x0001a0fa     0x1af5 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_str      0x00000000     0x7816
- .debug_str     0x00000000     0x7816 CMakeFiles/vgaPico2.dir/vga.c.o
+.debug_str      0x00000000     0x7a49
+ .debug_str     0x00000000     0x7a49 CMakeFiles/vgaPico2.dir/vga.c.o
                                 0xee0 (size before relaxing)
- .debug_str     0x00007816     0x187c CMakeFiles/vgaPico2.dir/vga_drv.c.o
- .debug_str     0x00007816      0x71f CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .debug_str     0x00007816      0x421 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
- .debug_str     0x00007816      0x307 CMakeFiles/vgaPico2.dir/cursor.c.o
- .debug_str     0x00007816      0x254 CMakeFiles/vgaPico2.dir/font.c.o
- .debug_str     0x00007816      0x1cf CMakeFiles/vgaPico2.dir/font_8x12.c.o
- .debug_str     0x00007816      0x1bd CMakeFiles/vgaPico2.dir/font_8x14.c.o
- .debug_str     0x00007816      0x1bd CMakeFiles/vgaPico2.dir/font_8x16.c.o
- .debug_str     0x00007816      0x1bd CMakeFiles/vgaPico2.dir/font_8x18.c.o
- .debug_str     0x00007816      0xd48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_str     0x00007816      0x221 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_str     0x00007816      0x393 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
- .debug_str     0x00007816      0x33e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
- .debug_str     0x00007816      0xbeb CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_str     0x00007816      0xc6a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
- .debug_str     0x00007816      0x230 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
- .debug_str     0x00007816      0x904 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
- .debug_str     0x00007816     0x1326 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .debug_str     0x00007816      0xbbe CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
- .debug_str     0x00007816      0xbad CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_str     0x00007816      0x4b7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
- .debug_str     0x00007816      0x2e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_str     0x00007816      0x980 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_str     0x00007816      0x2cc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_str     0x00007816      0x2aa CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_str     0x00007816      0x25d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_str     0x00007816      0x2b3 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
- .debug_str     0x00007816     0x1237 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_str     0x00007816      0x4ff CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_str     0x00007816       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
- .debug_str     0x00007816      0x588 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
- .debug_str     0x00007816      0x45c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
- .debug_str     0x00007816      0x4c9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .debug_str     0x00007816       0x8e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
- .debug_str     0x00007816      0x8b2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_str     0x00007816      0xc47 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
- .debug_str     0x00007816     0x11db CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
- .debug_str     0x00007816      0x68c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .debug_str     0x00007816     0x1308 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+ .debug_str     0x00007a49     0x1994 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .debug_str     0x00007a49      0xd28 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .debug_str     0x00007a49      0x421 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+ .debug_str     0x00007a49      0x307 CMakeFiles/vgaPico2.dir/cursor.c.o
+ .debug_str     0x00007a49      0x254 CMakeFiles/vgaPico2.dir/font.c.o
+ .debug_str     0x00007a49      0x1cf CMakeFiles/vgaPico2.dir/font_8x12.c.o
+ .debug_str     0x00007a49      0x1bd CMakeFiles/vgaPico2.dir/font_8x14.c.o
+ .debug_str     0x00007a49      0x1bd CMakeFiles/vgaPico2.dir/font_8x16.c.o
+ .debug_str     0x00007a49      0x1bd CMakeFiles/vgaPico2.dir/font_8x18.c.o
+ .debug_str     0x00007a49      0xd48 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_str     0x00007a49      0x221 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_str     0x00007a49      0x393 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+ .debug_str     0x00007a49      0x33e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+ .debug_str     0x00007a49      0xbeb CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_str     0x00007a49      0xc6a CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+ .debug_str     0x00007a49      0x230 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+ .debug_str     0x00007a49      0x904 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+ .debug_str     0x00007a49     0x1326 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .debug_str     0x00007a49      0xbbe CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+ .debug_str     0x00007a49      0xbad CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_str     0x00007a49      0x4b7 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+ .debug_str     0x00007a49      0x2e4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_str     0x00007a49      0x980 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_str     0x00007a49      0x2cc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_str     0x00007a49      0x2aa CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_str     0x00007a49      0x25d CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_str     0x00007a49      0x2b3 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_str     0x00007a49     0x1237 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_str     0x00007a49      0x4ff CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_str     0x00007a49       0x9c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_double/double_aeabi_dcp.S.o
+ .debug_str     0x00007a49      0x588 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+ .debug_str     0x00007a49      0x45c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_standard_binary_info/standard_binary_info.c.o
+ .debug_str     0x00007a49      0x4c9 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .debug_str     0x00007a49       0x8e CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_crt0/crt0.S.o
+ .debug_str     0x00007a49      0x8b2 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_str     0x00007a49      0xc47 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_str     0x00007a49     0x11db CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+ .debug_str     0x00007a49      0x68c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .debug_str     0x00007a49     0x1308 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
 
-.debug_frame    0x00000000     0x2d2c
+.debug_frame    0x00000000     0x2d74
  .debug_frame   0x00000000      0x148 CMakeFiles/vgaPico2.dir/vga.c.o
- .debug_frame   0x00000148       0x74 CMakeFiles/vgaPico2.dir/vga_drv.c.o
- .debug_frame   0x000001bc      0x264 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
- .debug_frame   0x00000420       0x40 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
- .debug_frame   0x00000460       0xe8 CMakeFiles/vgaPico2.dir/cursor.c.o
- .debug_frame   0x00000548       0x20 CMakeFiles/vgaPico2.dir/font.c.o
- .debug_frame   0x00000568      0x374 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
- .debug_frame   0x000008dc       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
- .debug_frame   0x00000928       0x94 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
- .debug_frame   0x000009bc       0x94 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
- .debug_frame   0x00000a50       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
- .debug_frame   0x00000a90      0x1cc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
- .debug_frame   0x00000c5c       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
- .debug_frame   0x00000c7c      0x1d0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
- .debug_frame   0x00000e4c      0x378 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
- .debug_frame   0x000011c4      0x2d8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
- .debug_frame   0x0000149c      0x1f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
- .debug_frame   0x0000168c       0x44 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
- .debug_frame   0x000016d0       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
- .debug_frame   0x00001710      0x12c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
- .debug_frame   0x0000183c       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
- .debug_frame   0x0000185c       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
- .debug_frame   0x0000189c       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
- .debug_frame   0x000018e8       0x70 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
- .debug_frame   0x00001958       0xc0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
- .debug_frame   0x00001a18       0x34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
- .debug_frame   0x00001a4c       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
- .debug_frame   0x00001acc      0x2a4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
- .debug_frame   0x00001d70      0x190 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
- .debug_frame   0x00001f00      0x2d8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
- .debug_frame   0x000021d8      0x308 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
- .debug_frame   0x000024e0      0x118 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
- .debug_frame   0x000025f8      0x290 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
- .debug_frame   0x00002888       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_aeabi_uldivmod.o)
- .debug_frame   0x000028b4       0x38 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_udivmoddi4.o)
- .debug_frame   0x000028ec       0x30 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
- .debug_frame   0x0000291c       0x4c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mallocr.o)
- .debug_frame   0x00002968       0x30 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
- .debug_frame   0x00002998       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
- .debug_frame   0x000029c4       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sbrkr.o)
- .debug_frame   0x000029f0       0x20 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-errno.o)
- .debug_frame   0x00002a10       0xb0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
- .debug_frame   0x00002ac0       0x28 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sysconf.o)
- .debug_frame   0x00002ae8       0x28 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
- .debug_frame   0x00002b10       0x20 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
- .debug_frame   0x00002b30       0x84 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
- .debug_frame   0x00002bb4      0x13c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-findfp.o)
- .debug_frame   0x00002cf0       0x3c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-reent.o)
+ .debug_frame   0x00000148       0xa0 CMakeFiles/vgaPico2.dir/vga_drv.c.o
+ .debug_frame   0x000001e8      0x280 CMakeFiles/vgaPico2.dir/vga_primitives.c.o
+ .debug_frame   0x00000468       0x40 CMakeFiles/vgaPico2.dir/vga_bus_read.c.o
+ .debug_frame   0x000004a8       0xe8 CMakeFiles/vgaPico2.dir/cursor.c.o
+ .debug_frame   0x00000590       0x20 CMakeFiles/vgaPico2.dir/font.c.o
+ .debug_frame   0x000005b0      0x374 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o
+ .debug_frame   0x00000924       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/panic.c.o
+ .debug_frame   0x00000970       0x94 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/hardware_claim/claim.c.o
+ .debug_frame   0x00000a04       0x94 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync/sync.c.o
+ .debug_frame   0x00000a98       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_sync_spin_lock/sync_spin_lock.c.o
+ .debug_frame   0x00000ad8      0x1cc CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
+ .debug_frame   0x00000ca4       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/lock_core.c.o
+ .debug_frame   0x00000cc4      0x1d0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_sync/mutex.c.o
+ .debug_frame   0x00000e94      0x378 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/time.c.o
+ .debug_frame   0x0000120c      0x2d8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/timer.c.o
+ .debug_frame   0x000014e4      0x1f0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_clocks/clocks.c.o
+ .debug_frame   0x000016d4       0x44 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o
+ .debug_frame   0x00001718       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_ticks/ticks.c.o
+ .debug_frame   0x00001758      0x12c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom.c.o
+ .debug_frame   0x00001884       0x20 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_bootrom/bootrom_lock.c.o
+ .debug_frame   0x000018a4       0x40 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_boot_lock/boot_lock.c.o
+ .debug_frame   0x000018e4       0x4c CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_xosc/xosc.c.o
+ .debug_frame   0x00001930       0x70 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime/runtime.c.o
+ .debug_frame   0x000019a0       0xc0 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init.c.o
+ .debug_frame   0x00001a60       0x34 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_runtime_init/runtime_init_clocks.c.o
+ .debug_frame   0x00001a94       0x80 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_malloc/malloc.c.o
+ .debug_frame   0x00001b14      0x2a4 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_printf/printf.c.o
+ .debug_frame   0x00001db8      0x190 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_clib_interface/newlib_interface.c.o
+ .debug_frame   0x00001f48      0x2d8 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/stdio.c.o
+ .debug_frame   0x00002220      0x308 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o
+ .debug_frame   0x00002528      0x118 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o
+ .debug_frame   0x00002640      0x290 CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_multicore/multicore.c.o
+ .debug_frame   0x000028d0       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_aeabi_uldivmod.o)
+ .debug_frame   0x000028fc       0x38 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/thumb/v8-m.main+fp/softfp/libgcc.a(_udivmoddi4.o)
+ .debug_frame   0x00002934       0x30 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-malloc.o)
+ .debug_frame   0x00002964       0x4c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mallocr.o)
+ .debug_frame   0x000029b0       0x30 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-mlock.o)
+ .debug_frame   0x000029e0       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memset.o)
+ .debug_frame   0x00002a0c       0x2c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sbrkr.o)
+ .debug_frame   0x00002a38       0x20 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-errno.o)
+ .debug_frame   0x00002a58       0xb0 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-lock.o)
+ .debug_frame   0x00002b08       0x28 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-sysconf.o)
+ .debug_frame   0x00002b30       0x28 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-memcpy.o)
+ .debug_frame   0x00002b58       0x20 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-strlen-stub.o)
+ .debug_frame   0x00002b78       0x84 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-freer.o)
+ .debug_frame   0x00002bfc      0x13c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-findfp.o)
+ .debug_frame   0x00002d38       0x3c /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/bin/../lib/gcc/arm-none-eabi/14.2.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+fp/softfp/libg.a(libc_a-reent.o)
 
 .debug_line_str
                 0x00000000      0x286

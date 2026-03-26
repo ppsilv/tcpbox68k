@@ -9,15 +9,18 @@
 #include "vga_bus_read.pio.h"
 #include "vga_drv.h"
 
+
 // Give the I/O pins that we're using some names that make sense - usable in main()
 //enum vga_pins {BUS=0,HSYNC=19, VSYNC=20, RED_PIN=21, LO_GRN=22, BLUE_PIN=26} ;
 enum vga_pins {BUS=0,HSYNC=16, VSYNC=17, RED_PIN=20, LO_GRN=19, BLUE_PIN=18} ;
 
-// VGA timing constants
-#define H_ACTIVE   655    // (active + frontporch - 1) - one cycle delay for mov
-#define V_ACTIVE   479    // (active - 1)
-#define RGB_ACTIVE 319    // (horizontal active)/2 - 1
-//#define RGB_ACTIVE 639 // change to this if 1 pixel/byte
+#define H_ACTIVE_1   327    // (active + frontporch - 1) - one cycle delay for mov
+#define V_ACTIVE_1   479    // (active - 1)
+#define H_ACTIVE_2   655    // (active + frontporch - 1) - one cycle delay for mov
+#define V_ACTIVE_2   479    // (active - 1)
+
+#define RGB_ACTIVE_1 159    // (horizontal active)/2 - 1
+#define RGB_ACTIVE_2 319    // (horizontal active)/2 - 1
 
 PIO bus_pio0;
 PIO bus_pio1;
@@ -28,7 +31,8 @@ uint vsync_sm = 1;
 uint rgb_sm = 2;
 
 static void initDMA(char **active_buffer_ptr,unsigned int totalBytes,PIO pio);
-static void initPio0(void);
+static void initPio0(screenMode_t mode);
+static void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm);
 
 void initReadBus_Pio()
 {
@@ -46,14 +50,25 @@ void initReadBus_Pio()
 
 }
 
-void initVGA(  char **active_buffer_ptr,unsigned int totalBytes) {
+void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mode) {
 
-    initPio0();
-    initDMA(active_buffer_ptr,totalBytes,bus_pio0);
+    initPio0(mode);
+    switch(mode){    
+        case MODE_TEXT_40_S:
+        case MODE_TEXT_40_F:
+        case MODE_320x240:
+            initDMA_320x200(active_buffer_ptr, bus_pio0, rgb_sm);
+            break;
+        case MODE_TEXT_80_S:
+        case MODE_TEXT_80_F:
+        case MODE_640x480:    
+            initDMA(active_buffer_ptr,totalBytes,bus_pio0);
+            break;
+    }    
 
 }
 
-static void initPio0(void)
+static void initPio0(screenMode_t mode)
 {
         // Choose which PIO instance to use (there are two instances, each with 4 state machines)
     PIO pio = pio0;
@@ -87,10 +102,22 @@ static void initPio0(void)
     // Initialize PIO state machine counters. This passes the information to the state machines
     // that they retrieve in the first 'pull' instructions, before the .wrap_target directive
     // in the assembly. Each uses these values to initialize some counting registers.
-    pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE);
-    pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE);
-    pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE);
-   
+    switch(mode){
+        case MODE_TEXT_40_S:
+        case MODE_TEXT_40_F:
+        case MODE_320x240:
+            pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_1);
+            pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_1);
+            pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_1);
+            break;
+        case MODE_TEXT_80_S:
+        case MODE_TEXT_80_F:
+        case MODE_640x480:    
+            pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_2);
+            pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_2);
+            pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_2);
+            break;
+    }   
 
     // Start the two pio machine IN SYNC
     // Note that the RGB state machine is running at full speed,
@@ -153,3 +180,57 @@ static void initDMA(char **active_buffer_ptr,unsigned int totalBytes,PIO pio){
     // of that array.
     dma_start_channel_mask((1u << rgb_chan_0)) ;
 }    
+
+//320x200
+
+
+// Variáveis globais para controle
+int rgb_chan_0;
+static uint16_t vga_line_counter = 0;
+static bool vga_repeat_step = false;
+char * vga_buffer_global;
+void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm) {
+    vga_buffer_global = *active_buffer_ptr;
+    rgb_chan_0 = dma_claim_unused_channel(true);
+
+    dma_channel_config c0 = dma_channel_get_default_config(rgb_chan_0);
+    channel_config_set_transfer_data_size(&c0, DMA_SIZE_8);   // Manda byte a byte
+    channel_config_set_read_increment(&c0, true);             // Avança na memória
+    channel_config_set_write_increment(&c0, false);           // Escreve sempre no mesmo lugar (PIO)
+    
+    // DREQ: O PIO dita o ritmo (só manda quando a FIFO do PIO tiver espaço)
+    channel_config_set_dreq(&c0, pio_get_dreq(pio, sm, true));
+
+    dma_channel_configure(
+        rgb_chan_0,
+        &c0,
+        &pio->txf[sm],      // Destino: FIFO de dados do PIO
+        active_buffer_ptr,             // Origem inicial
+        160,                // TAMANHO DE UMA LINHA (320 pixels / 2)
+        false               // NÃO começa ainda
+    );
+}
+
+void __not_in_flash_func(vga_line_handler)() {
+    pio_interrupt_clear(pio0, 1); 
+
+    // Apenas reinicia o DMA de dados apontando para o endereço atual
+    // O segredo é que o DMA agora é disparado pelo DREQ do PIO de vídeo
+    // e a CPU só precisa garantir que o endereço mude a cada 2 linhas físicas.
+    
+    static int physical_line = 0;
+    static int data_line = 0;
+
+    // Dispara o DMA para a linha de dados atual
+    dma_channel_set_read_addr(rgb_chan_0, &vga_buffer_global[data_line * 160], true);
+
+    physical_line++;
+    if (physical_line % 2 == 0) {
+        data_line++; // Só avança a linha de dados a cada 2 linhas físicas
+    }
+
+    if (data_line >= 240) {
+        data_line = 0;
+        physical_line = 0;
+    }
+}

@@ -84,6 +84,7 @@ CMakeFiles/vgaPico2.dir/cursor.c.o: /home/pdsilva/project/tcpbox68k/software/car
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/cursor.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font_5x7.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.h
 
@@ -2669,6 +2670,7 @@ CMakeFiles/vgaPico2.dir/vga.c.o: /home/pdsilva/project/tcpbox68k/software/card_v
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font_5x7.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/pt_cornell_v1_4.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_bus_read.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.h
@@ -2818,6 +2820,7 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: /home/pdsilva/project/tcpbox68k/software/ca
   vga640p_rgb.pio.h \
   vga640p_vsync.pio.h \
   vga_bus_read.pio.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h
 
 CMakeFiles/vgaPico2.dir/vga_primitives.c.o: /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.c \
@@ -2910,6 +2913,7 @@ CMakeFiles/vgaPico2.dir/vga_primitives.c.o: /home/pdsilva/project/tcpbox68k/soft
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/cursor.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font_5x7.h \
+  /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_drv.h \
   /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/vga_primitives.h
 
@@ -3317,6 +3321,8 @@ generated/pico_base/pico/version.h:
 /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/colors.h:
 
 /home/pdsilva/project/tcpbox68k/software/card_vga_pico2/font.h:
+
+/home/pdsilva/project/tcpbox68k/software/card_vga_pico2/screen_mode.h:
 
 /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/stdio.h:
 
