@@ -25,7 +25,7 @@ static const uint16_t hsync_program_instructions[] = {
     0xff00, //  4: set    pins, 0                [31]
     0xff00, //  5: set    pins, 0                [31]
     0xff01, //  6: set    pins, 1                [31]
-    0xec01, //  7: set    pins, 1                [12]
+    0xe501, //  7: set    pins, 1                [5]
     0xc100, //  8: irq    nowait 0               [1]
             //     .wrap
 };
