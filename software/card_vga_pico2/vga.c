@@ -11,14 +11,22 @@
 #include "vga_bus_read.h"
 #include "hardware/pio.h"
 #include "eeprom.h"
+#include "hardware/watchdog.h"
 
 vga_t *vga = NULL ;
+
+#define MAGIC_WARM_BOOT 0xDEADBEEF
+#define SCRATCH_REASON_REG watchdog_hw->scratch[0]
+#define SCRATCH_MODE_REG   watchdog_hw->scratch[1]
+static bool is_coldstart = false;
 
 static repeating_timer_t timer;
 static int last_toggle_time = 1;
 static bool system_run;
-extern PIO bus_pio1;
+screenMode_t video_mode;
 
+
+extern PIO bus_pio1;
 extern uint bus_sm;
 extern bool bus_try_get_event(uint8_t *value,uint8_t *reg,PIO pio, uint sm);
 
@@ -57,7 +65,7 @@ static void create_timer(bool btimer)
         cancel_repeating_timer(&timer);
     }
 }
-
+void dump(uint8_t addr,uint8_t size);
 static PT_THREAD (protothread_print_bus_read(struct pt *pt))
 {
     char buf[256]={0};
@@ -69,20 +77,22 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
     PT_INTERVAL_INIT() ;
     // 1. Aguarda um sinal claro do 68000 ou um tempo de estabilização
     // 2. LIMPEZA CRUCIAL: Antes de começar, esvazie o lixo que o PIO pegou no boot
-    while( system_run == false ){
-        if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
-            //sprintf(buf,"%d-%d ",data,reg);
-            //vga->printString(buf);
-            if(data == CMD_SYSTEM_ENABLE && reg == D_SYSTEM_RUN ){
-                system_run = true;
+
+    if( is_coldstart ){
+        while( system_run == false ){
+            if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
+                //sprintf(buf,"%d-%d ",data,reg);
+                //vga->printString(buf);
+                if(data == CMD_SYSTEM_ENABLE && reg == D_SYSTEM_RUN ){
+                    system_run = true;
+                }
             }
+            PT_YIELD_INTERVAL(1) ;
         }
-        PT_YIELD_INTERVAL(1) ;
     }
     while (!pio_sm_is_rx_fifo_empty(bus_pio1, bus_sm)) {
         pio_sm_get(bus_pio1, bus_sm); 
     }    
-    vga->clrscr();
 
     while(1) {
         PT_YIELD_INTERVAL(1) ;
@@ -166,21 +176,36 @@ void video_welcome_screen(){
     vga->setTextColor(RED, BLACK);
     vga->printString("Tcpbox Vpico2 vga312k   VGA BIOS VRP2350\n");
     vga->setTextColor(YELLOW, BLACK);
-    vga->printString("Version 26.03.00RA\n");
+    vga->printString("Version 1.0.26.03.00RA\n");
     vga->setTextColor(CYAN, BLACK);
-    vga->printString("Copyright (C) 2026 pdsilva(aka pgordao).V1.0 Vpico2vga312k\n");
+    if ( video_mode < MODE_TEXT_80_S){
+        vga->printString("Copyright (C) 2026 pdsilva(aka pgordao).\nV1.0 Vpico2vga312k\n");
+    }else{
+        vga->printString("Copyright (C) 2026 pdsilva(aka pgordao).V1.0 Vpico2vga312k\n");
+    }
     vga->setTextCursorPos(0,5);
     vga->setTextColor(GREEN, BLACK);
     vga->printString("Loading Operating system loader...\n");
+}
+
+int verify_start() {
+
+    if (SCRATCH_REASON_REG == MAGIC_WARM_BOOT) {
+        is_coldstart = true;
+    } else {
+        // Coldstart: Primeira vez que liga
+        SCRATCH_REASON_REG = MAGIC_WARM_BOOT;
+    }
 }
 
 int main(){
 
     // set the clock
     set_sys_clock_khz(150000, true);
-
     // start the serial i/o
     stdio_init_all() ;
+    //verify what start type is
+    verify_start();
     // Start i2c bus
     pico_i2c_init();
     // start bus read
@@ -190,11 +215,13 @@ int main(){
     // load configuration
     eeprom_load_config(&vga_nvc_config);
 
-    vga = create_screen(vga_nvc_config.video_mode ); //, 0, 0, font );
-    //vga = create_vga_instance();
-    //if (vga) {
-    //    vga_setup_mode(vga, MODE_TEXT_80_S);
-    //}
+    if( is_coldstart ){
+        vga = create_screen( MODE_TEXT_80_S ); //, 0, 0, font );
+        video_mode = MODE_TEXT_80_S;
+    }else{
+        vga = create_screen(vga_nvc_config.video_mode ); //, 0, 0, font );
+        video_mode = vga_nvc_config.video_mode;
+    }        
 
     drawHLine(0,0,640,YELLOW);
     drawHLine(0,1,640,YELLOW);

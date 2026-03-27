@@ -41,7 +41,6 @@ typedef enum screenMode screenMode_t ;
 typedef struct vga_text vga_t ;
 
 struct vga_text {
-  screenMode_t screen_mode;
   //getters
   uint8_t (*getTextColor)(void);
   uint8_t (*getTextSize)(void);

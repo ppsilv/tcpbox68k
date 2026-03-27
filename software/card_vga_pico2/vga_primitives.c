@@ -28,7 +28,7 @@ typedef struct  {
     uint16_t width;  //320, 640
     uint16_t height; //240, 480
     cursor_t *cursor ;
-    screenMode_t mode ;
+    screenMode_t video_mode ;
     font_t font ;
     color_t textcolor ;
     color_t textbgcolor ;
@@ -72,7 +72,7 @@ static void set_vga_home(void){
 
 static void set_vga_mode(uint8_t mode){
   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
-
+  priv->video_mode = mode;
   switch(mode){
     case MODE_TEXT_40_S:
       priv->width = 320;
@@ -101,7 +101,7 @@ static void set_vga_mode(uint8_t mode){
     default:
       priv->width = 640;
       priv->height= 480;
-      mode = MODE_TEXT_40_S;
+      priv->video_mode = MODE_TEXT_80_S;
       break;
 
   }
@@ -523,8 +523,6 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
   priv->bottommask = 0b11110000 ;
   priv->vga_data_array = &active_buffer[0] ;
 
-  vga->screen_mode = mode;
-
   set_vga_mode(mode);
 
   vga->printString = printString;
@@ -655,6 +653,7 @@ void vga_setup_mode(vga_t* instance, screenMode_t mode) {
 */
 
 #include "eeprom.h"
+#include "hardware/resets.h"
 extern sys_config_t vga_nvc_config;
 
 void change_mode(screenMode_t mode) {
@@ -670,5 +669,13 @@ void change_mode(screenMode_t mode) {
   eeprom_save_config(&vga_nvc_config);
   sprintf(buf,"Depois da configuracao:[%d]\n",(int8_t)vga_nvc_config.video_mode);
   vga->printString(buf);
+
+  // 1. Coloca o PIO0 e o DMA em estado de reset (limpa FIFOs e máquinas de estado)
+  reset_block(RESETS_RESET_PIO0_BITS | RESETS_RESET_DMA_BITS);
+
+  // 2. Tira do reset e espera o hardware confirmar que está pronto
+  unreset_block_wait(RESETS_RESET_PIO0_BITS | RESETS_RESET_DMA_BITS);
+
+  reset();
 
 }

@@ -2749,6 +2749,7 @@ CMakeFiles/vgaPico2.dir/vga.c.o: /home/pdsilva/Projects/tcpbox68k/software/card_
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/sio.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/timer.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/uart.h \
+  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/watchdog.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/accessctrl.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/clocks.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/interp.h \
@@ -2762,6 +2763,7 @@ CMakeFiles/vgaPico2.dir/vga.c.o: /home/pdsilva/Projects/tcpbox68k/software/card_
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/sio.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/timer.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/uart.h \
+  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/watchdog.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/pico_platform/include/pico/platform.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/pico_platform/include/pico/platform/cpu_regs.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/cmsis/include/cmsis/rename_exceptions.h \
@@ -2775,6 +2777,7 @@ CMakeFiles/vgaPico2.dir/vga.c.o: /home/pdsilva/Projects/tcpbox68k/software/card_
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_resets/include/hardware/resets.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/include/hardware/timer.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_uart/include/hardware/uart.h \
+  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_watchdog/include/hardware/watchdog.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_common/include/pico/platform/common.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_compiler/include/pico/platform/compiler.h \
   /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_platform_panic/include/pico/platform/panic.h \

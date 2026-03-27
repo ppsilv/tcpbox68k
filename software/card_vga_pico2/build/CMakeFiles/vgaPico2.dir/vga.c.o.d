@@ -95,4 +95,7 @@ CMakeFiles/vgaPico2.dir/vga.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/pio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/pio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include/hardware/pio_instructions.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.h
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_watchdog/include/hardware/watchdog.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/watchdog.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/watchdog.h
