@@ -1,0 +1,57 @@
+Ter 1.5 MB de RAM no 68000 é um "latifúndio" para quem gosta de sistemas embarcados. 
+Para você ter uma ideia, o Macintosh original tinha 128 KB e o Amiga 1000 vinha com 
+512 KB. Você tem espaço de sobra para fazer algo épico.
+
+Se você está na dúvida entre portar algo pronto ou criar o seu, aqui vai uma análise 
+de "analista para analista":
+
+### 1. uClinux
+* **O Desafio:** É o "Everest". Como o 68000 (puro) não tem MMU (Memory Management 
+Unit), o uClinux usa uma técnica especial para rodar sem proteção de memória.
+* **Prós:** Você teria multitarefa real, sistema de arquivos e rede (se colocar uma 
+placa Ethernet no backplane).
+* **Contras:** É pesado. Compilar o kernel para uma arquitetura customizada exige 
+um *cross-compiler* muito bem configurado e muita paciência com drivers de console.
+
+### 2. FUZIX
+* **O Meio Termo:** Criado pelo Alan Cox (uma lenda do Linux), o FUZIX é um System 
+V (Unix-like) feito especificamente para processadores antigos (Z80, 68000, 6502).
+* **Vibe:** Ele tem o "cheiro" de Unix mas cabe em 64 KB de código. Com 1.5 MB de 
+RAM, o FUZIX voaria no seu 68000.
+* **Vantagem:** É muito mais fácil de portar que o Linux, pois o hardware "alvo" é 
+justamente máquinas como a sua.
+
+### 3. Desenvolver o seu próprio (O "TCPBOX-OS")
+Como você nunca fez um SO, essa é a jornada mais recompensadora. Você não precisa 
+começar com algo complexo como o Windows. Você pode seguir a escola do **CP/M** ou 
+do **MS-DOS**:
+
+* **Nível 1 (Monitor):** Você já tem. Ler/escrever memória e executar endereços.
+* **Nível 2 (BIOS/Kernel):** Criar um "Despachante de Interrupções". O 68000 é 
+excelente nisso com as instruções `TRAP`.
+* **Nível 3 (Gerenciador de Arquivos):** Se você colocar um slot de cartão SD no 
+seu Pi Pico, o 68000 pode mandar comandos para o Pico ler arquivos e carregar na RAM.
+* **Nível 4 (Shell):** Um prompt `A>` que aceita comandos como `DIR`, `TYPE` e `RUN`.
+
+---
+
+### Por onde eu começaria?
+Se eu fosse você, com essa sede de ver o vídeo e teclado funcionando, eu iria pelo 
+**caminho do SO autoral simples**:
+
+1.  **Abstração de I/O:** Consolide sua VBIOS para que o SO não saiba o que é o 
+Pico ou o CH9350. Ele só chama `GET_CHAR` e `PUT_CHAR`.
+2.  **Alocador de Memória:** Escreva uma função `malloc` simples em Assembly 
+para gerenciar esses 1.5 MB.
+3.  **Carregador de Programas:** Faça o 68000 receber um arquivo binário pela 
+Serial (via protocolo XMODEM, que é fácil de implementar) e jogar na RAM para executar.
+
+
+
+**Uma curiosidade:** O 68000 tem um modo "Supervisor" e um modo "Usuário". 
+Se você fizer o seu próprio SO, pode usar isso para proteger o Kernel de programas 
+que travam — algo que o MS-DOS nunca conseguiu fazer direito!
+
+**Você já pensou em como vai armazenar os arquivos?** (Cartão SD via Pico, uma 
+memória Flash extra no barramento ou vai ficar só na RAM por enquanto?) Com 1.5 MB 
+dá até para criar um "RAM Disk" gigante!

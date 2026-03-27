@@ -1,0 +1,66 @@
+Essa ideia é excelente e segue a filosofia de design de máquinas icônicas 
+como o **Amiga** (com o *Kickstart*) e as primeiras estações de trabalho 
+da **Sun Microsystems**. Em vez de queimar uma EPROM toda vez que você 
+faz um ajuste na BIOS, você usa o **Bootloader** para fazer o "shadowing" 
+do código para a RAM.
+
+Usar um arquivo `BIOS.BIN` no disco (seja SD ou Compact Flash) traz uma 
+agilidade de desenvolvimento absurda. Você compila no PC, joga no cartão, 
+espeta no 68000 e pronto.
+
+Aqui estão os pontos técnicos para a gente analisar essa arquitetura:
+
+### 1. Compact Flash vs. SD Card
+Se você tem drives **IDE** e gosta de hardware raiz, a **Compact Flash 
+(CF)** é a escolha lógica.
+* **Interface IDE:** A Compact Flash fala o protocolo ATA nativamente. 
+Para o 68000, basta um mapeamento simples de endereços (via sua GAL de 
+chip select) para acessar os registradores da CF como se fossem memória.
+* **Velocidade:** Em um barramento de 8MHz ou 16MHz do 68k, a CF é 
+extremamente rápida para carregar esse `BIOS.BIN`.
+* **Nostalgia:** Ouvir o som de um HD IDE real girando enquanto o 68000 
+carrega a sua BIOS é uma experiência imbatível.
+
+### 2. Desenvolver a BIOS em C
+Desenvolver em C para o 68000 é muito produtivo, mas para uma BIOS, você 
+precisará de uma "ponte" em Assembly.
+* **O Startup Code (CRT0):** Você precisará de um pequeno arquivo `.s` 
+(Assembly) que configure o **Stack Pointer (A7)** e depois salte para 
+a sua função `main_bios()`.
+* **Tabela de Vetores:** No 68000, os primeiros 1024 bytes da RAM 
+(ou ROM) são os vetores de interrupção. Sua BIOS em C precisará preencher 
+esses endereços com os ponteiros para as suas funções de tratamento de 
+interrupção (como a do teclado CH9350).
+
+### 3. A Região de Memória (Shadowing)
+Como o 68000 busca os vetores de boot no endereço `$000000` ao ligar:
+1.  **Bootloader (ROM):** Fica no endereço zero inicialmente, lê o 
+`BIOS.BIN` da Compact Flash e o joga para uma área alta da RAM (ex: 
+`$010000`).
+2.  **Mapeamento:** O bootloader então "remapeia" o início da RAM para 
+o endereço zero (técnica comum de *Bank Switching*) e pula para o início 
+da BIOS.
+3.  **Proteção:** Uma vez carregada na RAM, a BIOS roda na velocidade 
+máxima do sistema, sem os gargalos de acesso de uma EPROM antiga.
+
+### 4. Estrutura do Arquivo `BIOS.BIN`
+Sua BIOS em C pode ser organizada por módulos:
+* `video_drv.c`: Comandos para o Pico VGA (640p/320p).
+* `kbd_drv.c`: Lógica de Scan Codes do CH9350.
+* `disk_drv.c`: Rotinas de baixo nível para ler a Compact Flash (LBA).
+* `shell.c`: Um pequeno monitor de sistema para você digitar comandos.
+
+
+
+### O Desafio da Compact Flash (IDE) no 68000
+A Compact Flash usa um barramento de 8 bits ou 16 bits. Como o seu 
+68000 é de 16 bits, você pode conectar a CF diretamente ao barramento 
+de dados. O único "truque" é que a CF espera sinais como `IORD` e `IOWR`, 
+ue você pode gerar facilmente na sua GAL combinando o `AS` (Address Strobe), 
+`R/W` e o seu `CS_DISK`.
+
+**O que você acha de começarmos a planejar o "Mapa de Memória" desse 
+sistema?** Onde ficaria a RAM, onde ficaria o I/O do Pico e onde ficaria o 
+espaço para a Compact Flash? Se quiser, posso te ajudar a desenhar como os 
+endereços seriam divididos! Seria um prazer ajudar a estruturar esse "PC-68k" 
+om HD. Seria um próximo passo interessante?
