@@ -39,23 +39,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  17 .comment      00000045  00000000  00000000  0000bfcc  2**0
                   CONTENTS, READONLY
- 18 .debug_info   00035bb4  00000000  00000000  0000c011  2**0
+ 18 .debug_info   00035c05  00000000  00000000  0000c011  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_abbrev 00008678  00000000  00000000  00041bc5  2**0
+ 19 .debug_abbrev 000086bb  00000000  00000000  00041c16  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_loclists 00016aaf  00000000  00000000  0004a23d  2**0
+ 20 .debug_loclists 00016aba  00000000  00000000  0004a2d1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_aranges 00001170  00000000  00000000  00060cf0  2**3
+ 21 .debug_aranges 00001178  00000000  00000000  00060d90  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_rnglists 000047a3  00000000  00000000  00061e60  2**0
+ 22 .debug_rnglists 000047a9  00000000  00000000  00061f08  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 23 .debug_line   0001f2e7  00000000  00000000  00066603  2**0
+ 23 .debug_line   0001f32f  00000000  00000000  000666b1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 24 .debug_str    0000838d  00000000  00000000  000858ea  2**0
+ 24 .debug_str    000083b6  00000000  00000000  000859e0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 25 .debug_frame  00003320  00000000  00000000  0008dc78  2**2
+ 25 .debug_frame  00003330  00000000  00000000  0008dd98  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 26 .debug_line_str 00000287  00000000  00000000  00090f98  2**0
+ 26 .debug_line_str 00000287  00000000  00000000  000910c8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vgaPico2.elf:     file format elf32-littlearm

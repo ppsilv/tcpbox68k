@@ -197,7 +197,27 @@ int verify_start() {
         SCRATCH_REASON_REG = MAGIC_WARM_BOOT;
     }
 }
+/*
 
+ Resumo para consulta rápida:
++------------------------------------------------------------------------------------+
+| Instrução | O que faz           | Por que é proibida no User Mode?                  |
++------------------------------------------------------------------------------------+
+| STOP      | Para a CPU.         | Evita que o usuário "mate" o sistema.             | 
+| RESET     | Reseta o barramento.| Evita que o usuário resete o disco ou a VGA.      |
+| RTE       | Volta de exceção.   | Poderia alterar o nível de privilégio ilegalmente.|
+| MOVE to SR| Altera Status.      | Impede o usuário de desabilitar interrupções.     |
+| MOVE USP  | Mexe no Stack       | O usuário não deve gerenciar ponteiros de sistema.| 
++------------------------------------------------------------------------------------+
+Escreva o dado $AA no endereço $1555
+Escreva o dado $55 no endereço $0AAA
+Escreva o dado $90 no endereço $1555
+Nota importante: Esses endereços são relativos ao início da ROM. Se sua ROM começa em $F00000, você soma esse valor.
+2. O que acontece depois?
+Após essa sequência, a 28C64 entra no modo de identificação. Agora, se o 68000 ler os dois primeiros bytes da ROM:
+Endereço $0000: Retorna o Manufacturer Code (Ex: $1F para Atmel).
+Endereço $0001: Retorna o Device Code (Ex: $64 para a 28C64).
+*/
 int main(){
 
     // set the clock
@@ -263,7 +283,25 @@ int main(){
 
 
 
+// Definição de uma variável "mágica" no final da BIOS (via Linker ou endereço fixo)
+#define MAGIC_ADDR 0x001FFE 
 
+int check_if_shadowed() {
+    volatile unsigned short *check_ptr = (unsigned short *)MAGIC_ADDR;
+    unsigned short original_val = *check_ptr; // Deve ser o valor fixo da ROM
+
+    *check_ptr = 0xA5A5; // Tenta "sujar" a memória
+
+    if (*check_ptr == 0xA5A5) {
+        // Se mudou, é RAM! Já fizemos o shadow.
+        // Opcional: restaurar o valor original se for necessário.
+        *check_ptr = original_val; 
+        return 1; 
+    } else {
+        // Se continua o valor original, é ROM. Precisa copiar!
+        return 0;
+    }
+}
 
 
 
