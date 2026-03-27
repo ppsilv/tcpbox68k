@@ -25,8 +25,10 @@ enum vga_pins {BUS=0,HSYNC=16, VSYNC=17, RED_PIN=20, LO_GRN=19, BLUE_PIN=18} ;
 #define RGB_ACTIVE_1 159    // (horizontal active)/2 - 1
 #define RGB_ACTIVE_2 319    // (horizontal active)/2 - 1
 
-PIO bus_pio0;
-PIO bus_pio1;
+const PIO mpio0 = pio0;
+const PIO mpio1 = pio1;
+PIO bus_pio0=mpio0;
+PIO bus_pio1=mpio1;
 uint bus_sm;
 // Manually select a few state machines from pio instance pio0.
 uint hsync_sm = 0;
@@ -37,26 +39,57 @@ static void initDMA(char **active_buffer_ptr,unsigned int totalBytes,PIO pio);
 static void initPio0(screenMode_t mode);
 static void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm);
 
+
+
 void initReadBus_Pio()
 {
-    PIO pio = pio1;
-    bus_pio1 = pio;
-
-    uint bus_read_offset = pio_add_program(pio, &bus_read_program);
+    uint bus_read_offset = pio_add_program(mpio1, &bus_read_program);
 
     uint bus_read_sm = 0;
     bus_sm = bus_read_sm;
 
-    pio_sm_claim (pio, bus_read_sm);
+    pio_sm_claim (mpio1, bus_read_sm);
 
-    bus_read_program_init(pio, bus_read_sm, bus_read_offset, BUS);
-
+    bus_read_program_init(mpio1, bus_read_sm, bus_read_offset, BUS);
 }
 static void initPio_320p();
 static void initPio_640p();
+#include "vga_primitives.h"
+
+void pioReset(){
+
+// 1. Para as 3 SMs simultaneamente para não perder o sincronismo
+pio_set_sm_mask_enabled(mpio0, (1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm), false);
+
+// 2. Remove os programas da memória de instrução (Libera os 32 slots)
+// Isso é vital se os programas do modo novo forem diferentes
+pio_clear_instruction_memory(mpio0);
+
+// 3. Reseta o estado interno (registradores X, Y, PC e FIFOs)
+pio_sm_restart(mpio0, hsync_sm);
+pio_sm_restart(mpio0, vsync_sm);
+pio_sm_restart(mpio0, rgb_sm);
+
+// 4. Limpa os FIFOs para garantir que não sobrou lixo do modo anterior
+pio_sm_clear_fifos(mpio0, hsync_sm);
+pio_sm_clear_fifos(mpio0, vsync_sm);
+pio_sm_clear_fifos(mpio0, rgb_sm);
+
+// 5. Opcional: Se você usou pio_sm_claim, libere os índices
+// pio_sm_unclaim(mpio0, hsync_sm); ...
+}
+
+void dmaReset(int dma_chan ){
+    // Substitua 'dma_chan' pela variável que guarda o seu canal de DMA
+    dma_channel_abort(dma_chan); 
+
+    // Opcional: Limpar as interrupções do DMA se você usar handlers
+    dma_channel_acknowledge_irq0(dma_chan);
+}
+
 //ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mode) {
-
+    pioReset();
     switch(mode){    
         case MODE_TEXT_40_S:
         case MODE_TEXT_40_F:
@@ -75,58 +108,58 @@ void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mod
 }
 //ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 static void initPio_320p(){
-    PIO pio = pio0;
-    bus_pio0 = pio;
-    uint hsync_offset = pio_add_program(pio, &hsync320p_program);
-    uint vsync_offset = pio_add_program(pio, &vsync320p_program);
-    uint rgb_offset = pio_add_program(pio, &rgb320p_program);
+    uint hsync_offset = pio_add_program(mpio0, &hsync320p_program);
+    uint vsync_offset = pio_add_program(mpio0, &vsync320p_program);
+    uint rgb_offset = pio_add_program(mpio0, &rgb320p_program);
  
-    pio_sm_claim (pio, hsync_sm);
-    pio_sm_claim (pio, vsync_sm);
-    pio_sm_claim (pio, rgb_sm);
+    pio_sm_claim (mpio0, hsync_sm);
+    pio_sm_claim (mpio0, vsync_sm);
+    pio_sm_claim (mpio0, rgb_sm);
 
-    hsync320p_program_init(pio, hsync_sm, hsync_offset, HSYNC);
-    vsync320p_program_init(pio, vsync_sm, vsync_offset, VSYNC);
-    rgb320p_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
+    hsync320p_program_init(mpio0, hsync_sm, hsync_offset, HSYNC);
+    vsync320p_program_init(mpio0, vsync_sm, vsync_offset, VSYNC);
+    rgb320p_program_init(mpio0, rgb_sm, rgb_offset, BLUE_PIN);
 
-    pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_1);
-    pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_1);
-    pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_1);
+    pio_sm_put_blocking(mpio0, hsync_sm, H_ACTIVE_1);
+    pio_sm_put_blocking(mpio0, vsync_sm, V_ACTIVE_1);
+    pio_sm_put_blocking(mpio0, rgb_sm, RGB_ACTIVE_1);
 
-    pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
+    pio_enable_sm_mask_in_sync(mpio0, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
 }
 static void initPio_640p(){
-    PIO pio = pio0;
-    bus_pio0 = pio;
-    uint hsync_offset = pio_add_program(pio, &hsync_program);
-    uint vsync_offset = pio_add_program(pio, &vsync_program);
-    uint rgb_offset = pio_add_program(pio, &rgb_program);
+    uint hsync_offset = pio_add_program(mpio0, &hsync_program);
+    uint vsync_offset = pio_add_program(mpio0, &vsync_program);
+    uint rgb_offset = pio_add_program(mpio0, &rgb_program);
  
-    pio_sm_claim (pio, hsync_sm);
-    pio_sm_claim (pio, vsync_sm);
-    pio_sm_claim (pio, rgb_sm);
+    pio_sm_claim (mpio0, hsync_sm);
+    pio_sm_claim (mpio0, vsync_sm);
+    pio_sm_claim (mpio0, rgb_sm);
 
-    hsync_program_init(pio, hsync_sm, hsync_offset, HSYNC);
-    vsync_program_init(pio, vsync_sm, vsync_offset, VSYNC);
-    rgb_program_init(pio, rgb_sm, rgb_offset, BLUE_PIN);
+    hsync_program_init(mpio0, hsync_sm, hsync_offset, HSYNC);
+    vsync_program_init(mpio0, vsync_sm, vsync_offset, VSYNC);
+    rgb_program_init(mpio0, rgb_sm, rgb_offset, BLUE_PIN);
 
-    pio_sm_put_blocking(pio, hsync_sm, H_ACTIVE_2);
-    pio_sm_put_blocking(pio, vsync_sm, V_ACTIVE_2);
-    pio_sm_put_blocking(pio, rgb_sm, RGB_ACTIVE_2);
+    pio_sm_put_blocking(mpio0, hsync_sm, H_ACTIVE_2);
+    pio_sm_put_blocking(mpio0, vsync_sm, V_ACTIVE_2);
+    pio_sm_put_blocking(mpio0, rgb_sm, RGB_ACTIVE_2);
 
-    pio_enable_sm_mask_in_sync(pio, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
+    pio_enable_sm_mask_in_sync(mpio0, ((1u << hsync_sm) | (1u << vsync_sm) | (1u << rgb_sm)));
 }
 
-
+int rgb_chan_0;
+int rgb_chan_1;
 static void initDMA(char **active_buffer_ptr,unsigned int totalBytes,PIO pio){
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // ============================== PIO DMA Channels =================================================
     /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    dmaReset(rgb_chan_0);
+    dmaReset(rgb_chan_1);
     // DMA channels - 0 sends color data, 1 reconfigures and restarts 0
-    int rgb_chan_0 = dma_claim_unused_channel(true);
-    int rgb_chan_1 = dma_claim_unused_channel(true);
+    rgb_chan_0 = dma_claim_unused_channel(true);
+    rgb_chan_1 = dma_claim_unused_channel(true);
+
 
     // change this to true of other DMA channels interfer with video
     #define rgb_high_priority false
@@ -185,6 +218,8 @@ void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm) {
     vga_buffer_global = *active_buffer_ptr;
     rgb_chan_0 = dma_claim_unused_channel(true);
 
+    dmaReset(rgb_chan_0);
+
     dma_channel_config c0 = dma_channel_get_default_config(rgb_chan_0);
     channel_config_set_transfer_data_size(&c0, DMA_SIZE_8);   // Manda byte a byte
     channel_config_set_read_increment(&c0, true);             // Avança na memória
@@ -204,7 +239,7 @@ void initDMA_320x200(char **active_buffer_ptr, PIO pio, uint sm) {
 }
 //ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 void __not_in_flash_func(vga_line_handler)() {
-    pio_interrupt_clear(pio0, 1); 
+    pio_interrupt_clear(mpio0, 1); 
 
     // Apenas reinicia o DMA de dados apontando para o endereço atual
     // O segredo é que o DMA agora é disparado pelo DREQ do PIO de vídeo

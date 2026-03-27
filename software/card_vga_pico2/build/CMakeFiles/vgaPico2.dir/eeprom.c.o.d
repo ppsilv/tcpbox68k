@@ -1,5 +1,5 @@
-CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/vga_drv.c \
+CMakeFiles/vgaPico2.dir/eeprom.c.o: \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.c \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/stdio.h \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/_ansi.h \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/newlib.h \
@@ -17,10 +17,11 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/machine/_types.h \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/lock.h \
  /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/stdio.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/stdlib.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/machine/stdlib.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/alloca.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_stdlib_headers/include/pico/stdlib.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/string.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/_locale.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/strings.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/string.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/include/hardware/i2c.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_base_headers/include/pico.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_base_headers/include/pico/types.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_base_headers/include/pico/assert.h \
@@ -45,7 +46,6 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/addressmap.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/sio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_base_headers/include/pico/error.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/include/pico/stdio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_time/include/pico/time.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_timer/include/hardware/timer.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/timer.h \
@@ -54,6 +54,9 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/accessctrl.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/timer.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/intctrl.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/i2c.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/i2c.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dreq.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/include/hardware/gpio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/sio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/interp.h \
@@ -68,36 +71,25 @@ CMakeFiles/vgaPico2.dir/vga_drv.c.o: \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/nvic.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/scb.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/include/hardware/gpio_coproc.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_watchdog/include/hardware/watchdog.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/watchdog.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/watchdog.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/screen_mode.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/vga_primitives.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/vga_drv.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/cursor.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/stdlib.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/machine/stdlib.h \
+ /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/alloca.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/common/pico_stdlib_headers/include/pico/stdlib.h \
+ /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/pico_stdio/include/pico/stdio.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_uart/include/hardware/uart.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/uart.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/uart.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dreq.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_resets/include/hardware/resets.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/resets.h \
  /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/resets.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include/hardware/pio.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/pio.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/pio.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include/hardware/pio_instructions.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/include/hardware/dma.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/dma.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_regs/include/hardware/regs/dma.h \
- /home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/hardware_structs/include/hardware/structs/dma_debug.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga320p_hsync.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga320p_vsync.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga320p_rgb.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga640p_hsync.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga640p_vsync.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga640p_rgb.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/build/vga_bus_read.pio.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/vga_drv.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/screen_mode.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/vga_primitives.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/cursor.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/string.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/_locale.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/strings.h \
- /home/pdsilva/.pico-sdk/toolchain/14_2_Rel1/arm-none-eabi/include/sys/string.h \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/colors.h \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font.h \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font_5x7.h

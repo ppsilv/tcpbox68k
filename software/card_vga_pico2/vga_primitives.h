@@ -18,7 +18,7 @@
 void tft_write(uint8_t c) ;
 static void printString(char* str) ;
 static void pchar(char c);
-void clrscr();
+static void clrscr();
 
 // 5x7 font
 static void writeStringBold(char* str);
@@ -58,15 +58,21 @@ struct vga_text {
   void (*set_vga_mode)(uint8_t mode);
   //functions
   void (*printString)(char* str);
+  void (*printString1)(char* str,int32_t num);
+  void (*printString2)(char* str,int32_t num);
   void (*pchar)(uint8_t c);
   void (*clrscr)(void);
+  void (*change_mode)(uint8_t mode);
 
   void * _private;
 };
 
 vga_t* create_screen(screenMode_t mode); //,uint8_t vga_data_array[],uint32_t txcount,font_t * font);
+void change_mode(uint8_t mode);
+//vga_t* create_vga_instance() ;
+//void vga_setup_mode(vga_t* instance, screenMode_t mode) ;
 void put_cursor(uint8_t c);
-
+vga_t* get_vga();
 
 
 #endif

@@ -139,11 +139,13 @@ set(CMAKE_ASM_TARGET_INCLUDE_PATH
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2350/boot_stage2/include"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/include"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/include"
+  "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/include"
   )
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/cursor.c" "CMakeFiles/vgaPico2.dir/cursor.c.o" "gcc" "CMakeFiles/vgaPico2.dir/cursor.c.o.d"
+  "/home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.c" "CMakeFiles/vgaPico2.dir/eeprom.c.o" "gcc" "CMakeFiles/vgaPico2.dir/eeprom.c.o.d"
   "/home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font.c" "CMakeFiles/vgaPico2.dir/font.c.o" "gcc" "CMakeFiles/vgaPico2.dir/font.c.o.d"
   "/home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font_8x12.c" "CMakeFiles/vgaPico2.dir/font_8x12.c.o" "gcc" "CMakeFiles/vgaPico2.dir/font_8x12.c.o.d"
   "/home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font_8x14.c" "CMakeFiles/vgaPico2.dir/font_8x14.c.o" "gcc" "CMakeFiles/vgaPico2.dir/font_8x14.c.o.d"
@@ -165,6 +167,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_divider/divider.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_divider/divider.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_divider/divider.c.o.d"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o.d"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o.d"
+  "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o.d"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o.d"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pio/pio.c.o.d"
   "/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o" "gcc" "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_pll/pll.c.o.d"

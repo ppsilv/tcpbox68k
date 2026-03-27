@@ -93,4 +93,5 @@ CMakeFiles/vgaPico2.dir/vga_primitives.c.o: \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/cursor.h \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/colors.h \
  /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font.h \
- /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font_5x7.h
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/font_5x7.h \
+ /home/pdsilva/Projects/tcpbox68k/software/card_vga_pico2/eeprom.h

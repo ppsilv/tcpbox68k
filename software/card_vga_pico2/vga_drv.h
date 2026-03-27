@@ -50,6 +50,4 @@ void initVGA(  char **active_buffer_ptr,unsigned int totalBytes,screenMode_t mod
 void initReadBus_Pio();
 char* get_vga_buffer_pointer(void);
 
-
-
 #endif

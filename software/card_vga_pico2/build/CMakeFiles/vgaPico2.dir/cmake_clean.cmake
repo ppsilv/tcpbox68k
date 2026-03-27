@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/vgaPico2.dir/cursor.c.o"
   "CMakeFiles/vgaPico2.dir/cursor.c.o.d"
+  "CMakeFiles/vgaPico2.dir/eeprom.c.o"
+  "CMakeFiles/vgaPico2.dir/eeprom.c.o.d"
   "CMakeFiles/vgaPico2.dir/font.c.o"
   "CMakeFiles/vgaPico2.dir/font.c.o.d"
   "CMakeFiles/vgaPico2.dir/font_8x12.c.o"
@@ -43,6 +45,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_dma/dma.c.o.d"
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o"
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.o.d"
+  "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o"
+  "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o.d"
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o"
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o.d"
   "CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq_handler_chain.S.o"

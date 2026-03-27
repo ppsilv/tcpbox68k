@@ -309,6 +309,30 @@ cursor.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/cursor.c.s
 .PHONY : cursor.c.s
 
+eeprom.o: eeprom.c.o
+.PHONY : eeprom.o
+
+# target to build an object file
+eeprom.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/eeprom.c.o
+.PHONY : eeprom.c.o
+
+eeprom.i: eeprom.c.i
+.PHONY : eeprom.i
+
+# target to preprocess a source file
+eeprom.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/eeprom.c.i
+.PHONY : eeprom.c.i
+
+eeprom.s: eeprom.c.s
+.PHONY : eeprom.s
+
+# target to generate assembly for a file
+eeprom.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/eeprom.c.s
+.PHONY : eeprom.c.s
+
 font.o: font.c.o
 .PHONY : font.o
 
@@ -812,6 +836,30 @@ home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.s: home/pdsil
 home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.s
 .PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.c.s
+
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.o: home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.o
+
+# target to build an object file
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.o
+
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.i: home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.i
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.i
+
+# target to preprocess a source file
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.i
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.i
+
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.s: home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.s
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.s
+
+# target to generate assembly for a file
+home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/vgaPico2.dir/build.make CMakeFiles/vgaPico2.dir/home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.s
+.PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.c.s
 
 home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.o: home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.c.o
 .PHONY : home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.o
@@ -1781,6 +1829,9 @@ help:
 	@echo "... cursor.o"
 	@echo "... cursor.i"
 	@echo "... cursor.s"
+	@echo "... eeprom.o"
+	@echo "... eeprom.i"
+	@echo "... eeprom.s"
 	@echo "... font.o"
 	@echo "... font.i"
 	@echo "... font.s"
@@ -1844,6 +1895,9 @@ help:
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.o"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.i"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_gpio/gpio.s"
+	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.o"
+	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.i"
+	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_i2c/i2c.s"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.o"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.i"
 	@echo "... home/pdsilva/.pico-sdk/sdk/2.2.0/src/rp2_common/hardware_irq/irq.s"

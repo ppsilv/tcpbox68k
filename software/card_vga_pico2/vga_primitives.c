@@ -40,18 +40,18 @@ typedef struct  {
     uint8_t* vga_data_array;    
 }vga_text_private_t;
 
-
-
 static vga_t * vga = NULL ;
 
-
-static void set_vga_data_array(uint8_t video_data_array[])
-{
-  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
-  priv->vga_data_array = &video_data_array[0];  
-} 
-
-void clrscr(){
+void PANIC(){
+  panic("Erro critico no sistema!");
+  while(1){
+    
+  }
+}
+vga_t * get_vga(){
+    return vga;
+}
+static void clrscr(){
   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 
   memset(&priv->vga_data_array[0], 0, priv->txcount) ;
@@ -59,6 +59,54 @@ void clrscr(){
   priv->cursor->x = 0 ;
   priv->cursor->y = 0 ;
 }
+
+static void set_vga_data_array(uint8_t video_data_array[])
+{
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
+  priv->vga_data_array = &video_data_array[0];  
+} 
+
+static void set_vga_home(void){
+  vga->setTextCursorPos(0,0);
+}
+
+static void set_vga_mode(uint8_t mode){
+  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
+
+  switch(mode){
+    case MODE_TEXT_40_S:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_TEXT_40_F:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_TEXT_80_S:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    case MODE_TEXT_80_F:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    case MODE_320x240:
+      priv->width = 320;
+      priv->height= 240;
+      break;
+    case MODE_640x480:
+      priv->width = 640;
+      priv->height= 480;
+      break;
+    default:
+      priv->width = 640;
+      priv->height= 480;
+      mode = MODE_TEXT_40_S;
+      break;
+
+  }
+}
+
 
 /*
 static void pchar(char c){
@@ -338,12 +386,7 @@ static void setTextCursorBlink(bool b) {
 //  vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
 //  priv->textcolor = priv->textbgcolor = c;
 //}
-void set_vga_home(void){
-  vga->setTextCursorPos(0,0);
-}
-void set_vga_mode(uint8_t mode){
 
-}
 
 static void setTextColor(char c, char b) {
   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
@@ -362,6 +405,35 @@ static void printString(char* str){
         tft_write(*str++);
     }
 }
+
+static void printString1(char* str,int32_t num){
+  uint8_t buf[8+1];
+  while (*str){
+      tft_write(*str++);
+  }
+  sprintf(buf,"%x",num);
+  uint8_t size = sizeof(buf);
+  buf[--size]='\0';
+  uint8_t i=0;
+  while(buf[i]){
+    tft_write(buf[i++]);
+  }
+  tft_write('\n');
+}
+static void printString2(char* str,int32_t num){
+  uint8_t buf[8+1];
+  while (*str){
+      tft_write(*str++);
+  }
+  sprintf(buf,"%x",num);
+  uint8_t size = sizeof(buf);
+  buf[--size]='\0';
+  uint8_t i=0;
+  while(buf[i]){
+    tft_write(buf[i++]);
+  }
+}
+
 
 static void setTextColorBig(color_t color, char background) {
   vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
@@ -414,11 +486,17 @@ char vga_video_data_array1[TXCOUNT];
 char *active_buffer = (char *)&vga_video_data_array0[0];
 unsigned char buffer=0;
 font_t *font;
+
+
 //ESTA FUNÇÃO ESTÁ OK PARA 320 TESTADO 26/03
 vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t txcount,font_t * font1){
   vga = (vga_t*)malloc(sizeof(vga_t));
   vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
-  
+  if (!vga || !priv) {
+      free(vga);
+      free(priv);
+      return NULL;
+  }
   font = set_font(FONTE_8X16);
     // Initialize the VGA screen
   initVGA(  &active_buffer, TXCOUNT , mode) ;
@@ -428,11 +506,6 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
       mode == MODE_320x240
     ){
     init_vga_320x200();
-  }
-  if (!vga || !priv) {
-      free(vga);
-      free(priv);
-      return NULL;
   }
   vga->_private = priv;
   
@@ -452,38 +525,7 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
 
   vga->screen_mode = mode;
 
-  switch(mode){
-    case MODE_TEXT_40_S:
-      priv->width = 320;
-      priv->height= 240;
-      break;
-    case MODE_TEXT_40_F:
-      priv->width = 320;
-      priv->height= 240;
-      break;
-    case MODE_TEXT_80_S:
-      priv->width = 640;
-      priv->height= 480;
-      break;
-    case MODE_TEXT_80_F:
-      priv->width = 640;
-      priv->height= 480;
-      break;
-    case MODE_320x240:
-      priv->width = 320;
-      priv->height= 240;
-      break;
-    case MODE_640x480:
-      priv->width = 640;
-      priv->height= 480;
-      break;
-    default:
-      priv->width = 640;
-      priv->height= 480;
-      mode = MODE_TEXT_40_S;
-      break;
-
-  }
+  set_vga_mode(mode);
 
   vga->printString = printString;
   vga->setTextColor = setTextColor;
@@ -499,8 +541,134 @@ vga_t* create_screen(screenMode_t mode){ //,uint8_t active_buffer1[],uint32_t tx
   vga->set_vga_mode = set_vga_mode;
   vga->pchar = tft_write;
   vga->set_vga_data_array = set_vga_data_array;
+  vga->printString1 = printString1;
+  vga->printString2 = printString2;
 
   return vga;
 }
+/*
+extern vga_t *vga;
 
- 
+
+void change_modeold(uint8_t mode){
+    // 1. Libera APENAS o que é dinâmico dentro do private, se houver
+    vga_text_private_t* priv = (vga_text_private_t*)vga->_private;
+    if(priv->cursor) {
+        // Se o cursor foi alocado dinamicamente, libere aqui
+        // free(priv->cursor); 
+    }
+
+    // 2. Em vez de free(vga), vamos apenas "reconfigurar"
+    // Pode ser necessário parar os PIOs/DMA antes de mudar o modo
+    // stop_vga_dma(); 
+    char buf[8];
+    sprintf(buf,"\nmode [%d]\n",mode);
+    vga->printString(buf);
+    vga->printString("Chamando initVGA\n");
+    // 3. Chame as rotinas de inicialização de hardware para o novo modo
+    initVGA(&active_buffer, TXCOUNT, mode);
+    
+    vga->printString("Se modo 320p chama init vga 32-x200\n");
+    if(mode == MODE_TEXT_40_S || mode == MODE_TEXT_40_F || mode == MODE_320x240) {
+        init_vga_320x200();
+    }
+
+    // 4. Atualize os campos de estado do vga e o modo
+    vga->printString("Configurando mode");
+    vga->screen_mode = mode;
+    set_vga_mode(mode);
+    
+    // Atualize as fontes e masks no priv existente sem dar free nele
+    font = set_font(FONTE_8X16);
+    priv->font.height = font->height;
+    // ... atualizar demais campos do priv ...
+}
+
+
+// Esta função deve ser chamada APENAS UMA VEZ no seu main.c
+vga_t* create_vga_instance() {
+    vga_t* instance = (vga_t*)malloc(sizeof(vga_t));
+    vga_text_private_t* priv = (vga_text_private_t*)malloc(sizeof(vga_text_private_t));
+
+    if (!instance || !priv) {
+        free(instance);
+        free(priv);
+        return NULL;
+    }
+
+    // Link fixo entre a estrutura principal e a privada
+    instance->_private = priv;
+
+    // Atribuição fixa dos ponteiros de função (vtable manual)
+    instance->printString = printString;
+    instance->setTextColor = setTextColor;
+    instance->getTextColor = getTextColor;
+    instance->getTextSize = getTextSize;
+    instance->setTextCursorPos = setTextCursor;
+    instance->clrscr = clrscr;
+    instance->setTextCursorVisible = setTextCursorVisible;
+    instance->setTextCursorBlink = setTextCursorBlink;
+    instance->get_blink_interval = get_blink_interval;
+    instance->set_blink_interval = set_blink_interval;
+    instance->set_vga_home = set_vga_home;
+    instance->set_vga_mode = set_vga_mode;
+    instance->pchar = tft_write;
+    instance->set_vga_data_array = set_vga_data_array;
+
+    return instance;
+}
+
+// Esta é a função que faz o trabalho pesado de trocar o modo sem dar free
+void vga_setup_mode(vga_t* instance, screenMode_t mode) {
+    if (!instance) return;
+
+    vga_text_private_t* priv = (vga_text_private_t*)instance->_private;
+
+    // 1. Configuração de Hardware (Para o PIO/DMA antes de mudar)
+    // Se você tiver uma função para parar o DMA, chame-a aqui.
+    
+    font = set_font(FONTE_8X16);
+    initVGA(&active_buffer, TXCOUNT, mode);
+
+    if (mode == MODE_TEXT_40_S || mode == MODE_TEXT_40_F || mode == MODE_320x240) {
+        init_vga_320x200();
+    }
+
+    // 2. Atualização dos dados de controle (sem malloc!)
+    priv->cursor = create_default_cursor(); 
+    priv->textcolor = WHITE;
+    priv->textbgcolor = BLACK;
+    priv->font.name = font->name;
+    priv->font.width = font->width;
+    priv->font.height = font->height;
+    priv->font.size = font->size;
+    priv->font.data = font->name;
+    priv->tabspace = 4;
+    priv->txcount = TXCOUNT;
+    priv->topmask = 0b00001111;
+    priv->bottommask = 0b11110000;
+    priv->vga_data_array = &active_buffer[0];
+
+    instance->screen_mode = mode;
+    set_vga_mode(mode);
+}
+*/
+
+#include "eeprom.h"
+extern sys_config_t vga_nvc_config;
+
+void change_mode(screenMode_t mode) {
+    
+//  pio_clear_instruction_memory(pio0);
+//  pio_clear_instruction_memory(pio1);  
+
+  eeprom_load_config(&vga_nvc_config);
+  char buf[64];
+  sprintf(buf,"Antes da configuracao: [%d]\n",(int8_t)vga_nvc_config.video_mode);
+  vga->printString(buf);
+  vga_nvc_config.video_mode = mode;  
+  eeprom_save_config(&vga_nvc_config);
+  sprintf(buf,"Depois da configuracao:[%d]\n",(int8_t)vga_nvc_config.video_mode);
+  vga->printString(buf);
+
+}

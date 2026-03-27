@@ -36,7 +36,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(vgaPico2 vga.c vga_drv.c vga_primitives.c vga_bus_read.c cursor.c font.c font_8x12.c font_8x14.c font_8x16.c font_8x18.c )
+add_executable(vgaPico2 vga.c vga_drv.c vga_primitives.c vga_bus_read.c cursor.c font.c font_8x12.c font_8x14.c font_8x16.c font_8x18.c eeprom.c)
 
 pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga320p_hsync.pio)
 pico_generate_pio_header(vgaPico2 ${CMAKE_CURRENT_SOURCE_DIR}/vga320p_vsync.pio)
@@ -70,6 +70,8 @@ target_link_libraries(vgaPico2
     hardware_irq
     pico_multicore
     m
+    hardware_i2c
+    hardware_watchdog
 )
 pico_add_extra_outputs(vgaPico2)
 

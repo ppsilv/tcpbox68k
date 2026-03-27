@@ -10,6 +10,7 @@
 #include "colors.h"
 #include "vga_bus_read.h"
 #include "hardware/pio.h"
+#include "eeprom.h"
 
 vga_t *vga = NULL ;
 
@@ -26,6 +27,7 @@ uint16_t cursor_x = 0;
 uint16_t cursor_y = 0;
 uint8_t  text_color = 0;
 uint8_t  bg_color = 0;
+sys_config_t vga_nvc_config;
 
 //Prototypes
 void drawPixel(short x, short y, color_t color) ;
@@ -86,8 +88,8 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
         PT_YIELD_INTERVAL(1) ;
         data=0x00;reg=0x00;
         if( bus_try_get_event(&data,&reg,bus_pio1, bus_sm) == true ){
-            //sprintf(buf,"dat:%02X reg:%02X\n",data,reg);
-            //vga->printString(buf);
+           // sprintf(buf,"dat:%02X reg:%02X\n",data,reg);
+           // vga->printString(buf);
             switch(reg){    
                 case D_RUN_CMD:
                     switch(data){
@@ -105,8 +107,9 @@ static PT_THREAD (protothread_print_bus_read(struct pt *pt))
                     }
                     break;
                 case D_SET_MODE:                //0x12
-                    break;
-                case D_SET_HOME:                //0x13                    
+                    sprintf(buf,"\n\nSe voce ver isso, nao funcionou data: [%d]\n",data);
+                    vga->printString(buf);
+                    change_mode((screenMode_t)data);
                     break;
                 case D_SET_TXT_COLOR:
                     text_color = (data>>4) & 0x0F;
@@ -178,10 +181,20 @@ int main(){
 
     // start the serial i/o
     stdio_init_all() ;
+    // Start i2c bus
+    pico_i2c_init();
     // start bus read
     initReadBus_Pio();
+    // Verify if memory exists in the bus
+    eeprom_ping();
+    // load configuration
+    eeprom_load_config(&vga_nvc_config);
 
-    vga = create_screen( MODE_TEXT_80_S ); //, 0, 0, font );
+    vga = create_screen(vga_nvc_config.video_mode ); //, 0, 0, font );
+    //vga = create_vga_instance();
+    //if (vga) {
+    //    vga_setup_mode(vga, MODE_TEXT_80_S);
+    //}
 
     drawHLine(0,0,640,YELLOW);
     drawHLine(0,1,640,YELLOW);
@@ -189,6 +202,23 @@ int main(){
     drawHLine(0,3,640,YELLOW);
 
     video_welcome_screen();
+    // Show eeprom status
+    print_mem_status();
+    //void i2c_scanner();
+
+    uint8_t byte = eeprom_read_byte(0);
+    vga->printString1("byte_0 = ",byte);
+    byte = eeprom_read_byte(1);
+    vga->printString1("byte_1 = ",byte);
+    byte = eeprom_read_byte(2);
+    vga->printString1("byte_2 = ",byte);
+    byte = eeprom_read_byte(3);
+    vga->printString1("byte_3 = ",byte);
+    byte = eeprom_read_byte(4);
+    vga->printString1("byte_4 = ",byte);
+    byte = eeprom_read_byte(5);
+    vga->printString1("byte_5 = ",byte);
+
 
   // === config threads ========================
   // for core 0
