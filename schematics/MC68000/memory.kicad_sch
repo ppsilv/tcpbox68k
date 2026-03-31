@@ -9965,6 +9965,16 @@
 		)
 		(uuid "b838c54d-d117-43a1-8c49-fa95febd8ebf")
 	)
+	(wire
+		(pts
+			(xy 266.7 127) (xy 271.78 127)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b85e5162-8f33-4b7a-a7e5-2ee008e45fe2")
+	)
 	(bus
 		(pts
 			(xy 236.22 29.21) (xy 236.22 31.75)
@@ -9984,6 +9994,16 @@
 			(type default)
 		)
 		(uuid "b9474ca5-de4d-4700-9e47-5116fb90f6b6")
+	)
+	(wire
+		(pts
+			(xy 106.68 123.19) (xy 99.06 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b9fd70dd-fcad-40f4-b4d9-6d6735c01a6f")
 	)
 	(wire
 		(pts
@@ -13008,7 +13028,7 @@
 		)
 	)
 	(global_label "{slash}IO_CS"
-		(shape input)
+		(shape output)
 		(at 106.68 120.65 0)
 		(fields_autoplaced yes)
 		(effects
@@ -13117,8 +13137,52 @@
 			)
 		)
 	)
-	(global_label "{slash}ROM_CE"
+	(global_label "{slash}CH376S"
 		(shape input)
+		(at 271.78 127 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5c2821fc-f619-47c5-b046-56c6a7174514")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 283.5342 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "{slash}CH376S"
+		(shape output)
+		(at 106.68 123.19 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5fbc8bf5-ce54-4238-9f1b-7546160e9a15")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 118.4342 123.19 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "{slash}ROM_CE"
+		(shape output)
 		(at 106.68 118.11 0)
 		(fields_autoplaced yes)
 		(effects
@@ -13162,7 +13226,7 @@
 		)
 	)
 	(global_label "{slash}DTACK"
-		(shape input)
+		(shape output)
 		(at 106.68 135.89 0)
 		(fields_autoplaced yes)
 		(effects
@@ -13250,7 +13314,7 @@
 		)
 	)
 	(global_label "LEDS"
-		(shape input)
+		(shape output)
 		(at 106.68 133.35 0)
 		(fields_autoplaced yes)
 		(effects
@@ -13272,7 +13336,7 @@
 		)
 	)
 	(global_label "{slash}RAM1CS_H"
-		(shape input)
+		(shape output)
 		(at 106.68 125.73 0)
 		(fields_autoplaced yes)
 		(effects
@@ -13294,7 +13358,7 @@
 		)
 	)
 	(global_label "{slash}RAM1CS_L"
-		(shape input)
+		(shape output)
 		(at 106.68 128.27 0)
 		(fields_autoplaced yes)
 		(effects
