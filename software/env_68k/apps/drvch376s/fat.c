@@ -26,7 +26,26 @@
 #define CMD_CHECK_EXIST   0x06
 #define CMD_SET_USB_MODE  0x15
 
-void test_ch376() {
+void long_pause() {
+    // Aproximadamente 210ms a 16MHz
+    // Usando 187000 para arredondar a margem de erro do C
+    volatile uint32_t i;
+    for(i = 0; i < 187000; i++);
+}
+
+void medium_pause() {
+    // Aproximadamente 100ms
+    volatile uint32_t i;
+    for(i = 0; i < 89000; i++);
+}
+
+void short_pause() {
+    // Pausa técnica para comandos rápidos (micro-pausa)
+    volatile uint32_t i;
+    for(i = 0; i < 500; i++);
+}
+
+void check_module_exists() {
     unsigned char test_val = 0x55;
     unsigned char res;
 
@@ -43,6 +62,11 @@ void test_ch376() {
         printf("ERRO: Leu 0x%02X. Verifique GAL e fiaçao.\n", res);
     }
 }
+
+void reset_ch376_module(){
+    
+}
+
 
 void write_cmd(unsigned char cmd) {
     CH376_DELAY();
