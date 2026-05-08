@@ -31,18 +31,18 @@ Linker script and memory map
  *(.rodata .rodata.*)
                 0x00001dec                        . = ALIGN (0x2)
 
-.data           0x00001dec      0x584
+.data           0x00001dec      0x588
                 0x00001dec                        __data_load = LOADADDR (.data)
                 0x00001dec                        __data_start = .
  *(.data .data.*)
- .data          0x00001dec      0x584 monitor.o
-                0x00002370                        . = ALIGN (0x2)
-                0x00002370                        __data_end = .
+ .data          0x00001dec      0x588 monitor.o
+                0x00002374                        . = ALIGN (0x2)
+                0x00002374                        __data_end = .
 
-.checksum       0x00002370        0x4
-                0x00002370                        . = ALIGN (0x2)
-                0x00002370                        __checksum_addr = .
-                0x00002370        0x4 LONG 0x0
+.checksum       0x00002374        0x4
+                0x00002374                        . = ALIGN (0x2)
+                0x00002374                        __checksum_addr = .
+                0x00002374        0x4 LONG 0x0
 
 .bss            0x00080000     0x2550
                 0x00080000                        __bss_start = .
