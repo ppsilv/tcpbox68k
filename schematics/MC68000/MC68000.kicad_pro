@@ -283,7 +283,7 @@
     "netclass_patterns": [
       {
         "netclass": "Default",
-        "pattern": "/CPU/{slash}E"
+        "pattern": "slash"
       }
     ]
   },
