@@ -6846,7 +6846,7 @@
 		)
 		(uuid "86cca84d-3110-43d3-8b21-76e3e236448b")
 	)
-	(label "{slash}bLDS"
+	(label "{slash}bUDS"
 		(at 111.76 105.41 0)
 		(effects
 			(font
