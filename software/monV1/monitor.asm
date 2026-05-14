@@ -1905,7 +1905,7 @@ DumpHeader1:
     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 MSGINIT:
-    DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).V1.0",13,10
+    DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).VBug1.0",13,10
     DC.B    "MC68000 System Monitor",13,10
     INCLUDE "build_date.inc"
     INCLUDE "build_counter.inc"

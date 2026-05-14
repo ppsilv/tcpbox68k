@@ -6836,6 +6836,16 @@
 		)
 		(uuid "86cca84d-3110-43d3-8b21-76e3e236448b")
 	)
+	(label "{slash}bUDS"
+		(at 111.76 105.41 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "894f218d-72ea-4963-9a95-27d145c785c8")
+	)
 	(label "bA1"
 		(at 139.7 41.91 0)
 		(effects
