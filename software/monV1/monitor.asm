@@ -510,7 +510,7 @@ UART_INIT:
         move.b  #%10000011,LCR(a1)      ; 8 data bits, no parity, 1 stop bit, DLAB=1
         move.b  #BAUD_DIV_L,DLL(a1)     ; set divisor latch low byte
         move.b  #BAUD_DIV_U,DLM(a1)     ; set divisor latch high byte
-        bclr.b  #3,LCR(a1)              ; disable divisor latch 2026/04 bob alterou de 7 para 3
+        bclr.b  #7,LCR(a1)              ; disable divisor latch
         clr.b   SCR(a1)                 ; clear the scratch register
         RTS
 
@@ -525,7 +525,7 @@ UART_INIT1:
         move.b  D0,DLL(A1)              ; Byte 0 (LSB) -> DLL
         lsr.l   #8,D0                   ; Shift right 8 bits
         move.b  D0,DLM(A1)              ; Byte 1 (agora no LSB) -> DLM
-        bclr.b  #3,LCR(a1)              ; disable divisor latch 2026/04 bob alterou de 7 para 3
+        bclr.b  #7,LCR(a1)              ; disable divisor latch
         clr.b   SCR(a1)                 ; clear the scratch register
         RTS
 
@@ -1905,7 +1905,7 @@ DumpHeader1:
     DC.B    "Address   00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F  ASCII",13,10
     DC.B    "--------  -----------------------------------------------  ----------------",13,10,0
 MSGINIT:
-    DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(pgordao).VBug1.0",13,10
+    DC.B    13,10,"Tcpbox68k - copyright (C) pdsilva(aka pgordao).VBug1.0 2620",13,10
     DC.B    "MC68000 System Monitor",13,10
     INCLUDE "build_date.inc"
     INCLUDE "build_counter.inc"
