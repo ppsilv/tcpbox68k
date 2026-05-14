@@ -197,31 +197,12 @@ int verify_start() {
         SCRATCH_REASON_REG = MAGIC_WARM_BOOT;
     }
 }
-/*
-
- Resumo para consulta rápida:
-+------------------------------------------------------------------------------------+
-| Instrução | O que faz           | Por que é proibida no User Mode?                  |
-+------------------------------------------------------------------------------------+
-| STOP      | Para a CPU.         | Evita que o usuário "mate" o sistema.             | 
-| RESET     | Reseta o barramento.| Evita que o usuário resete o disco ou a VGA.      |
-| RTE       | Volta de exceção.   | Poderia alterar o nível de privilégio ilegalmente.|
-| MOVE to SR| Altera Status.      | Impede o usuário de desabilitar interrupções.     |
-| MOVE USP  | Mexe no Stack       | O usuário não deve gerenciar ponteiros de sistema.| 
-+------------------------------------------------------------------------------------+
-Escreva o dado $AA no endereço $1555
-Escreva o dado $55 no endereço $0AAA
-Escreva o dado $90 no endereço $1555
-Nota importante: Esses endereços são relativos ao início da ROM. Se sua ROM começa em $F00000, você soma esse valor.
-2. O que acontece depois?
-Após essa sequência, a 28C64 entra no modo de identificação. Agora, se o 68000 ler os dois primeiros bytes da ROM:
-Endereço $0000: Retorna o Manufacturer Code (Ex: $1F para Atmel).
-Endereço $0001: Retorna o Device Code (Ex: $64 para a 28C64).
-*/
+void dump(uint8_t addr,uint8_t size);
 int main(){
 
     // set the clock
-    set_sys_clock_khz(150000, true);
+    set_sys_clock_khz(300000, true);
+
     // start the serial i/o
     stdio_init_all() ;
     //verify what start type is
@@ -230,29 +211,32 @@ int main(){
     pico_i2c_init();
     // start bus read
     initReadBus_Pio();
+    
     // Verify if memory exists in the bus
     eeprom_ping();
     // load configuration
     eeprom_load_config(&vga_nvc_config);
 
+    set_sys_clock_khz(150000, true);
     if( is_coldstart ){
         vga = create_screen( MODE_TEXT_80_S ); //, 0, 0, font );
         video_mode = MODE_TEXT_80_S;
     }else{
         vga = create_screen(vga_nvc_config.video_mode ); //, 0, 0, font );
         video_mode = vga_nvc_config.video_mode;
-    }        
+    }      
+      
 
-    drawHLine(0,0,640,YELLOW);
-    drawHLine(0,1,640,YELLOW);
-    drawHLine(0,2,640,YELLOW);
-    drawHLine(0,3,640,YELLOW);
+    drawHLine(0,48,640,YELLOW);
+    drawHLine(0,49,640,YELLOW);
+    drawHLine(0,50,640,YELLOW);
+    drawHLine(0,51,640,YELLOW);
 
     video_welcome_screen();
     // Show eeprom status
     print_mem_status();
     //void i2c_scanner();
-
+/*
     uint8_t byte = eeprom_read_byte(0);
     vga->printString1("byte_0 = ",byte);
     byte = eeprom_read_byte(1);
@@ -265,7 +249,8 @@ int main(){
     vga->printString1("byte_4 = ",byte);
     byte = eeprom_read_byte(5);
     vga->printString1("byte_5 = ",byte);
-
+*/
+    dump(0,64);
 
   // === config threads ========================
   // for core 0

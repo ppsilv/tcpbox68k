@@ -137,12 +137,20 @@ void i2c_scanner(){
 }
 
 void dump(uint8_t addr,uint8_t size){
-    uint8_t j=0;
+    uint8_t j=0,data;
+    get_vga()->printString2("Dumping ",size); 
+    get_vga()->printString("Hexa bytes from i2c memory.\n"); 
     for(uint8_t i=0; i < size; i++){
-        get_vga()->printString2(" ", eeprom_read_byte(i));
+        data = eeprom_read_byte(i);
+        if ( data <= 0x0F){
+            get_vga()->printString("0"); 
+        }
+        get_vga()->printString2("", data);
+        get_vga()->printString(" "); 
         j++;
-        if( j==16 ){
+        if( j==8 ){
             get_vga()->printString("\n");
+            j=0;
         }
     }
 }

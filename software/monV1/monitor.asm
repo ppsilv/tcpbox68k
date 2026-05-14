@@ -510,7 +510,7 @@ UART_INIT:
         move.b  #%10000011,LCR(a1)      ; 8 data bits, no parity, 1 stop bit, DLAB=1
         move.b  #BAUD_DIV_L,DLL(a1)     ; set divisor latch low byte
         move.b  #BAUD_DIV_U,DLM(a1)     ; set divisor latch high byte
-        bclr.b  #7,LCR(a1)              ; disable divisor latch
+        bclr.b  #3,LCR(a1)              ; disable divisor latch 2026/04 bob alterou de 7 para 3
         clr.b   SCR(a1)                 ; clear the scratch register
         RTS
 
@@ -525,7 +525,7 @@ UART_INIT1:
         move.b  D0,DLL(A1)              ; Byte 0 (LSB) -> DLL
         lsr.l   #8,D0                   ; Shift right 8 bits
         move.b  D0,DLM(A1)              ; Byte 1 (agora no LSB) -> DLM
-        bclr.b  #7,LCR(a1)              ; disable divisor latch
+        bclr.b  #3,LCR(a1)              ; disable divisor latch 2026/04 bob alterou de 7 para 3
         clr.b   SCR(a1)                 ; clear the scratch register
         RTS
 

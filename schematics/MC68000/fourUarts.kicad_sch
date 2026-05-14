@@ -18474,6 +18474,7 @@
 	(symbol
 		(lib_id "74xx:74LS04")
 		(at 172.72 240.03 0)
+		(at 44.45 262.89 0)
 		(unit 3)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -18482,6 +18483,7 @@
 		(uuid "0cfb7ffd-c578-4001-a64b-79b3a2071471")
 		(property "Reference" "U25"
 			(at 177.8 241.554 0)
+			(at 44.45 254 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18590,6 +18592,7 @@
 		(uuid "18663e32-c106-4b51-b9bd-8ab6046c5cd9")
 		(property "Reference" "U25"
 			(at 128.27 241.554 0)
+			(at 121.92 213.36 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21112,6 +21115,9 @@
 		(lib_id "Device:C")
 		(at 109.22 250.19 180)
 		(unit 1)
+		(lib_id "74xx:74LS04")
+		(at 118.11 170.18 0)
+		(unit 2)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -21187,6 +21193,7 @@
 		(uuid "91ad212a-55a1-4aa1-94f0-e255f56203a2")
 		(property "Reference" "U25"
 			(at 151.13 242.062 0)
+			(at 118.11 161.29 0)
 			(effects
 				(font
 					(size 1.27 1.27)

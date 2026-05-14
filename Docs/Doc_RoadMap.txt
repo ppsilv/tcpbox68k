@@ -55,3 +55,11 @@ que travam — algo que o MS-DOS nunca conseguiu fazer direito!
 **Você já pensou em como vai armazenar os arquivos?** (Cartão SD via Pico, uma 
 memória Flash extra no barramento ou vai ficar só na RAM por enquanto?) Com 1.5 MB 
 dá até para criar um "RAM Disk" gigante!
+
+
+Esse meu projeto nessas placas atuais, é como um protótipo para o projeto final, eu já tenho um novo rack(maior) eu desenhei a placa e mandei para fabricante de placas já chegou ele está com fonte -5, +5 e +12 e o barramento tem 96 pinos vou usar conector euro 96, como tem pino de sobra posso usar o mesmo rack para TM9900 que é meu próximo projeto, e Z80 , não pretendo ter todas as cpus ao mesmo tempo no barramento, porém tenciono usar a mesma placa de memoria, logico 4MB para Z80 ou TM9900 é mais que eles conseguem usar, mas para desenvover software e outras coisas não preciso fazer nova placa, a placa de serial sera a mesma a placa de video a Vpico2 312k será a mesma.
+
+e quando voce falou da memoria SST eu me lembrei que tenho dessas memorias, tenho muitas 39VF010 39SF512 e achei uma SRAM maravilhos da ISSI IS61C1024 128K de 12ns de acesso um verdadeiro foguete e como ela é muito menor que a dip que estou usando posso colocar 4 delas pelo mesmo espaço das outras grandonas. no desenho da próxima placa vou usá-las
+
+
+
