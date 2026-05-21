@@ -1,17 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <mc68000.h>
-
-#define LEDS_ADDRESS 0x4400
-#define LEDS (*(volatile unsigned char *)LEDS_ADDRESS)
-
-/*
-UART1 - 0x4000 até 0x20FF = UART_CS1                  
-UART2 - 0x4100 até 0x21FF = UART_CS2                                                   
-UART3 - 0x4200 até 0x22FF = UART_CS3                                                   
-UART4 - 0x4300 até 0x23FF = UART_CS4
-*/
 
 #define UART_KEYBOARD 0x4300
 
@@ -32,90 +23,21 @@ UART4 - 0x4300 até 0x23FF = UART_CS4
 #define IIR   ISR // interrupt identification register
 #define SCR   SPR // scratch register
 
+unsigned char shift_status = 0;
+unsigned char ctrl_status = 0;
+unsigned char alt_status = 0;
+unsigned char modifier = 0;
+unsigned char _CapsFlag = 0;
+
+unsigned char get_keypress(); 
+void set_keyboard_leds(unsigned char led_status);
+
 void delay(unsigned int time) {
     for (volatile unsigned int i = 0; i < time; i++);
 }
 
-// Função para verificar stack
-void check_stack(void) {
-    unsigned long stack_val;
-    asm volatile (
-        "move.l %%sp, %0\n\t"
-        : "=r" (stack_val)
-    );
-    printf("Stack pointer: 0x%08X\n", stack_val);
-}
-
-/* Definindo o endereço base da sua Video Card */
-//#define SCREEN_REG 0xB8001
-#define S1_REG 0xB8003
-#define S2_REG 0xB8005
-#define S3_REG 0xB8007
-//#define CONFIG_REG 0xB8009
-
-
-//Register address
-#define WRITE_SCREEN   0xB8001        //Endereço real  3 0x03  o pico enxerga 0x00
-#define REG_02         0xB8003        //Endereço real  3 0x03  o pico enxerga 0x01
-#define REG_03         0xB8005        //Endereço real  5 0x05  o pico enxerga 0x02
-#define REG_04         0xB8007        //Endereço real  7 0x07  o pico enxerga 0x03
-#define CONFIG_REG     0xB8009        //Endereço real  9 0x09  o pico enxerga 0x04
-#define REG_06         0xB800b        //Endereço real 11 0x0b  o pico enxerga 0x05
-#define REG_07         0xB800d        //Endereço real 13 0x0d  o pico enxerga 0x06
-#define REG_08         0xB800f        //Endereço real 15 0x0f  o pico enxerga 0x07
-#define REG_09         0xB8011        //Endereço real 17 0x11  o pico enxerga 0x08
-#define REG_0A         0xB8013        //Endereço real 19 0x13  o pico enxerga 0x09
-#define REG_0B         0xB8015        //Endereço real 21 0x15  o pico enxerga 0x0A
-#define REG_0C         0xB8017        //Endereço real 23 0x17  o pico enxerga 0x0B
-#define REG_0D         0xB8019        //Endereço real 25 0x19  o pico enxerga 0x0C
-#define REG_0E         0xB801b        //Endereço real 27 0x1b  o pico enxerga 0x0D
-#define REG_0F         0xB801d        //Endereço real 29 0x1d  o pico enxerga 0x0E
-#define REG_10         0xB801f        //Endereço real 31 0x1f  o pico enxerga 0x0F
-#define REG_11         0xB8021        //Endereço real 33 0x21  o pico enxerga 0x10
-#define REG_12         0xB8023        //Endereço real 35 0x23  o pico enxerga 0x11
-#define REG_13         0xB8025        //Endereço real 37 0x25  o pico enxerga 0x12
-#define SET_MODE       0xB8027        //Endereço real 39 0x27  o pico enxerga 0x13 (0=Texto+Scroll, 1=Texto Fixo, 2=320x200, 3=640x200)
-#define SET_TXT_COLOR  0xB8029        //Endereço real 41 0x29  o pico enxerga 0x14
-#define CHANGE_CUR_POS 0xB802b        //Endereço real 43 0x2b  o pico enxerga 0x15
-#define REG_X_HIGH     0xB802d        //Endereço real 45 0x2d  o pico enxerga 0x16
-#define REG_X_LOW      0xB802f        //Endereço real 47 0x2f  o pico enxerga 0x17
-#define REG_Y_HIGH     0xB8031        //Endereço real 49 0x31  o pico enxerga 0x18
-#define REG_Y_LOW      0xB8033        //Endereço real 51 0x33  o pico enxerga 0x19
-#define CHANGE_BUFFER  0xB8035        //Endereço real 53 0x35  o pico enxerga 0x1A
-#define SELECT_SCREEN  0xB8037        //Endereço real 55 0x37  o pico enxerga 0x1B
-#define SET_HORIZONTAL 0xB8039        //Endereço real 57 0x39  o pico enxerga 0x1C
-#define SET_VERTICAL   0xB803b        //Endereço real 59 0x3b  o pico enxerga 0x1D
-#define RUN_CMD        0xB803d        //Endereço real 61 0x3d  o pico enxerga 0x1E
-#define CORINGA        0xB803f        //Endereço real 63 0x3f  o pico enxerga 0x1F
-
-
-
-
-
-//Commands
-#define CMD_SYSTEM_ENABLE   0xA5
-#define CMD_CLEAR_SCREEN    0xA4
-#define CMD_SET_CUR_POS     0xA3
-#define CMD_SET_TXT_COLOR   0xA2
-#define CMD_GO_HOME         0xA1
-
-unsigned char *vga_run_cmd = (unsigned char *)RUN_CMD;
-
 #define BAUD_DIV_L  0x08 //(BAUD_DIV&$FF)
 #define BAUD_DIV_U  0x00 //((BAUD_DIV>>8)&$FF)
-
-
-void init_uart999(){
-    unsigned char *uart_reg = (unsigned char *)UART_KEYBOARD;
-    *(uart_reg+LCR) = 0x83;          // 8 data bits, no parity, 1 stop bit, DLAB=1
-    *(uart_reg+DLL) = 8; //BAUD_DIV_L;    // set divisor latch low byte
-    *(uart_reg+DLM) = 0; //BAUD_DIV_U;    // set divisor latch high byte
-    *(uart_reg+LCR) = 0x03;          // disable divisor latch     
-    *(uart_reg+FCR) = 0xC7;          // enable FIFO
-    // 4. Limpa registradores de controle
-    *(uart_reg + MCR) = 0x00;          
-    *(uart_reg + IER) = 0x00; // Garante que interrupções estão desligadas    
-}
 
 void init_uart(){
     volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
@@ -134,57 +56,24 @@ void init_uart(){
     *(uart_reg + MCR) = 0x00;          
     *(uart_reg + IER) = 0x00; // Garante que interrupções estão desligadas
 }       
-/*
-void read_uart_correta(){
+
+unsigned char read_kbd()
+{
     volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
-    unsigned char ch=0;
-//    unsigned char ch1=0x41;
-    unsigned char buf[16];
-    unsigned char size=0,start=0;
-    printf("Aguardando Loopback na UART 3...\n");
 
-    while(1){
-        // 1. Espera o transmissor ficar livre (Bit 5 = 1)
-//        while( !(*(uart_reg + LSR) & 0x20) ); 
-//        
-//        // 2. Envia o caractere
-//        *(uart_reg + THR) = ch1++;  
-//        if( ch1 > 0x80)
-//            ch1 = 0x41;
-
-        // 3. Espera o dado chegar no receptor (Bit 0 = 1)
-        // Se ficar travado aqui, a UART não está recebendo o próprio sinal no RX
-        while( !(*(uart_reg + LSR) & 0x01) ){};
-        ch = *(uart_reg + RHR);  
-        //printf("%02x ", ch);
-        if(ch == 0x57)
-            start=1;
-        if(start){
-            buf[size]=ch;
-            size++;
-            if(size == 3){
-                if( buf[2] != 0x88){
-                    size = 0;
-                    start= 0;
-                    continue;
-                }
-            }
-            if(size >=11){ 
-                size = 0;
-                start= 0;
-                if( buf[2] == 0x88){
-                    for(int i=0;i <= 11;i++){
-                        printf("%02x",buf[i]);
-                    }
-                    printf("\n");
-                }
-            }
-        }
-        // 4. Se chegou aqui, o bit subiu!
-        delay(0x00FF); 
-    }
+    while( !(*(uart_reg + LSR) & 0x01) ); 
+    return (unsigned char)*(uart_reg + RHR); 
 }
-*/
+unsigned char uart_read(){
+    return read_kbd();
+}
+void write_kbd(unsigned char data){
+    volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
+    // Tente ler a versão do chip
+    while( !(*(uart_reg + LSR) & 0x20) ){}; 
+    *(uart_reg + THR) = data;
+}
+
 // Tabela simplificada de Tradução HID para ASCII
 // Índice é o ScanCode, valor é o caractere
 const char hid2ascii[] = {
@@ -192,68 +81,132 @@ const char hid2ascii[] = {
     'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2', 
     '3', '4', '5', '6', '7', '8', '9', '0', 0x0D, 0x1B, 0x08, 0x09, ' '
 };
+unsigned char key_buffer[12];
+unsigned char key_bufferA[12];
+unsigned char key_bufferB[12];
+unsigned char cmd,length,type,new_packet=0;
+volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
 
-unsigned char get_keypress() {
-    volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
-    //unsigned char header1;
-    //unsigned char header2;
-    unsigned char scancode;
+
+ unsigned char get_0x81(){
     int i;
+    printf("Pacote 0x81\n");
+    // É o pacote de dados! 
+    // O próximo byte é o Tipo/Endereço (no seu dump veio 0x01)
+    while(!(*(uart_reg + LSR) & 0x01));
+    type = *(uart_reg + RHR);
 
-    while(1) {
-        // 1. Procura o primeiro byte do cabeçalho (0x57)
-        while(!(*(uart_reg + LSR) & 0x01)); 
-        if (*(uart_reg + RHR) != 0x57) {
-            while((*(uart_reg + LSR) & 0x01)){
-                *(uart_reg + RHR);
-            }
-            continue;
-        }
+    // O próximo byte é o Length (Tamanho do pacote que vem atrás)
+    while(!(*(uart_reg + LSR) & 0x01));
+    length = *(uart_reg + RHR);
 
-        // 2. Procura o segundo byte (0xAB)
-        while(!(*(uart_reg + LSR) & 0x01)); 
-        if (*(uart_reg + RHR) != 0xAB) {
-            while((*(uart_reg + LSR) & 0x01)){
-                *(uart_reg + RHR);
-            }
-            continue;
-        }
-        // 2. Procura o segundo byte (0x88)
-        while(!(*(uart_reg + LSR) & 0x01)); 
-        if (*(uart_reg + RHR) != 0x88){
-            while((*(uart_reg + LSR) & 0x01)){
-                *(uart_reg + RHR);
-            }
-            continue;
-        }
-
-        // 3. Se chegou aqui, o pacote é legítimo. 
-        // Vamos pular os bytes: Tipo (1), Modificador (1) e Reservado (1)
-        for(i = 0; i <= 3; i++) {
+    // Se o tamanho for 0x6A (106 bytes), é aquele Descriptor gigante!
+    // Temos que engolir ele na velocidade da luz para a FIFO não transbordar
+    if (length > 8) {
+        for(i = 0; i < length; i++) {
             while(!(*(uart_reg + LSR) & 0x01));
-            *(uart_reg + RHR); // Lê e descarta
+            *(uart_reg + RHR); // descarta
+        }
+    }
+
+    // SE CHEGOU AQUI: O tamanho é pequeno (provavelmente 8 bytes padrão de teclado HID)
+    if (length == 8) {
+        for(i = 0; i < 8; i++) {
+            while(!(*(uart_reg + LSR) & 0x01));
+            key_buffer[i] = *(uart_reg + RHR);
+            printf("[%02x ",key_buffer[i]);
         }
 
-        // 4. O sexto byte é o que nos interessa: ScanCode!
+        // Filtro para ignorar quando solta a tecla (tudo zero)
+        if (key_buffer[2] != 0) {
+            return key_buffer[2]; // Retorna o ScanCode real!
+        }
+    } else {
+        // Caso venha um tamanho inesperado, limpa para não desalinhar
+        for(i = 0; i < length; i++) {
+            while(!(*(uart_reg + LSR) & 0x01));
+            *(uart_reg + RHR);
+        }
+    }
+    return 0;
+}
+void get_0x87(){
+    int i;
+    printf("Pacote 0x87\n");
+    // É o aviso de descritor recebido. Ele manda 1 byte de tamanho depois.
+    while(!(*(uart_reg + LSR) & 0x01));
+    length = *(uart_reg + RHR);
+    
+    // Esvazia os bytes desse aviso rapidamente
+    for(i = 0; i < length; i++) {
         while(!(*(uart_reg + LSR) & 0x01));
-        scancode = *(uart_reg + RHR);
+        *(uart_reg + RHR);
+    }
+}
+void get_0x88(){
+    for(int i = 0; i < 12; i++) {
+        //while(!(*(uart_reg + LSR) & 0x01));
+        if(new_packet == 0){
+            key_bufferA[i] = read_kbd(); //*(uart_reg + RHR);
+        }
+        else{
+            key_bufferB[i] = read_kbd(); //*(uart_reg + RHR);
+        }
+    }
+    if(new_packet == 0){
+        new_packet = 1;
+        if( key_bufferA[2] > 0x00){
+            modifier = key_bufferA[2];
+        }
+       // printf("key_bufferA[4] [%02x] - ",key_bufferA[4]);
+       // printf("key_bufferA[2] [%02x]\n",key_bufferA[2]);
+    }
+}
+unsigned char get_packet(){
+    while(1) {
+        // 1. Sincroniza no primeiro byte do cabeçalho (0x57)
+        if (read_kbd() != 0x57){             
+            new_packet = 0;
+            continue;
+        }
 
-        // 5. Filtro de "Key Up": O CH9350 manda 0x00 quando soltamos a tecla.
-        // Se você quiser apenas a tecla pressionada, ignore o 0x00.
-        if (scancode != 0) {
-            return scancode;
+        // 2. Confirma o segundo byte (0xAB)
+        if ( read_kbd() != 0xAB){
+            continue;
+        }
+
+        // 3. Lê o Comando (Pelo seu dump, pode vir 0x88, 0x87 ou 0x81)
+        cmd = read_kbd(); // *(uart_reg + RHR);
+
+        if (cmd == 0x81) {
+            get_0x81();
+        }
+        if (cmd == 0x82) 
+            continue;
+        if (cmd == 0x87) {
+            get_0x87();
+        }
+        if (cmd == 0x88) {
+            get_0x88();
+        }
+        if ( new_packet == 1 ){
+            /*
+            if(key_bufferA[0] == 0x0b && key_bufferA[1] == 0x10){
+                for(int i = 0; i < 12; i++) {
+                    printf("%02x|",key_bufferA[i]);
+                }
+                printf("\n");
+            }
+            if(key_bufferB[0] == 0x0b && key_bufferB[1] == 0x10){
+                for(int i = 0; i < 12; i++) {
+                    printf("%02x|",key_bufferB[i]);
+                }
+                printf("\n");
+            }*/
+            return 0;
         }
     }
 }
- /*
-void get_version(){
-    volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
-    // Tente ler a versão do chip
-    while( !(*(uart_reg + LSR) & 0x20) ){}; *(uart_reg + THR) = 0xAB;
-    while( !(*(uart_reg + LSR) & 0x20) ){}; *(uart_reg + THR) = 0x01;
-    while( !(*(uart_reg + LSR) & 0x20) ){}; *(uart_reg + THR) = 0x57;
-    while( !(*(uart_reg + LSR) & 0x20) ){}; *(uart_reg + THR) = 0x03; // Checksum (57+AB+01)
-}*/
 void set_keyboard_leds(unsigned char led_status) {
     volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
     
@@ -266,13 +219,13 @@ void set_keyboard_leds(unsigned char led_status) {
     buf[4] = 0x00;
     buf[5] = 0x00;
     buf[6] = 0x00;
-    buf[7] = 0x02; // Report Type (Output)
-    buf[8] = led_status; // O bitmask dos LEDs (0x01, 0x02, 0x04)
+    buf[7] = led_status; // Report Type (Output)
+    buf[8] = 0x00; // O bitmask dos LEDs (0x01, 0x02, 0x04)
     buf[9] = 0x0F; // Constante de preenchimento (comum nesse protocolo)
     
     // Checksum: soma de buf[0] até buf[9]
     unsigned char ck = 0;
-    for(int i = 0; i < 10; i++) {
+    for(int i = 2; i < 10; i++) {
         ck += buf[i];
     }
     buf[10] = ck;
@@ -283,249 +236,150 @@ void set_keyboard_leds(unsigned char led_status) {
         *(uart_reg + THR) = buf[i];
     }
 }
-unsigned char keyboard_led_state=0;
-void toggle_caps_lock() {
-    // Inverte apenas o bit 1 (Caps Lock)
-    keyboard_led_state ^= 0x02; 
-    set_keyboard_leds(keyboard_led_state);
-}
-/*
-void set_transparent_mode() {
-    volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
+unsigned char get_kbd_key(char mod, unsigned char code);
 
-    // Array com o comando completo: Header(57 AB), Cmd(01), Param(00), Checksum(01)
-    unsigned char cmd[] = {0x57, 0xAB, 0x01, 0x00, 0x01};
-
-    for(int i = 0; i < 5; i++) {
-        // Aguarda o Line Status Register (LSR) indicar que o 
-        // Transmitter Holding Register (THR) está vazio (bit 5 - 0x20)
-        while (!(uart_reg[LSR] & 0x20)); 
-        
-        // Escreve o byte no Transmit Holding Register
-        uart_reg[THR] = cmd[i];
-    }
-}*/
-void main_loop() {
+void main() {
+    unsigned char ch;
     init_uart();
     //set_transparent_mode();
     printf("Desligando led...");
     delay(0x8FF);
     printf("\nOrion68K Online. Digite algo:\n");
-    set_keyboard_leds(0x02);
-//    get_version();
-//    while(1){
-//        read_uart_correta();
-//    }
-    while(1) {
-        unsigned char code = get_keypress();
-        
-        // Traduz para ASCII usando a tabela
-        if (code < sizeof(hid2ascii)) {
-            char c = hid2ascii[code];
-            if (c != 0) {
-                printf("%c", c); // Ecoa no terminal do console
-            }
-        }
-    }
-}
-void vga_set_txt_mode(unsigned char mode){
-    unsigned char *config_reg_txt_mode = (unsigned char *)SET_MODE;
+    //set_keyboard_leds(0x02);
 
-    *config_reg_txt_mode = (unsigned char)mode;
-
-}
-
-void vga_set_x(unsigned short x) {
-    unsigned char *config_reg_x_low = (unsigned char *)REG_X_LOW;
-    unsigned char *config_reg_x_high = (unsigned char *)REG_X_HIGH;
-    if( x < 80 ){
-        *config_reg_x_low  = (unsigned char)x;
-    }else{
-        *config_reg_x_low  = (unsigned char)(x & 0xFF);
-        *config_reg_x_high = (unsigned char)(x >> 8);
-    }
-}
-void vga_set_y(unsigned short y) {
-    unsigned char *config_reg_y_low = (unsigned char *)REG_Y_LOW;
-    unsigned char *config_reg_y_high = (unsigned char *)REG_Y_HIGH;
-    if ( y < 80 ){
-        *config_reg_y_low  = (unsigned char)y;
-    }else{
-        *config_reg_y_low  = (unsigned char)(y & 0xFF);
-        *config_reg_y_high = (unsigned char)(y >> 8);
-    }
-}
-void vga_set_txt_color(unsigned char color){
-    unsigned char *config_reg_txt_color = (unsigned char *)SET_TXT_COLOR;
-
-    *config_reg_txt_color = (unsigned char)color;
-}
-void vga_go_home(){
-    *vga_run_cmd = CMD_GO_HOME;
-}
-unsigned short read_uint() {
-    unsigned short val = 0;
-    char c;
-    while (1) {
-        c = getchar(); // Lê um caractere da serial
-        if (c == '\r' || c == '\n' || c == ' ') break; // Para no Enter ou Espaço
-        if (c >= '0' && c <= '9') {
-            putchar(c); // Ecoa o que você digitou
-            val = val * 10 + (c - '0');
-        }
-    }
-    putchar('\n');
-    return val;
-}
-
-void imprime_char(char ch)
-{
-    unsigned char *screen_reg = (unsigned char *)WRITE_SCREEN;
-    *screen_reg = ch;
-
-}
-
-void read_str(char *str) {
-    char c;
-    char *p = str;
-
-    while (1) {
-        c = getchar(); // Lê um caractere
-        // Para no Enter (Unix usa \n, alguns terminais mandam \r)
-        if (c == '\n' || c == '\r') {
-            break;
-        }
-        // Armazena o caractere no ponteiro e avança
-        *p = c;
-        p++;
-        imprime_char(c);
-    }
-    *p = '\0'; // FINALIZA A STRING (Essencial em C!)
-    putchar('\n');
-    imprime_char('\0');
-    imprime_char('\n');
-}
-void clrscr()
-{
-    *vga_run_cmd = CMD_CLEAR_SCREEN;
-}
-
-
-
-void imprime_tbl_ascii()
-{
-    unsigned char *screen_reg = (unsigned char *)WRITE_SCREEN;
-
-    for(unsigned char i=0x20;i<0x80;i++){
-        *screen_reg = i;
-        delay(50);
-    }
-
-}
-
-void show_menu(){
-    int choice;
-    unsigned short pos_x;
-    unsigned short pos_y;
-
-    choice = 'A';
-    while (choice != 1000){
-        printf("\n--- TCPBOX68K VIDEO TEST ---\n");
-        printf("1 - Clear Screen\n");
-        printf("2 - Set X Position\n");
-        printf("3 - Set text and bg color \n");
-        printf("4 - Envia string\n");
-        printf("5 - Imprime tbl ascii\n");
-        printf("6 - Imprime um caractere\n");
-        printf("7 - Home\n");
-        printf("8 - Troca modo tela");
-
-        printf("0 - sai do programa\n");
-        printf("\nEscolha: ");
-        choice = getchar();
-        printf("choice [%x04]\n",choice);
-        switch(choice){
-            case '1':
-                printf("Limpando a tela\n");
-                clrscr();
-                break;
-            case '2':
-                printf("Digite a posicao X (0-639): ");
-                pos_x = read_uint();
-                vga_set_x(pos_x);
-                printf("X definido para %d\n", pos_x);
-                printf("Digite a posicao Y (0-319): ");
-                pos_y = read_uint();
-                vga_set_y(pos_y);
-                printf("Y definido para %d\n", pos_y);
-           // case '4': //Change cursor position.
-                *vga_run_cmd =CMD_SET_CUR_POS;
-                break;
-            case '3':
-                unsigned char textColor,bgColor,color;
-                printf("Digite   a  cor  do  texto [0-8]: ");
-                textColor = read_uint();
-                printf("Digite a cor do background [0-8]: ");
-                bgColor = read_uint();
-                color = (unsigned char )((textColor<<4)&0xF0) | bgColor;
-                printf("textColor[%x][%x] bgColor[%x] color[%x]",((textColor<<4)&0xF0),textColor,bgColor,color);
-                vga_set_txt_color(color);
-                break;
-            case '4':
-                printf("Escolhido opcao 4\n");
-                char cstr[256];
-                read_str(cstr);
-                break;
-            case '5':
-                printf("\nVamos imprimir a tabela ascii\n");
-                imprime_tbl_ascii();
-                break;
-            case '6':
-                printf("Digite um caractere: ");
-                char ch = getchar();
-                imprime_char(ch);
-                break;
-            case '7':
-                printf("Go home");
-                vga_go_home();
-                break;
-            case '8':
-                unsigned char mode;
-                printf("Digite 0=320x200 1=640x400: ");
-                mode = read_uint();
-                vga_set_txt_mode(mode);
-                break;
-            case '0':
-                return;
-
-                break;
-        }
+    while(1){
+        get_packet();
+        //if (key_bufferA[4] >= 0x20){
+        ch = get_kbd_key(modifier,key_bufferA[4]);
+        if( ch >= 0x20 )
+            printf("%c",ch);
+        memset((void *)key_bufferA,0,sizeof(key_bufferA) );
+        memset((void *)key_bufferB,0,sizeof(key_bufferB) );
+        modifier = 0;
     }
 }
 
-
-int main() {
-    //char str[10]={0};
-    check_stack();  // ✅ Verificar stack no início
-/* Criando ponteiros de 8 bits (unsigned char) para os endereços */
-
-    unsigned char *config_reg = (unsigned char *)CONFIG_REG;
-
-    printf("\nTesting keyboard...\n");
-    main_loop();
-
-
-
-    printf("\n--- Teste de Video Card com Pi Pico V2 2603 ---\n");
-
-    printf("Vou testar a placa de video: enviando SYSTEM_ENABLE \n");
-    *config_reg = CMD_SYSTEM_ENABLE;
-
-
-
-    show_menu();
-
-    return 0;
+/*
+Esse código está enviando um comando de inicialização 
+crucial para mudar o comportamento interno do CH9350: 
+ele está tirando o chip do modo padrão e forçando-o a 
+entrar no Modo Transparente (ou Modo de Transmissão 
+Direta).Analisando a estrutura do array cmd[] = 
+{0x57, 0xAB, 0x01, 0x00, 0x01}, o que cada byte faz 
+de acordo com o protocolo do CH9350 é o seguinte:0x57 
+0xAB $\rightarrow$ É o cabeçalho de sincronismo 
+obrigatório que você já conhece.0x01 $\rightarrow$ É 
+o código do comando para "Definir Modo de Trabalho" 
+(Set Work Mode).0x00 $\rightarrow$ É o parâmetro do 
+modo. O valor 0x00 configura o chip para o Modo 
+Transparente USB HID.0x01 $\rightarrow$ É o Checksum 
+desse pacote (pulando o cabeçalho, a soma de 0x01 + 
+0x00 é igual a 0x01).O que esse modo muda no seu 
+Orion68K?Por padrão de fábrica, o CH9350 tenta ser 
+"esperto": ele tenta decodificar os relatórios USB 
+HID do teclado internamente e enviar apenas dados 
+mastigados na serial.Quando você envia esse comando e 
+ativa o Modo Transparente (0x00):Desativa o Filtro 
+Interno: Você está dizendo para o chip: "Não tente 
+processar ou filtrar nada por conta própria. Tudo o 
+que o teclado USB mandar, repasse bruto para a minha 
+serial".Explica o tamanho dos pacotes: É exatamente 
+por causa desse comando que o comportamento do chip 
+mudou e ele começou a te enviar aqueles pacotes longos 
+de 12 bytes em vez de apenas o scancode puro! No modo 
+transparente, ele encapsula o relatório USB HID inteiro 
+do teclado (que tem 8 bytes) dentro do frame serial 
+dele (adicionando os bytes de status, tamanho, 
+sequenciador e o checksum de rodapé que você descobriu).
+*/
+void set_transparent_mode() {
+    volatile unsigned char *uart_reg = (volatile unsigned char *)UART_KEYBOARD;
+    // Array com o comando completo: Header(57 AB), Cmd(01), Param(00), Checksum(01)
+    unsigned char cmd[] = {0x57, 0xAB, 0x01, 0x00, 0x01};
+    for(int i = 0; i < 5; i++) {
+        while (!(uart_reg[LSR] & 0x20)); 
+        uart_reg[THR] = cmd[i];
+    }
 }
 
+unsigned char get_kbd_key(char mod, unsigned char code){
+unsigned char RetKey=0;  //default is 0 (No key pressed)
 
+//printf("mod [%02X] code [%02x]\n",mod, code);
+// Keymap Tables: Feel free to modify for your Application. 
+// As there is no standard and I need only one byte values 
+// (no VT320 ESC sequences) 
+// I have defined years ago a Simple Map table
+//                          0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
+unsigned char OE_BASE_KEYMAP[] =  { 0x00,0x00,0x00,0x00, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',  // 0x
+                            'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '1', '2',  // 1x
+                            '3', '4', '5', '6', '7', '8', '9', '0',0x0D,0x1B,0x08,0x09, ' ', '-', '=', '[',  // 2x  ENTER, ESC, BACKSPACE, TAB
+                            ']','\\',0xFF, ';','\'', '`', ',', '.', '/',0x02,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,  // 3x  CAPS = 2, F0-F6
+                           0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0x1F,0xF0,0xFE,0x18,0x14,0x15,0x7F,0x17,0x16,0x13,  // 4x F7-F12, PrintScreen, ScrollLock, Pause, Insert, Home, PageUp, DelFwd,End, PageDown, Rightarrow
+                           0x12,0x11,0x10,0x05, '/', '*', '-', '+',0x0D, '1', '2', '3', '4', '5', '6', '7',  // 5x Left, Down, Up, NumLock, Keypad Symbols
+                            '8', '9', '0', '.',0xFF,0x0A,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 6x Unknown, Application, Not used symbols
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //7x Not used symbols
+
+unsigned char OE_SHIFT_KEYMAP[] = { 0x00,0x00,0x00,0x00, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',  // 0x
+                            'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '!', '@',  // 1x
+                            '#', '$', '%', '^', '&', '*', '(', ')',0x0E,0x1B,0x08,0x0B,0x80, '_', '+', '{',  // 2x  Shift-ENTER, ESC, BACKSPACE, TAB, Shift-Space
+                            '}', '|',0xFF, ':', '"', '~', '<', '>', '?',0x02,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,  // 3x  CAPS = 2, F0-F6
+                           0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0x1F,0xF0,0xFE,0x18,0x14,0x15,0x7F,0x17,0x16,0x13,  // 4x  F7-F12, PrintScreen, ScrollLock, Pause, Insert, Home, PageUp, DelFwd,End, PageDown, Rightarrow
+                           0x12,0x11,0x10,0x05, '/', '*', '-', '+',0x0D, '1', '2', '3', '4', '5', '6', '7',  // 5x  Left, Down, Up, NumLock, Keypad Symbols
+                            '8', '9', '0', '.',0xFF,0x0A,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 6x  Unknown, Application, Not used symbols
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //7x  Not used symbols
+
+unsigned char OE_CTRL_KEYMAP[] =  { 0x00,0x00,0x00,0x00,0xA1,0xA2,0xA3,0xA4,0xA5,0xA6,0xA7,0xA8,0xA9,0xAA,0xAB,0xAC,  // 0x
+                           0xAD,0xAE,0xAF,0xB0,0xB1,0xB2,0xB3,0xB4,0xB5,0xB6,0xB7,0xB8,0xB9,0xBA,0xE1,0xE2,  // 1x
+                           0xE3,0xE4,0xE5,0xE6,0xE7,0xE8,0xE9,0xE0,0x0F,0x00,0x08,0x00, ' ',0x00,0x00,0x00,  // 2x  CTRL-ENTER, --, BACKSPACE, Space
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,  // 3x  F0-F6
+                           0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x13,  // 4x  F7-F12 / Rightarrow
+                           0x12,0x11,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 5x  Left, Down, Up, NumLock, Keypad Symbols
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 6x 
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //7x                            
+
+unsigned char OE_ALT_KEYMAP[] =   { 0x00,0x00,0x00,0x00,0xC1,0xC2,0xC3,0xC4,0xC5,0xC6,0xC7,0xC8,0xC9,0xCA,0xCB,0xCC,  // 0x
+                           0xCD,0xCE,0xCF,0xD0,0xD1,0xD2,0xD3,0xD4,0xD5,0xD6,0xD7,0xD8,0xD9,0xDA,0xBC,0xBD,  // 1x
+                           0xBE,0xBF,0xDB,0xDC,0xDD,0xDE,0xDF,0xBB,0x0D,0x00,0x08,0x00, ' ',0x00,0x00,0x00,  // 2x  ENTER, --, BACKSPACE, Space
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,  // 3x  F0-F6
+                           0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x13,  // 4x  F7-F12 / Rightarrow
+                           0x12,0x11,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 5x  Left, Down, Up, NumLock, Keypad Symbols
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 6x 
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //7x 
+
+unsigned char OE_ALTGR_KEYMAP[] = { 0x00,0x00,0x00,0x00,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8A,0x8B,0x8C,  // 0x
+                           0x8D,0x8E,0x8F,0x90,0x91,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9A,0x9C,0x9D,  // 1x
+                           0x9E,0x9F,0xEA,0xEB,0xEC,0xED,0xEE,0x9B,0x0D,0x00,0x08,0x00, ' ',0x00,0x00,0x00,  // 2x  ENTER, --, BACKSPACE, Space
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,  // 3x  F0-F6
+                           0xF7,0xF8,0xF9,0xFA,0xFB,0xFC,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x13,  // 4x  F7-F12 / Rightarrow
+                           0x12,0x11,0x10,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 5x  Left, Down, Up, NumLock, Keypad Symbols
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,  // 6x 
+                           0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 }; //7x 
+
+if(mod==0x00){ //No modifier 
+    RetKey = OE_BASE_KEYMAP[code];  
+    if(_CapsFlag==2)  //Caps a --> A
+    {
+        if((RetKey >= 'a') &&  (RetKey <= 'z'))
+           RetKey=RetKey-32;
+    }
+}   
+if((mod==0x02)||(mod==0x20)) { //Left & Right Shift modifier
+    RetKey = OE_SHIFT_KEYMAP[code];
+    if(_CapsFlag==2)  //Caps A --> a
+    {
+        if((RetKey >= 'A') &&  (RetKey <= 'Z'))
+           RetKey=RetKey+32;
+    }
+}
+if((mod==0x01)||(mod==0x10)){//Left & Right CTRL modifier
+   RetKey = OE_CTRL_KEYMAP[code];
+}
+if(mod==0x04){//Left ALT modifier
+   RetKey = OE_ALT_KEYMAP[code];
+}
+if(mod==0x40){ //Right ALT (ALT GR) modifier
+   RetKey = OE_ALTGR_KEYMAP[code];
+}
+  return RetKey;
+}     

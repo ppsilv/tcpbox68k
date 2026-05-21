@@ -19,24 +19,24 @@
             ;REPT 45
             ;DC.L    DEFAULT_HANDLER
             ;ENDR
-            DC.L    DEFAULT_HANDLER    ; $60: Spurious Interrupt
-            DC.L    DEFAULT_HANDLER     ; $64: Level 1 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $70: Level 4 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $74: Level 5 Interrupt
-            DC.L    DEFAULT_HANDLER        ; $78: Level 6 Interrupt  ✅
-            DC.L    DEFAULT_HANDLER     ; $7C: Level 7 Interrupt
-            DC.L    DEFAULT_HANDLER    ; $60: Spurious Interrupt
-            DC.L    DEFAULT_HANDLER     ; $64: Level 1 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $68: Level 2 Interrupt
-            DC.L    DEFAULT_HANDLER     ; $6C: Level 3 Interrupt
-            DC.L    SPURIOUS_HANDLER    ; $60: Spurious Interrupt
-            DC.L    INT1_HANDLER        ; $70: Level 4 Interrupt
-            DC.L    INT2_HANDLER        ; $74: Level 5 Interrupt
-            DC.L    INT3_HANDLER        ; $78: Level 6 Interrupt  ✅
-            DC.L    INT4_HANDLER        ; $7C: Level 7 Interrupt
-            DC.L    INT5_HANDLER        ; $64: Level 1 Interrupt
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    DEFAULT_HANDLER
+            DC.L    SPURIOUS_HANDLER    ; $60: Spurious handler
+            DC.L    INT1_HANDLER        ; $70: Level 1 Interrupt
+            DC.L    INT2_HANDLER        ; $74: Level 2 Interrupt
+            DC.L    INT3_HANDLER        ; $78: Level 3 Interrupt  ✅
+            DC.L    INT4_HANDLER        ; $7C: Level 4 Interrupt
+            DC.L    INT5_HANDLER        ; $64: Level 5 Interrupt
             DC.L    INT6_HANDLER        ; $78: Level 6 Interrupt  ✅
             DC.L    INT7_HANDLER        ; $7C: Level 7 Interrupt
             DC.L    TRAP0_HANDLER       ; Aponta para nosso handler

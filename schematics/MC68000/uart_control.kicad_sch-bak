@@ -6836,6 +6836,16 @@
 		)
 		(uuid "86cca84d-3110-43d3-8b21-76e3e236448b")
 	)
+	(label "{slash}bUDS"
+		(at 111.76 105.41 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "894f218d-72ea-4963-9a95-27d145c785c8")
+	)
 	(label "bA1"
 		(at 139.7 41.91 0)
 		(effects
@@ -7942,7 +7952,7 @@
 			)
 		)
 	)
-	(global_label "{slash}bUDS"
+	(global_label "{slash}bLDS"
 		(shape input)
 		(at 111.76 105.41 0)
 		(fields_autoplaced yes)
@@ -7954,7 +7964,7 @@
 		)
 		(uuid "b273890e-365a-478b-a1f1-2410ed909a07")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 121.0347 105.41 0)
+			(at 120.7323 105.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
